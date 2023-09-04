@@ -17,9 +17,15 @@
 
 body {
     font-family: 'Nunito', sans-serif;
-    background-color: var(--body-bg);
+    background-color: var(--body-bg-2);
     color: var(--text-color);
     font-size: 16px;
     line-height: 1.5;
     font-weight: 400;
+}
+
+.main-app main {
+    background-color: var(--body-bg-2);
+    min-height: calc(100vh - 8rem);
+    padding: 1rem;
 }
