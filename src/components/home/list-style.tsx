@@ -1,5 +1,4 @@
-import grid from "src/assets/icons/grid.svg";
-import list from "src/assets/icons/list.svg";
+import { GridIcon, ListIcon } from "src/assets/icons";
 import { useQuranStore } from "src/store";
 
 export function ListTypeToggle() {
@@ -15,7 +14,7 @@ export function ListTypeToggle() {
                 disabled={type === "grid"}
                 onClick={() => setType("grid")}
             >
-                <img src={grid} alt="grid" />
+                <GridIcon />
             </button>
 
             <button
@@ -25,7 +24,7 @@ export function ListTypeToggle() {
                 disabled={type === "list"}
                 onClick={() => setType("list")}
             >
-                <img src={list} alt="list" />
+                <ListIcon />
             </button>
         </div>
     );
