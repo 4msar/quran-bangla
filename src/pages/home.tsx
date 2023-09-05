@@ -1,12 +1,11 @@
-import { Layouts } from "src/components";
-import { SurahList } from "src/components";
-import { useQuranStore } from "src/store/quran-store";
+import { Layouts, ListTypeToggle, SurahList } from "src/components";
+import surah from "src/data/meta/surah.json";
 
 export function Home() {
-    const surah = useQuranStore((state) => state.surah);
     return (
         <Layouts>
-            <SurahList type="grid" surahs={surah} />
+            <ListTypeToggle />
+            <SurahList surah={surah} />
         </Layouts>
     );
 }

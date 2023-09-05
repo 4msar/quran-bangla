@@ -1,21 +1,20 @@
-import { Surah } from "src/types";
 import { create } from "zustand";
-
-import surah from "src/data/meta/surah.json";
+import { persist } from "zustand/middleware";
 
 export type QuranStore = {
-    surah: Surah[];
-    setSurah: (surah: Surah[]) => void;
-    getSurahById: (id: number) => Surah | undefined;
+    listType: "list" | "grid";
+    setListType: (listType: "list" | "grid") => void;
 };
 
-export const useQuranStore = create<QuranStore>((set, get) => ({
-    surah: [],
+export const useQuranStore = create<QuranStore>()(
+    persist(
+        (set) => ({
+            listType: "grid",
 
-    setSurah: (surah) => set({ surah }),
-    getSurahById: (id) => get().surah.find((item) => item.id === id),
-}));
-
-useQuranStore.setState({
-    surah,
-});
+            setListType: (listType) => set({ listType }),
+        }),
+        {
+            name: "quran-store",
+        }
+    )
+);

@@ -8,7 +8,7 @@ export function Layouts({ children }: { children: React.ReactNode }) {
 
             <main className="mt-20">
                 <Sidebar />
-                <section className="flex-1 ml-20 content-container">
+                <section className="flex-1 md:ml-20 content-container">
                     {children}
                 </section>
             </main>

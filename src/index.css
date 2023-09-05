@@ -36,6 +36,15 @@ body {
 
 }
 
+.active.list-style-toggle {
+    filter: opacity(0.3);
+    @apply border;
+}
+
+.list-style-toggle {
+    @apply flex w-8 h-8;
+}
+
 /* width */
 ::-webkit-scrollbar {
     width: 5px;
