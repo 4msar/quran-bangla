@@ -1,6 +1,6 @@
 import { Surah } from "src/types";
-import heart from "src/assets/heart.svg";
 import { Link } from "react-router-dom";
+import { HeartIcon } from "src/assets/icons";
 
 export function GridItem({ surah }: { surah: Surah }) {
     return (
@@ -12,7 +12,7 @@ export function GridItem({ surah }: { surah: Surah }) {
                     </span>
 
                     <button className="flex-center">
-                        <img src={heart} alt="love" className="w-6 h-6" />
+                        <HeartIcon className="w-6 h-6" />
                     </button>
                 </div>
                 <div className="flex justify-between items-end">

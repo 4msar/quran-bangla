@@ -6,7 +6,7 @@ export function ListTypeToggle() {
     const setType = useQuranStore((state) => state.setListType);
 
     return (
-        <div className="flex space-x-2">
+        <div className="flex space-x-2 px-4 mb-2">
             <button
                 className={`list-style-toggle ${
                     type === "grid" ? "active" : ""

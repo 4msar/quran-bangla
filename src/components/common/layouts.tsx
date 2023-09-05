@@ -1,4 +1,3 @@
-import { Sidebar } from "./sidebar";
 import { Header } from "./header";
 
 export function Layouts({ children }: { children: React.ReactNode }) {
@@ -7,8 +6,7 @@ export function Layouts({ children }: { children: React.ReactNode }) {
             <Header />
 
             <main className="mt-20">
-                <Sidebar />
-                <section className="flex-1 md:ml-20 content-container">
+                <section className="flex-1 content-container">
                     {children}
                 </section>
             </main>
