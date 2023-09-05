@@ -1,4 +1,4 @@
-import { Footer } from "./footer";
+import { Sidebar } from "./sidebar";
 import { Header } from "./header";
 
 export function Layouts({ children }: { children: React.ReactNode }) {
@@ -6,9 +6,12 @@ export function Layouts({ children }: { children: React.ReactNode }) {
         <div className="main-app h-screen">
             <Header />
 
-            <main className="">{children}</main>
-
-            <Footer />
+            <main className="mt-20">
+                <Sidebar />
+                <section className="flex-1 ml-20 content-container">
+                    {children}
+                </section>
+            </main>
         </div>
     );
 }

@@ -1,92 +1,92 @@
 [
     {
-        "id": "1",
-        "sura": "7",
-        "aya": "206",
+        "id": 1,
+        "sura": 7,
+        "aya": 206,
         "type": "recommended"
     },
     {
-        "id": "2",
-        "sura": "13",
-        "aya": "15",
+        "id": 2,
+        "sura": 13,
+        "aya": 15,
         "type": "recommended"
     },
     {
-        "id": "3",
-        "sura": "16",
-        "aya": "50",
+        "id": 3,
+        "sura": 16,
+        "aya": 50,
         "type": "recommended"
     },
     {
-        "id": "4",
-        "sura": "17",
-        "aya": "109",
+        "id": 4,
+        "sura": 17,
+        "aya": 109,
         "type": "recommended"
     },
     {
-        "id": "5",
-        "sura": "19",
-        "aya": "58",
+        "id": 5,
+        "sura": 19,
+        "aya": 58,
         "type": "recommended"
     },
     {
-        "id": "6",
-        "sura": "22",
-        "aya": "18",
+        "id": 6,
+        "sura": 22,
+        "aya": 18,
         "type": "recommended"
     },
     {
-        "id": "7",
-        "sura": "22",
-        "aya": "77",
+        "id": 7,
+        "sura": 22,
+        "aya": 77,
         "type": "recommended"
     },
     {
-        "id": "8",
-        "sura": "25",
-        "aya": "60",
+        "id": 8,
+        "sura": 25,
+        "aya": 60,
         "type": "recommended"
     },
     {
-        "id": "9",
-        "sura": "27",
-        "aya": "26",
+        "id": 9,
+        "sura": 27,
+        "aya": 26,
         "type": "recommended"
     },
     {
-        "id": "10",
-        "sura": "32",
-        "aya": "15",
+        "id": 10,
+        "sura": 32,
+        "aya": 15,
         "type": "obligatory"
     },
     {
-        "id": "11",
-        "sura": "38",
-        "aya": "24",
+        "id": 11,
+        "sura": 38,
+        "aya": 24,
         "type": "recommended"
     },
     {
-        "id": "12",
-        "sura": "41",
-        "aya": "38",
+        "id": 12,
+        "sura": 41,
+        "aya": 38,
         "type": "obligatory"
     },
     {
-        "id": "13",
-        "sura": "53",
-        "aya": "62",
+        "id": 13,
+        "sura": 53,
+        "aya": 62,
         "type": "obligatory"
     },
     {
-        "id": "14",
-        "sura": "84",
-        "aya": "21",
+        "id": 14,
+        "sura": 84,
+        "aya": 21,
         "type": "recommended"
     },
     {
-        "id": "15",
-        "sura": "96",
-        "aya": "19",
+        "id": 15,
+        "sura": 96,
+        "aya": 19,
         "type": "obligatory"
     }
 ]

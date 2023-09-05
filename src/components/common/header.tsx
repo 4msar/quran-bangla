@@ -1,24 +1,24 @@
+import { Link } from "react-router-dom";
 import logo from "src/assets/logo.svg";
 
 export function Header() {
     return (
-        <header className="flex h-20 items-center justify-between bg-white px-4">
+        <header className="flex fixed left-0 top-0 w-full h-20 items-center justify-between bg-white">
             <div className="flex items-center">
-                <div className="logo max-[120px] pr-4">
+                <Link to="/" className="logo max-[120px] pr-4">
                     <img src={logo} alt="logo" className="max-[120px] p-2" />
-                </div>
-                <h4 className="text-xl pr-4 text-slate-800 font-bold">
+                </Link>
+                <h4 className="text-xl hidden md:block pr-4 text-slate-800 font-bold">
                     Quran Bangla
                 </h4>
             </div>
 
-            <nav className="flex flex-1 items-center justify-between ml-8 space-x-2">
-                <div className="search">
-                    <input type="text" placeholder="Search" />
-                </div>
-                <a className="pr-4" href="http://msar.me">
-                    Home
-                </a>
+            <nav className="flex flex-1 items-center justify-between mr-4 max-w-md">
+                <input
+                    className="bg-white border border-gray-100 outline-none text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5"
+                    type="search"
+                    placeholder="Search"
+                />
             </nav>
         </header>
     );

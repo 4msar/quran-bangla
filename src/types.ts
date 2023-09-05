@@ -9,15 +9,28 @@ export type SurahMetaData = {
 
 export type Surah = {
     id: number;
+    ayas: number;
+    start: number;
     name: string;
-    englishName: string;
-    meta: SurahMetaData;
+    tname: string;
+    bname: string;
+    ename: string;
+    type: string;
+    order: number;
+    rukus: number;
 };
 
 export type Ayah = {
     id: number;
-    surah: number;
-    number: number;
+    sura: number;
+    aya: number;
     text: string;
-    sajda: boolean;
+    sajda?: boolean;
+};
+
+export type MetaData = {
+    id: number;
+    sura: number;
+    aya: number;
+    type?: string;
 };

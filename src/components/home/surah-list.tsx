@@ -9,9 +9,7 @@ type SurahListProps = {
 
 export function SurahList({ type, surahs }: SurahListProps) {
     return (
-        <section className="surah-list">
-            <h1>Surah List</h1>
-
+        <div className="surah-list">
             {type === "list" && (
                 <div className="list-style">
                     {surahs.map((surah) => (
@@ -20,12 +18,12 @@ export function SurahList({ type, surahs }: SurahListProps) {
                 </div>
             )}
             {type === "grid" && (
-                <div className="grid-style">
+                <div className="grid-style flex justify-center flex-wrap">
                     {surahs.map((surah) => (
                         <GridItem key={`surah-${surah.id}`} surah={surah} />
                     ))}
                 </div>
             )}
-        </section>
+        </div>
     );
 }
