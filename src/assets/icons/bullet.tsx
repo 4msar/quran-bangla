@@ -1,11 +1,8 @@
-export function BulletIcon() {
+export function BulletIcon({ className }: { className?: string }) {
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
-            width="512"
-            height="512"
-            x="0"
-            y="0"
+            className={className}
             enableBackground="new 0 0 122.946 122.946"
             version="1.1"
             viewBox="0 0 122.946 122.946"

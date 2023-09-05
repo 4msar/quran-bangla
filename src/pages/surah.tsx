@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import { Layouts, SurahView } from "src/components";
+import { Actions, Layouts, SurahAyah, SurahView } from "src/components";
 import { getSurahInfo } from "src/utils/helpers";
 
 export function Surah() {
@@ -8,12 +8,16 @@ export function Surah() {
     const surah = getSurahInfo(Number(surahId));
 
     if (!surah) {
-        throw new Response("Not Found", { status: 404 });
+        return <div>Surah not found</div>;
     }
 
     return (
-        <Layouts>
-            <SurahView surah={surah} />
+        <Layouts className="mr-60">
+            <div className="flex">
+                <SurahAyah surah={surah} />
+                <SurahView surah={surah} />
+            </div>
+            <Actions />
         </Layouts>
     );
 }

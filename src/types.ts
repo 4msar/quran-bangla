@@ -1,3 +1,5 @@
+export type Language = "bn" | "en" | "ar";
+
 export type SurahMetaData = {
     ayahs: number;
     order: number;

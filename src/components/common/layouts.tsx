@@ -1,14 +1,18 @@
 import { Header } from "./header";
 
-export function Layouts({ children }: { children: React.ReactNode }) {
+export function Layouts({
+    children,
+    className,
+}: {
+    className?: string;
+    children: React.ReactNode;
+}) {
     return (
-        <div className="main-app h-screen">
+        <div className="main-app app-full">
             <Header />
 
-            <main className="mt-20">
-                <section className="flex-1 content-container">
-                    {children}
-                </section>
+            <main className={`mt-20 app-full content-container ${className}`}>
+                {children}
             </main>
         </div>
     );

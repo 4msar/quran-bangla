@@ -2,7 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-
 /* Body styles */
 
 :root {
@@ -15,9 +14,26 @@
     --text-color: #3D454F;
 }
 
+/* width */
+::-webkit-scrollbar {
+    width: 5px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 5px grey;
+    border-radius: 5px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: var(--green-dark);
+    border-radius: 5px;
+}
+
 body {
     font-family: 'Nunito', sans-serif;
-    background-color: var(--body-bg);
+    background-color: var(--body-bg-2);
     color: var(--text-color);
     font-size: 16px;
     line-height: 1.5;
@@ -27,6 +43,10 @@ body {
 .content-container {
     background-color: var(--body-bg-2);
     padding: 1rem;
+}
+
+.app-full {
+    height: calc(100vh - 5rem);
 }
 
 .flex-center {
@@ -45,19 +65,15 @@ body {
     @apply flex w-8 h-8;
 }
 
-/* width */
-::-webkit-scrollbar {
-    width: 5px;
+.sajdah-icon {
+    @apply w-8 h-8 text-4xl;
+    line-height: 20px;
 }
 
-/* Track */
-::-webkit-scrollbar-track {
-    box-shadow: inset 0 0 5px grey;
-    border-radius: 5px;
+.font-bangla {
+    font-family: 'Kalpurush', sans-serif;
 }
 
-/* Handle */
-::-webkit-scrollbar-thumb {
-    background: var(--green-dark);
-    border-radius: 5px;
+.font-arabic {
+    font-family: 'Amiri', serif;
 }
