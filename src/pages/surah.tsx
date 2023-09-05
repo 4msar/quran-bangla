@@ -12,7 +12,7 @@ export function Surah() {
     }
 
     return (
-        <Layouts className="mr-60">
+        <Layouts className="sm:mr-60">
             <div className="flex">
                 <SurahAyah surah={surah} />
                 <SurahView surah={surah} />

@@ -7,5 +7,5 @@ export * from "./home/surah-list";
 export * from "./home/list-style";
 
 export * from "./surah/view";
-export * from "./surah/ayas";
+export * from "./surah/ayats";
 export * from "./surah/actions";

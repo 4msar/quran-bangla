@@ -33,6 +33,12 @@ export const metadata = {
     sajdah,
 };
 
+export const getJuzInfo = (surah: number) => {
+    const juzs = juz.filter((juz) => juz.sura === surah).map((juz) => juz.id);
+
+    return [...new Set(juzs)];
+};
+
 export const getSurahInfo = (surahNumber: number) => {
     return surah.find((surah) => surah.id === surahNumber);
 };

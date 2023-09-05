@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { Surah } from "src/types";
+import { getJuzInfo } from "src/utils";
 
 export function ListItem({ surah }: { surah: Surah }) {
     return (
@@ -21,7 +22,8 @@ export function ListItem({ surah }: { surah: Surah }) {
                     <div className="text-xs font-medium text-right text-gray-400">
                         <span>{surah.type}</span> <br />
                         <span>Ayah: {surah.ayas}</span> <br />
-                        {/* <span>Start: {surah.start}</span> */}
+                        <span>Ruku: {surah.rukus}</span> <br />
+                        <span>Para: {getJuzInfo(surah.id).join(", ")}</span>
                     </div>
                 </div>
             </div>

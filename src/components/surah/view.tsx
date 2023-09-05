@@ -6,7 +6,7 @@ export function SurahView({ surah }: { surah: Surah }) {
             <h1>{surah.name}</h1>
             <p>{surah.bname}</p>
             <p>Ayah: {surah.ayas}</p>
-            <p>Revolution: {surah.type}</p>
+            <p>Revelation: {surah.type}</p>
         </div>
     );
 }
