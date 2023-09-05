@@ -1,12 +1,15 @@
 import { Link } from "react-router-dom";
-import logo from "src/assets/logo.svg";
 
 export function Header() {
     return (
         <header className="flex fixed left-0 top-0 w-full h-20 items-center justify-between bg-white">
             <div className="flex items-center">
                 <Link to="/" className="logo max-[120px] pr-4">
-                    <img src={logo} alt="logo" className="max-[120px] p-2" />
+                    <img
+                        src="/logo.svg"
+                        alt="logo"
+                        className="max-[120px] p-2"
+                    />
                 </Link>
                 <h4 className="text-xl hidden md:block pr-4 text-slate-800 font-bold">
                     Quran Bangla
