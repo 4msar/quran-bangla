@@ -7,6 +7,7 @@ import {
     getSurahName,
     posKey,
     revelationLabel,
+    RUKU_BY_END,
     RUKU_BY_START,
     toArabicDigits,
     toLocaleDigits,
@@ -16,6 +17,7 @@ import {
 import type { AyahRow } from "src/utils/quran";
 import { AyahItem } from "./ayah";
 import { RukuDivider } from "./ruku-divider";
+import { RukuEndMark } from "./ruku-end-mark";
 
 type AyahListProps = {
     rows: AyahRow[];
@@ -174,19 +176,24 @@ function QuranView({
                             lang="ar"
                             className="ayah-arabic px-1 text-justify text-ink [text-align-last:center] md:px-3"
                         >
-                            {group.rows.map(({ arabic }) => (
-                                <span
-                                    key={arabic.aya}
-                                    id={`ayah-${arabic.sura}-${arabic.aya}`}
-                                    data-ayah={posKey(arabic.sura, arabic.aya)}
-                                    className="scroll-mt-32 rounded-md"
-                                >
-                                    {arabic.text}
-                                    <span className="ayah-marker" aria-label={`Ayah ${arabic.aya}`}>
-                                        {toArabicDigits(arabic.aya)}
-                                    </span>{" "}
-                                </span>
-                            ))}
+                            {group.rows.map(({ arabic }) => {
+                                const key = posKey(arabic.sura, arabic.aya);
+                                const rukuEnd = RUKU_BY_END.get(key);
+                                return (
+                                    <span
+                                        key={arabic.aya}
+                                        id={`ayah-${arabic.sura}-${arabic.aya}`}
+                                        data-ayah={key}
+                                        className="scroll-mt-32 rounded-md"
+                                    >
+                                        {arabic.text}
+                                        <span className="ayah-marker" aria-label={`Ayah ${arabic.aya}`}>
+                                            {toArabicDigits(arabic.aya)}
+                                        </span>
+                                        {rukuEnd && <RukuEndMark ruku={rukuEnd} ui={ui} />}{" "}
+                                    </span>
+                                );
+                            })}
                         </p>
                     </Fragment>
                 );

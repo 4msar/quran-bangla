@@ -87,6 +87,11 @@ export const RUKU_BY_START = new Map<string, RukuRange>(
     RUKU_RANGES.map((r) => [posKey(r.sura, r.from.aya), r])
 );
 
+/** Lookup for the ruku that ends at a given ayah (where the ع mark goes). */
+export const RUKU_BY_END = new Map<string, RukuRange>(
+    RUKU_RANGES.map((r) => [posKey(r.sura, r.to.aya), r])
+);
+
 // ---- Rows ---------------------------------------------------------------
 
 export type AyahRow = {

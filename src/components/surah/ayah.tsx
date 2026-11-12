@@ -7,6 +7,7 @@ import {
     getSurahName,
     hasSajdah,
     posKey,
+    RUKU_BY_END,
     toLocaleDigits,
     TRANSLATIONS,
 } from "src/utils";
@@ -14,6 +15,7 @@ import type { UiLang } from "src/utils";
 import type { AyahRow } from "src/utils/quran";
 import { BookmarkIcon, CheckIcon, CopyIcon } from "src/components/ui/icons";
 import { AyahMenu } from "./ayah-menu";
+import { RukuEndMark } from "./ruku-end-mark";
 
 type AyahItemProps = {
     row: AyahRow;
@@ -29,6 +31,7 @@ export const AyahItem = memo(function AyahItem({ row, shown, ui }: AyahItemProps
     const { arabic, translations } = row;
     const key = posKey(arabic.sura, arabic.aya);
     const sajdah = hasSajdah(arabic.sura, arabic.aya);
+    const rukuEnd = RUKU_BY_END.get(key);
 
     const bookmarked = useQuranStore((s) => s.bookmarks.includes(key));
     const toggleBookmark = useQuranStore((s) => s.toggleBookmark);
@@ -114,6 +117,7 @@ export const AyahItem = memo(function AyahItem({ row, shown, ui }: AyahItemProps
 
             <p dir="rtl" lang="ar" className="ayah-arabic text-right text-ink">
                 {arabic.text}
+                {rukuEnd && <RukuEndMark ruku={rukuEnd} ui={ui} />}
             </p>
 
             {shown.map((id) => {
