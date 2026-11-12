@@ -1,10 +1,32 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn">
     <head>
         <meta charset="UTF-8" />
         <link rel="icon" type="image" href="/favicon.ico" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="color-scheme" content="light dark" />
         <title>Al Quran</title>
+
+        <!-- Apply the saved theme before first paint so there is no flash. -->
+        <script>
+            (function () {
+                var theme = "system";
+                try {
+                    var saved = JSON.parse(
+                        localStorage.getItem("quran-store-v2") || "{}"
+                    );
+                    if (saved.state && saved.state.theme)
+                        theme = saved.state.theme;
+                } catch (e) {}
+                if (theme === "system") {
+                    theme = window.matchMedia("(prefers-color-scheme: dark)")
+                        .matches
+                        ? "dark"
+                        : "light";
+                }
+                document.documentElement.dataset.theme = theme;
+            })();
+        </script>
 
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />

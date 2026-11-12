@@ -1,30 +1,42 @@
 import { Header } from "./header";
-import { NavTabs } from "./nav-tabs";
-import { SurahSidebar } from "./surah-sidebar";
+import { BottomBar, IconRail } from "./nav-items";
+import { ListPanel } from "./list-panel";
 
-export function Layouts({
-    children,
-    className,
-}: {
-    className?: string;
+type LayoutsProps = {
     children: React.ReactNode;
-}) {
+    /** Show the Surah/Juz/Ruku side panel on wide screens (reader pages). */
+    withPanel?: boolean;
+    /** Wider content column (home grids). */
+    wide?: boolean;
+    className?: string;
+};
+
+/**
+ * Desktop: header, icon rail, optional list panel, centred reading column.
+ * Mobile: header, content, bottom tab bar.
+ */
+export function Layouts({ children, withPanel = false, wide = false, className }: LayoutsProps) {
     return (
-        <div className="min-h-screen bg-white">
+        <div className="min-h-screen bg-page">
             <Header />
-            <SurahSidebar />
+            <IconRail />
+            {withPanel && <ListPanel />}
 
             <main
-                className={`min-h-screen pt-16 md:pl-80 ${className ?? ""}`}
+                className={`min-h-screen pb-24 pt-16 md:pb-10 md:pl-20 ${
+                    withPanel ? "lg:pl-[25rem]" : ""
+                } ${className ?? ""}`}
             >
-                <div className="mx-auto max-w-3xl px-4 py-6 md:px-10 md:py-8">
-                    {/* The sidebar carries the tabs on desktop; show them inline on mobile. */}
-                    <div className="mb-6 md:hidden">
-                        <NavTabs />
-                    </div>
+                <div
+                    className={`mx-auto px-4 py-6 md:px-8 md:py-8 ${
+                        wide ? "max-w-6xl" : "max-w-3xl"
+                    }`}
+                >
                     {children}
                 </div>
             </main>
+
+            <BottomBar />
         </div>
     );
 }

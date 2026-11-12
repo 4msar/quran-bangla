@@ -1,100 +1,116 @@
-import { useEffect } from "react";
-import { useLocation, useParams } from "react-router-dom";
-import {
-    Actions,
-    AyahList,
-    Layouts,
-    TranslationPicker,
-} from "src/components";
+import { useParams } from "react-router-dom";
+import { AyahList, Layouts, ReaderBar, SurahPrevNext } from "src/components";
+import { useHashTarget } from "src/hooks/use-hash-target";
 import { useQuranRows } from "src/hooks/use-quran-rows";
+import { useUiLang } from "src/store";
 import type { Surah as SurahInfo } from "src/types";
 import {
     bismillah,
     getSurahInfo,
     getSurahName,
-    getSurahPrefix,
-    uiLang,
+    revelationLabel,
+    toLocaleDigits,
 } from "src/utils";
+import { NotFound } from "./not-found";
 
 export function Surah() {
     const { surah: surahParam } = useParams();
     const surah = getSurahInfo(Number(surahParam));
 
-    if (!surah) {
-        return (
-            <Layouts>
-                <p className="text-center">Surah not found</p>
-            </Layouts>
-        );
-    }
+    if (!surah) return <NotFound />;
 
-    return <SurahView surah={surah} />;
+    // Keyed so switching surah resets scroll-tracking and menus.
+    return <SurahView key={surah.id} surah={surah} />;
 }
 
 function SurahView({ surah }: { surah: SurahInfo }) {
-    const { hash } = useLocation();
-    const { rows, translation, loading, translationLoading } = useQuranRows({
+    const ui = useUiLang();
+    const { rows, shown, viewMode, loading, translationLoading } = useQuranRows({
         surah: surah.id,
     });
-    const ui = uiLang(translation);
 
-    // Scroll to #ayah-S-A or #ruku-N once the text has rendered.
-    useEffect(() => {
-        if (!hash || loading) return;
-        document
-            .getElementById(decodeURIComponent(hash.slice(1)))
-            ?.scrollIntoView({ block: "start" });
-    }, [hash, loading]);
+    useHashTarget(!loading && !translationLoading, viewMode);
 
     // Bismillah is not recited at the start of Al-Fatihah (it is verse 1) or Al-Tawbah.
     const showBismillah = surah.id !== 1 && surah.id !== 9;
-    const bismillahTranslation =
-        translation === "en"
-            ? bismillah.en
-            : translation === "bn"
-              ? bismillah.bn
-              : null;
+    const d = (n: number) => toLocaleDigits(n, ui);
 
     return (
-        <Layouts>
-            <header className="mb-6 rounded-2xl border border-[var(--line)] bg-brand-50/60 px-6 py-8 text-center">
-                <p className="font-arabic text-4xl text-ink">{surah.name}</p>
-                <h1 className="mt-3 text-2xl font-semibold text-ink">
+        <Layouts withPanel>
+            <header className="relative mb-2 overflow-hidden rounded-3xl bg-brand-50 px-6 py-8 text-center ring-1 ring-brand-600/15">
+                <span
+                    aria-hidden="true"
+                    className="diamond absolute left-5 top-5 h-12 w-12 text-sm font-semibold text-brand-700"
+                    style={{ "--diamond-bg": "var(--surface)", "--diamond-line": "var(--brand-100)" } as React.CSSProperties}
+                >
+                    <span>{d(surah.id)}</span>
+                </span>
+                <p lang="ar" className="font-arabic text-4xl leading-relaxed text-ink md:text-5xl">
+                    {surah.name}
+                </p>
+                <h1 className={`mt-2 text-2xl font-semibold text-ink ${ui === "bn" ? "font-bangla text-3xl" : ""}`}>
                     {getSurahName(surah, ui)}
                 </h1>
                 <p className="mt-1 text-sm text-muted">
-                    {getSurahPrefix(ui)} · {surah.type} · {surah.ayas} ayah ·{" "}
-                    {surah.rukus} ruku
+                    {surah.tname} · {surah.ename}
                 </p>
-                <div className="mt-5 flex justify-center">
-                    <TranslationPicker loading={translationLoading} />
-                </div>
+                <ul className="mt-4 flex flex-wrap justify-center gap-2 text-xs font-medium text-brand-700">
+                    <li className="rounded-full bg-surface px-3 py-1 ring-1 ring-line">
+                        {revelationLabel(surah.type, ui)}
+                    </li>
+                    <li className="rounded-full bg-surface px-3 py-1 ring-1 ring-line">
+                        {d(surah.ayas)} {ui === "en" ? "ayahs" : "আয়াত"}
+                    </li>
+                    <li className="rounded-full bg-surface px-3 py-1 ring-1 ring-line">
+                        {d(surah.rukus)} {ui === "en" ? "rukus" : "রুকু"}
+                    </li>
+                </ul>
             </header>
 
+            <ReaderBar
+                title={`${d(surah.id)}. ${getSurahName(surah, ui)}`}
+                ui={ui}
+                from={{ sura: surah.id, aya: 1 }}
+                to={{ sura: surah.id, aya: surah.ayas }}
+                loading={translationLoading}
+            />
+
             {showBismillah && (
-                <div className="mb-6 text-center">
-                    <p className="font-arabic text-2xl text-ink">
+                <div className="py-4 text-center">
+                    <p dir="rtl" lang="ar" className="font-arabic text-3xl leading-loose text-ink">
                         {bismillah.ar}
                     </p>
-                    {bismillahTranslation && (
-                        <p
-                            className={`mt-2 text-sm text-muted ${
-                                translation === "bn" ? "font-bangla" : ""
-                            }`}
-                        >
-                            {bismillahTranslation}
-                        </p>
-                    )}
+                    {viewMode === "translation" &&
+                        shown.map((id) => (
+                            <p key={id} className={`mt-1 text-sm text-muted ${id === "bn" ? "font-bangla text-base" : ""}`}>
+                                {bismillah[id]}
+                            </p>
+                        ))}
                 </div>
             )}
 
             {loading ? (
-                <p className="text-center text-muted">Loading…</p>
+                <ReaderSkeleton />
             ) : (
-                <AyahList rows={rows} ui={ui} translation={translation} />
+                <AyahList rows={rows} shown={shown} viewMode={viewMode} ui={ui} />
             )}
 
-            <Actions />
+            <SurahPrevNext surah={surah.id} ui={ui} />
         </Layouts>
+    );
+}
+
+/** Static placeholder while the Arabic text chunk loads. */
+export function ReaderSkeleton() {
+    return (
+        <div aria-busy="true" aria-label="Loading" className="space-y-8 py-6">
+            {[0, 1, 2].map((i) => (
+                <div key={i} className="space-y-3 border-b border-line pb-8">
+                    <div className="h-6 w-14 rounded-full bg-panel" />
+                    <div className="ml-auto h-8 w-4/5 rounded-lg bg-panel" />
+                    <div className="h-4 w-3/5 rounded bg-panel" />
+                </div>
+            ))}
+        </div>
     );
 }

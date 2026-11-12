@@ -1,30 +1,34 @@
-import { GridIcon, ListIcon } from "src/assets/icons";
 import { useQuranStore } from "src/store";
+import { GridIcon, ListIcon } from "src/components/ui/icons";
 
 export function ListTypeToggle() {
-    const type = useQuranStore((state) => state.listType);
-    const setType = useQuranStore((state) => state.setListType);
+    const type = useQuranStore((s) => s.listType);
+    const setType = useQuranStore((s) => s.setListType);
+
+    const button = (active: boolean) =>
+        `press flex h-9 w-9 items-center justify-center rounded-full ${
+            active ? "bg-surface text-brand-700 shadow-card" : "text-muted hover:text-ink"
+        }`;
 
     return (
-        <div className="flex space-x-2 px-4 mb-2">
+        <div role="group" aria-label="Layout" className="flex gap-1 rounded-full bg-panel p-1 ring-1 ring-line">
             <button
-                className={`list-style-toggle ${
-                    type === "grid" ? "active" : ""
-                }`}
-                disabled={type === "grid"}
+                type="button"
+                className={button(type === "grid")}
+                aria-pressed={type === "grid"}
+                aria-label="Grid"
                 onClick={() => setType("grid")}
             >
-                <GridIcon />
+                <GridIcon size={16} />
             </button>
-
             <button
-                className={`list-style-toggle ${
-                    type === "list" ? "active" : ""
-                }`}
-                disabled={type === "list"}
+                type="button"
+                className={button(type === "list")}
+                aria-pressed={type === "list"}
+                aria-label="List"
                 onClick={() => setType("list")}
             >
-                <ListIcon />
+                <ListIcon size={16} />
             </button>
         </div>
     );

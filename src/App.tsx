@@ -1,26 +1,64 @@
-import { Route, Routes } from "react-router-dom";
+import { useEffect } from "react";
+import { Route, Routes, useLocation } from "react-router-dom";
+import { Drawer } from "src/components/common/drawer";
+import { ListPanelBody } from "src/components/common/list-panel";
+import { Toast } from "src/components/common/toast";
+import { SettingsDrawer } from "src/components/settings/settings-drawer";
+import { useApplySettings } from "src/hooks/use-apply-settings";
+import { useUiLang, useUiStore } from "src/store";
 import {
     Ayah,
+    Bookmarks,
     Home,
-    JuzIndex,
     JuzPage,
     NotFound,
-    RukuIndex,
     Surah,
 } from "src/pages";
 
-function App() {
-    return (
-        <Routes>
-            <Route index path="/" element={<Home />} />
-            <Route path="/juz" element={<JuzIndex />} />
-            <Route path="/juz/:juz" element={<JuzPage />} />
-            <Route path="/ruku" element={<RukuIndex />} />
-            <Route path="/:surah" element={<Surah />} />
-            <Route path="/:surah/:ayah" element={<Ayah />} />
+function ListDrawer() {
+    const open = useUiStore((s) => s.listOpen);
+    const setOpen = useUiStore((s) => s.setListOpen);
+    const ui = useUiLang();
+    const { pathname, hash } = useLocation();
 
-            <Route path="*" element={<NotFound />} />
-        </Routes>
+    // Close after picking a surah / juz / ruku.
+    useEffect(() => {
+        setOpen(false);
+    }, [pathname, hash, setOpen]);
+
+    return (
+        <Drawer
+            open={open}
+            onClose={() => setOpen(false)}
+            side="left"
+            title={ui === "en" ? "Browse" : "সূরা ও পারা"}
+        >
+            {open && <ListPanelBody />}
+        </Drawer>
+    );
+}
+
+function App() {
+    useApplySettings();
+
+    return (
+        <>
+            <Routes>
+                <Route index path="/" element={<Home tab="surah" />} />
+                <Route path="/juz" element={<Home tab="juz" />} />
+                <Route path="/juz/:juz" element={<JuzPage />} />
+                <Route path="/ruku" element={<Home tab="ruku" />} />
+                <Route path="/bookmarks" element={<Bookmarks />} />
+                <Route path="/:surah" element={<Surah />} />
+                <Route path="/:surah/:ayah" element={<Ayah />} />
+
+                <Route path="*" element={<NotFound />} />
+            </Routes>
+
+            <ListDrawer />
+            <SettingsDrawer />
+            <Toast />
+        </>
     );
 }
 

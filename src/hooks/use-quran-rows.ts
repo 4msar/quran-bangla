@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { useAyats } from "./use-ayats";
 import { useQuranStore } from "src/store";
 import { buildRows, indexAyats, Position, toOrdinal } from "src/utils";
-import type { Ayah, TranslationChoice } from "src/types";
+import type { Ayah } from "src/types";
 
 export type RowScope = {
     /** Show only this surah. */
@@ -13,21 +13,24 @@ export type RowScope = {
 };
 
 /**
- * Arabic rows for a scope, joined with the selected translation.
- * Translation loads on demand; `loading` is true while it is in flight.
+ * Arabic rows for a scope, joined with every selected translation.
+ * Translations load on demand only in the translation view;
+ * `translationLoading` is true while any of them is in flight.
  */
 export function useQuranRows(scope: RowScope) {
-    const translation: TranslationChoice = useQuranStore(
-        (state) => state.translation
-    );
-    const source = translation === "off" ? null : translation;
+    const translations = useQuranStore((s) => s.translations);
+    const viewMode = useQuranStore((s) => s.viewMode);
+    const wantTranslations = viewMode === "translation";
+
+    const wantBn = wantTranslations && translations.includes("bn");
+    const wantEn = wantTranslations && translations.includes("en");
 
     const arabic = useAyats("ar");
-    const translated = useAyats(source);
-    const translationIndex = useMemo(
-        () => (translated ? indexAyats(translated) : null),
-        [translated]
-    );
+    const bn = useAyats(wantBn ? "bn" : null);
+    const en = useAyats(wantEn ? "en" : null);
+
+    const bnIndex = useMemo(() => (bn ? indexAyats(bn) : null), [bn]);
+    const enIndex = useMemo(() => (en ? indexAyats(en) : null), [en]);
 
     const { surah, from, to } = scope;
     const fromSura = from?.sura;
@@ -55,13 +58,18 @@ export function useQuranRows(scope: RowScope) {
             );
         };
 
-        return buildRows(arabic.filter(inScope), translationIndex);
-    }, [arabic, translationIndex, surah, fromSura, fromAya, toSura, toAya]);
+        return buildRows(arabic.filter(inScope), {
+            ...(bnIndex ? { bn: bnIndex } : {}),
+            ...(enIndex ? { en: enIndex } : {}),
+        });
+    }, [arabic, bnIndex, enIndex, surah, fromSura, fromAya, toSura, toAya]);
 
     return {
         rows,
-        translation,
+        viewMode,
+        /** Translations to show, in order (empty in the Quran view). */
+        shown: wantTranslations ? translations : [],
         loading: arabic === null,
-        translationLoading: source !== null && translated === null,
+        translationLoading: (wantBn && bn === null) || (wantEn && en === null),
     };
 }

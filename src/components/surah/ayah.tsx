@@ -1,90 +1,148 @@
-import { Ayah, TranslationChoice } from "src/types";
-import { getRukuPrefix, hasSajdah, RUKU_BY_START, posKey } from "src/utils";
+import { memo, useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { useQuranStore, useUiStore } from "src/store";
+import type { TranslationId } from "src/types";
+import {
+    getSurah,
+    getSurahName,
+    hasSajdah,
+    posKey,
+    toLocaleDigits,
+    TRANSLATIONS,
+} from "src/utils";
 import type { UiLang } from "src/utils";
 import type { AyahRow } from "src/utils/quran";
+import { BookmarkIcon, CheckIcon, CopyIcon } from "src/components/ui/icons";
+import { AyahMenu } from "./ayah-menu";
 
 type AyahItemProps = {
     row: AyahRow;
+    shown: TranslationId[];
     ui: UiLang;
-    translation: TranslationChoice;
 };
 
-export function AyahItem({ row, ui, translation }: AyahItemProps) {
-    const { arabic, translation: translated } = row;
-    const ruku = RUKU_BY_START.get(posKey(arabic.sura, arabic.aya));
+const actionButton =
+    "press flex h-9 w-9 items-center justify-center rounded-full text-muted hover:bg-panel hover:text-ink";
+
+/** One verse in the translation view: key + actions, Arabic, translations. */
+export const AyahItem = memo(function AyahItem({ row, shown, ui }: AyahItemProps) {
+    const { arabic, translations } = row;
+    const key = posKey(arabic.sura, arabic.aya);
     const sajdah = hasSajdah(arabic.sura, arabic.aya);
 
+    const bookmarked = useQuranStore((s) => s.bookmarks.includes(key));
+    const toggleBookmark = useQuranStore((s) => s.toggleBookmark);
+    const showToast = useUiStore((s) => s.showToast);
+    const [copied, setCopied] = useState(false);
+    // Icon swaps animate only after the reader acts, never on first render.
+    const [touched, setTouched] = useState(false);
+    const swap = touched ? "icon-swap" : "";
+
+    useEffect(() => {
+        if (!copied) return;
+        const timer = window.setTimeout(() => setCopied(false), 1500);
+        return () => window.clearTimeout(timer);
+    }, [copied]);
+
+    const surah = getSurah(arabic.sura);
+    const reference = `${surah ? getSurahName(surah, ui) : ""} ${arabic.sura}:${arabic.aya}`;
+    const fullText = [
+        arabic.text,
+        ...shown.map((id) => translations[id]?.text).filter(Boolean),
+        `— ${reference}`,
+    ].join("\n\n");
+
+    const onCopy = () => {
+        navigator.clipboard?.writeText(fullText);
+        setTouched(true);
+        setCopied(true);
+        showToast(ui === "en" ? "Ayah copied" : "আয়াত কপি হয়েছে");
+    };
+
     return (
-        <>
-            {ruku && (
-                <div
-                    id={`ruku-${ruku.id}`}
-                    className="flex scroll-mt-24 items-center gap-3 pt-6 text-xs font-semibold uppercase tracking-wider text-brand-700"
+        <article
+            id={`ayah-${arabic.sura}-${arabic.aya}`}
+            data-ayah={key}
+            className="scroll-mt-32 rounded-2xl border-b border-line px-1 py-6 md:px-3"
+        >
+            <div className="mb-3 flex items-center gap-2">
+                <Link
+                    to={`/${arabic.sura}/${arabic.aya}`}
+                    className="rounded-full bg-brand-50 px-3 py-1 text-xs font-semibold tabular-nums text-brand-700 hover:bg-brand-100"
+                    aria-label={`Ayah ${arabic.sura}:${arabic.aya}`}
                 >
-                    <span className="h-px flex-1 bg-brand-100" />
-                    <span>
-                        {getRukuPrefix(ui)} {ruku.ruku}
-                    </span>
-                    <span className="h-px flex-1 bg-brand-100" />
-                </div>
-            )}
-
-            <article
-                id={`ayah-${arabic.sura}-${arabic.aya}`}
-                className="grid scroll-mt-24 grid-cols-[3.25rem_1fr] gap-4 border-b border-[var(--line)] py-6 md:grid-cols-[4rem_1fr] md:gap-6"
-            >
-                <div className="pt-1">
-                    <p className="text-sm font-semibold text-brand-700">
-                        {arabic.sura}:{arabic.aya}
-                    </p>
-                    {sajdah && (
-                        <p className="mt-1 text-xs text-brand-700" title="Sajdah">
-                            ۩
-                        </p>
-                    )}
-                </div>
-
-                <div className="min-w-0">
-                    <p
-                        dir="rtl"
-                        lang="ar"
-                        className="font-arabic text-right text-2xl leading-[2.2] text-ink md:text-3xl"
+                    {arabic.sura}:{arabic.aya}
+                </Link>
+                {sajdah && (
+                    <span
+                        className="rounded-full bg-panel px-2.5 py-1 text-[11px] font-medium text-brand-700 ring-1 ring-line"
+                        title="Sajdah"
                     >
-                        {arabic.text}
-                    </p>
+                        ۩ {ui === "en" ? "Sajdah" : "সিজদা"}
+                    </span>
+                )}
 
-                    {translated && translation !== "off" && (
-                        <TranslationText
-                            ayah={translated}
-                            translation={translation}
-                        />
-                    )}
+                <div className="ml-auto flex items-center">
+                    <button
+                        type="button"
+                        onClick={() => {
+                            setTouched(true);
+                            toggleBookmark(key);
+                        }}
+                        aria-pressed={bookmarked}
+                        aria-label={bookmarked ? "Remove bookmark" : "Bookmark"}
+                        className={`${actionButton} ${bookmarked ? "text-brand-600" : ""}`}
+                    >
+                        <BookmarkIcon key={String(bookmarked)} size={18} filled={bookmarked} className={swap} />
+                    </button>
+                    <button type="button" onClick={onCopy} aria-label="Copy ayah" className={actionButton}>
+                        {copied ? (
+                            <CheckIcon key="check" size={18} className={`${swap} text-brand-600`} />
+                        ) : (
+                            <CopyIcon key="copy" size={18} className={swap} />
+                        )}
+                    </button>
+                    <AyahMenu
+                        sura={arabic.sura}
+                        aya={arabic.aya}
+                        arabic={arabic.text}
+                        shareText={fullText}
+                        ui={ui}
+                    />
                 </div>
-            </article>
-        </>
-    );
-}
+            </div>
 
-function TranslationText({
-    ayah,
-    translation,
-}: {
-    ayah: Ayah;
-    translation: TranslationChoice;
-}) {
-    return (
-        <div className="fade-rise mt-4">
-            <p className="text-[11px] font-semibold uppercase tracking-wider text-muted">
-                {translation === "bn" ? "Bangla" : "English"}
+            <p dir="rtl" lang="ar" className="ayah-arabic text-right text-ink">
+                {arabic.text}
             </p>
-            <p
-                lang={translation}
-                className={`mt-1 leading-7 text-ink/90 ${
-                    translation === "bn" ? "font-bangla text-base" : "text-[15px]"
-                }`}
-            >
-                {ayah.text}
-            </p>
-        </div>
+
+            {shown.map((id) => {
+                const t = translations[id];
+                if (!t) return null;
+                const meta = TRANSLATIONS.find((x) => x.id === id);
+                return (
+                    <div key={id} className="fade-rise mt-4">
+                        {shown.length > 1 && (
+                            <p className="text-[10px] font-semibold uppercase tracking-widest text-muted">
+                                {meta?.label}
+                            </p>
+                        )}
+                        <p
+                            lang={id}
+                            className={`ayah-translation mt-1 text-ink/85 ${
+                                id === "bn" ? "font-bangla" : ""
+                            }`}
+                        >
+                            {id === "bn" && (
+                                <span className="mr-1 text-brand-700">
+                                    {toLocaleDigits(arabic.aya, "bn")}.
+                                </span>
+                            )}
+                            {t.text}
+                        </p>
+                    </div>
+                );
+            })}
+        </article>
     );
-}
+});

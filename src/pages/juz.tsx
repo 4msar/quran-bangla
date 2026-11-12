@@ -1,85 +1,79 @@
 import { useParams } from "react-router-dom";
-import {
-    AyahList,
-    JuzList,
-    Layouts,
-    TranslationPicker,
-} from "src/components";
+import { AyahList, Layouts, PrevNext, ReaderBar } from "src/components";
+import { useHashTarget } from "src/hooks/use-hash-target";
 import { useQuranRows } from "src/hooks/use-quran-rows";
-import { useQuranStore } from "src/store";
+import { useUiLang } from "src/store";
 import {
     getJuzPrefix,
     getSurah,
     getSurahName,
     JUZ_RANGES,
-    uiLang,
+    toLocaleDigits,
 } from "src/utils";
-
-export function JuzIndex() {
-    return (
-        <Layouts>
-            <JuzList />
-        </Layouts>
-    );
-}
+import { NotFound } from "./not-found";
+import { ReaderSkeleton } from "./surah";
 
 export function JuzPage() {
     const { juz } = useParams();
     const range = JUZ_RANGES.find((j) => j.id === Number(juz));
 
-    if (!range) {
-        return (
-            <Layouts>
-                <p className="text-center">Juz not found</p>
-            </Layouts>
-        );
-    }
+    if (!range) return <NotFound />;
 
-    return <JuzContent range={range} />;
+    return <JuzContent key={range.id} range={range} />;
 }
 
-function JuzContent({
-    range,
-}: {
-    range: (typeof JUZ_RANGES)[number];
-}) {
-    const translation = useQuranStore((state) => state.translation);
-    const ui = uiLang(translation);
-    const { rows, loading, translationLoading } = useQuranRows({
+function JuzContent({ range }: { range: (typeof JUZ_RANGES)[number] }) {
+    const ui = useUiLang();
+    const { rows, shown, viewMode, loading, translationLoading } = useQuranRows({
         from: range.from,
         to: range.to,
     });
+    useHashTarget(!loading && !translationLoading, viewMode);
 
+    const d = (n: number) => toLocaleDigits(n, ui);
     const fromSurah = getSurah(range.from.sura);
     const toSurah = getSurah(range.to.sura);
+    const title = `${getJuzPrefix(ui)} ${d(range.id)}`;
 
     return (
-        <Layouts>
-            <header className="mb-6 rounded-2xl border border-[var(--line)] bg-brand-50/60 px-6 py-8 text-center">
-                <h1 className="text-2xl font-semibold text-ink">
-                    {getJuzPrefix(ui)} {range.id}
+        <Layouts withPanel>
+            <header className="mb-2 rounded-3xl bg-brand-50 px-6 py-8 text-center ring-1 ring-brand-600/15">
+                <h1 className={`text-3xl font-semibold text-ink ${ui === "bn" ? "font-bangla" : ""}`}>
+                    {title}
                 </h1>
                 <p className="mt-2 text-sm text-muted">
-                    {fromSurah ? getSurahName(fromSurah, ui) : ""}{" "}
-                    {range.from.sura}:{range.from.aya} —{" "}
-                    {toSurah ? getSurahName(toSurah, ui) : ""}{" "}
-                    {range.to.sura}:{range.to.aya}
+                    {fromSurah ? getSurahName(fromSurah, ui) : ""} {range.from.sura}:{range.from.aya}
+                    {" — "}
+                    {toSurah ? getSurahName(toSurah, ui) : ""} {range.to.sura}:{range.to.aya}
                 </p>
-                <div className="mt-5 flex justify-center">
-                    <TranslationPicker loading={translationLoading} />
-                </div>
             </header>
 
+            <ReaderBar
+                title={title}
+                ui={ui}
+                from={range.from}
+                to={range.to}
+                loading={translationLoading}
+            />
+
             {loading ? (
-                <p className="text-center text-muted">Loading…</p>
+                <ReaderSkeleton />
             ) : (
-                <AyahList
-                    rows={rows}
-                    ui={ui}
-                    translation={translation}
-                    showSurahHeaders
-                />
+                <AyahList rows={rows} shown={shown} viewMode={viewMode} ui={ui} showSurahHeaders />
             )}
+
+            <PrevNext
+                prev={
+                    range.id > 1
+                        ? { to: `/juz/${range.id - 1}`, label: `${getJuzPrefix(ui)} ${d(range.id - 1)}`, sub: ui === "en" ? "Previous" : "আগের পারা" }
+                        : undefined
+                }
+                next={
+                    range.id < 30
+                        ? { to: `/juz/${range.id + 1}`, label: `${getJuzPrefix(ui)} ${d(range.id + 1)}`, sub: ui === "en" ? "Next" : "পরের পারা" }
+                        : undefined
+                }
+            />
         </Layouts>
     );
 }

@@ -1,43 +1,67 @@
-import { FormEvent, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { resolveSearch } from "src/utils";
+import { Link } from "react-router-dom";
+import { useQuranStore, useUiStore } from "src/store";
+import { MenuIcon, MoonIcon, SettingsIcon, SunIcon } from "src/components/ui/icons";
+import { SearchBox } from "./search-box";
+
+const iconButton =
+    "press flex h-10 w-10 items-center justify-center rounded-full bg-panel text-ink/80 hover:text-ink hover:bg-brand-50";
 
 export function Header() {
-    const navigate = useNavigate();
-    const [query, setQuery] = useState("");
+    const setTheme = useQuranStore((s) => s.setTheme);
+    const resolvedTheme = useUiStore((s) => s.resolvedTheme);
+    const setSettingsOpen = useUiStore((s) => s.setSettingsOpen);
+    const setListOpen = useUiStore((s) => s.setListOpen);
 
-    const onSubmit = (event: FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
-        const target = resolveSearch(query);
-        if (target) {
-            navigate(target);
-            setQuery("");
-        }
-    };
+    // The one-tap toggle flips between light and dark based on what is showing now.
+    const isDark = resolvedTheme === "dark";
+    const toggleTheme = () => setTheme(isDark ? "light" : "dark");
 
     return (
-        <header className="fixed inset-x-0 top-0 z-20 flex h-16 items-center gap-4 border-b border-[var(--line)] bg-white/95 px-4 backdrop-blur md:px-6">
-            <Link to="/" className="flex shrink-0 items-center gap-3">
+        <header className="fixed inset-x-0 top-0 z-30 flex h-16 items-center gap-3 border-b border-line bg-page/90 px-3 backdrop-blur md:px-5">
+            <button
+                type="button"
+                onClick={() => setListOpen(true)}
+                aria-label="Open surah list"
+                className={`${iconButton} md:hidden`}
+            >
+                <MenuIcon size={18} />
+            </button>
+
+            <Link to="/" className="flex shrink-0 items-center gap-2.5">
                 <img src="/logo.svg" alt="" className="h-9 w-9" />
-                <span className="hidden text-base font-semibold text-ink sm:block">
-                    Quran Bangla
+                <span className="leading-tight">
+                    <span className="block text-base font-semibold text-ink">
+                        Quran Bangla
+                    </span>
+                    <span className="hidden text-[11px] text-muted sm:block">
+                        পড়ুন, বুঝুন, আমল করুন
+                    </span>
                 </span>
             </Link>
 
-            <form
-                role="search"
-                onSubmit={onSubmit}
-                className="ml-auto w-full max-w-sm"
-            >
-                <input
-                    type="search"
-                    value={query}
-                    onChange={(e) => setQuery(e.target.value)}
-                    placeholder="Search surah, number or 2:255"
-                    aria-label="Search the Quran"
-                    className="w-full rounded-full border border-transparent bg-[var(--panel-bg)] px-4 py-2 text-sm text-ink outline-none transition-colors placeholder:text-muted focus:border-brand-600 focus:bg-white"
-                />
-            </form>
+            <div className="ml-auto hidden w-full max-w-sm md:block">
+                <SearchBox compact />
+            </div>
+
+            <div className="ml-auto flex items-center gap-2 md:ml-2">
+                <button
+                    type="button"
+                    onClick={toggleTheme}
+                    aria-label={isDark ? "Switch to light theme" : "Switch to dark theme"}
+                    className={iconButton}
+                >
+                    {isDark ? <SunIcon size={18} /> : <MoonIcon size={18} />}
+                </button>
+                <button
+                    type="button"
+                    onClick={() => setSettingsOpen(true)}
+                    aria-label="Settings"
+                    aria-haspopup="dialog"
+                    className={iconButton}
+                >
+                    <SettingsIcon size={18} />
+                </button>
+            </div>
         </header>
     );
 }

@@ -1,7 +1,7 @@
 import juzMeta from "src/data/meta/juz.json";
 import rukuMeta from "src/data/meta/ruku.json";
 import surahMeta from "src/data/meta/surah.json";
-import type { Ayah, Surah } from "src/types";
+import type { Ayah, Surah, TranslationId } from "src/types";
 
 export type Position = { sura: number; aya: number };
 
@@ -89,16 +89,46 @@ export const RUKU_BY_START = new Map<string, RukuRange>(
 
 // ---- Rows ---------------------------------------------------------------
 
-export type AyahRow = { arabic: Ayah; translation?: Ayah };
+export type AyahRow = {
+    arabic: Ayah;
+    translations: Partial<Record<TranslationId, Ayah>>;
+};
 
 export const indexAyats = (list: Ayah[]) =>
     new Map<string, Ayah>(list.map((a) => [posKey(a.sura, a.aya), a]));
 
+// Harakat, superscript alef, Quranic marks and tatweel.
+const DIACRITICS = /[ؐ-ًؚ-ٰٟۖ-ۭـ]/g;
+const BISMILLAH_BARE = "بسم الله الرحمن الرحيم";
+
+/**
+ * The source text prefixes ayah 1 of every surah (except 1 and 9) with the
+ * Bismillah. The reader shows it once as a heading, so drop it from the verse.
+ */
+export const stripBismillah = (a: Ayah): Ayah => {
+    if (a.aya !== 1 || a.sura === 1) return a;
+    const words = a.text.split(/\s+/);
+    if (words.length <= 4) return a;
+    const head = words.slice(0, 4).join(" ").replace(DIACRITICS, "");
+    return head === BISMILLAH_BARE ? { ...a, text: words.slice(4).join(" ") } : a;
+};
+
 export const buildRows = (
     arabic: Ayah[],
-    translation: Map<string, Ayah> | null
+    translations: Partial<Record<TranslationId, Map<string, Ayah>>>
 ): AyahRow[] =>
-    arabic.map((a) => ({
-        arabic: a,
-        translation: translation?.get(posKey(a.sura, a.aya)),
-    }));
+    arabic.map((a) => {
+        const key = posKey(a.sura, a.aya);
+        const row: AyahRow = { arabic: stripBismillah(a), translations: {} };
+        for (const [id, index] of Object.entries(translations)) {
+            const t = index?.get(key);
+            if (t) row.translations[id as TranslationId] = t;
+        }
+        return row;
+    });
+
+export const getJuzAt = (p: Position) =>
+    JUZ_RANGES.find((j) => inRange(p, j.from, j.to));
+
+export const getRukuAt = (p: Position) =>
+    RUKU_RANGES.find((r) => r.sura === p.sura && p.aya >= r.from.aya && p.aya <= r.to.aya);
