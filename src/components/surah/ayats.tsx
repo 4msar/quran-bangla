@@ -23,6 +23,7 @@ type AyahListProps = {
     rows: AyahRow[];
     shown: TranslationId[];
     viewMode: ViewMode;
+    showArabic: boolean;
     ui: UiLang;
     /** Show a heading whenever a new surah starts (used for Juz pages). */
     showSurahHeaders?: boolean;
@@ -79,7 +80,17 @@ function useTrackReading(containerRef: React.RefObject<HTMLElement | null>, deps
 }
 
 /** Compact surah heading inside a juz. */
-function SurahStart({ sura, ui }: { sura: number; ui: UiLang }) {
+function SurahStart({
+    sura,
+    ui,
+    showArabic = true,
+    shown = [],
+}: {
+    sura: number;
+    ui: UiLang;
+    showArabic?: boolean;
+    shown?: TranslationId[];
+}) {
     const surah = getSurah(sura);
     if (!surah) return null;
     return (
@@ -92,11 +103,18 @@ function SurahStart({ sura, ui }: { sura: number; ui: UiLang }) {
                 {revelationLabel(surah.type, ui)} · {toLocaleDigits(surah.ayas, ui)}{" "}
                 {ui === "en" ? "ayahs" : "আয়াত"}
             </p>
-            {sura !== 1 && sura !== 9 && (
-                <p dir="rtl" lang="ar" className="font-arabic mt-3 text-xl text-ink/90">
-                    {bismillah.ar}
-                </p>
-            )}
+            {sura !== 1 && sura !== 9 &&
+                (showArabic ? (
+                    <p dir="rtl" lang="ar" className="font-arabic mt-3 text-xl text-ink/90">
+                        {bismillah.ar}
+                    </p>
+                ) : (
+                    shown.map((id) => (
+                        <p key={id} className={`mt-2 text-sm text-ink/80 ${id === "bn" ? "font-bangla text-base" : ""}`}>
+                            {bismillah[id]}
+                        </p>
+                    ))
+                ))}
         </div>
     );
 }
@@ -105,6 +123,7 @@ export function AyahList({
     rows,
     shown,
     viewMode,
+    showArabic,
     ui,
     showSurahHeaders = false,
 }: AyahListProps) {
@@ -127,9 +146,11 @@ export function AyahList({
 
                 return (
                     <Fragment key={`${sura}-${aya}`}>
-                        {showSurahHeaders && aya === 1 && <SurahStart sura={sura} ui={ui} />}
+                        {showSurahHeaders && aya === 1 && (
+                            <SurahStart sura={sura} ui={ui} showArabic={showArabic} shown={shown} />
+                        )}
                         {ruku && <RukuDivider ruku={ruku} ui={ui} />}
-                        <AyahItem row={row} shown={shown} ui={ui} />
+                        <AyahItem row={row} shown={shown} ui={ui} showArabic={showArabic} />
                     </Fragment>
                 );
             })}

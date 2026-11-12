@@ -20,6 +20,11 @@ const T = {
         view: "পড়ার ধরন",
         translations: "অনুবাদ",
         translationsHint: "একাধিক বেছে নিতে পারেন। কোনোটি না বাছলে শুধু আরবি।",
+        translationsHintNoArabic: "আরবি বন্ধ থাকায় অন্তত একটি অনুবাদ চালু থাকবে।",
+        arabicText: "আরবি লেখা",
+        arabicTextHint: "বন্ধ করলে শুধু অনুবাদ দেখাবে।",
+        showArabic: "আরবি দেখান",
+        needTranslation: "আগে একটি অনুবাদ চালু করুন",
         font: "আরবি ফন্ট",
         arabicSize: "আরবি লেখার আকার",
         translationSize: "অনুবাদের লেখার আকার",
@@ -33,6 +38,11 @@ const T = {
         view: "View",
         translations: "Translations",
         translationsHint: "Pick one or more. None shows Arabic only.",
+        translationsHintNoArabic: "With Arabic hidden, at least one translation stays on.",
+        arabicText: "Arabic text",
+        arabicTextHint: "Turn off to read the translation only.",
+        showArabic: "Show Arabic",
+        needTranslation: "Turn on a translation first",
         font: "Arabic font",
         arabicSize: "Arabic font size",
         translationSize: "Translation font size",
@@ -101,6 +111,53 @@ function Stepper({
     );
 }
 
+function Switch({
+    label,
+    checked,
+    onChange,
+    disabled,
+    note,
+}: {
+    label: string;
+    checked: boolean;
+    onChange: (v: boolean) => void;
+    disabled?: boolean;
+    note?: string;
+}) {
+    return (
+        <label
+            className={`flex items-center gap-3 rounded-xl px-3 py-2.5 ring-1 ring-line ${
+                disabled ? "cursor-not-allowed opacity-60" : "cursor-pointer hover:bg-panel"
+            }`}
+        >
+            <span className="min-w-0 flex-1">
+                <span className="block text-sm font-medium text-ink">{label}</span>
+                {note && <span className="block text-xs text-muted">{note}</span>}
+            </span>
+            <input
+                type="checkbox"
+                role="switch"
+                checked={checked}
+                disabled={disabled}
+                onChange={(e) => onChange(e.target.checked)}
+                className="peer sr-only"
+            />
+            <span
+                aria-hidden="true"
+                className={`relative h-6 w-11 shrink-0 rounded-full transition-colors duration-200 peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-brand-600 ${
+                    checked ? "bg-brand-600" : "bg-line"
+                }`}
+            >
+                <span
+                    className={`segment-thumb absolute left-0.5 top-0.5 h-5 w-5 rounded-full bg-surface shadow-card ${
+                        checked ? "translate-x-5" : "translate-x-0"
+                    }`}
+                />
+            </span>
+        </label>
+    );
+}
+
 /** Loads every Arabic font once the drawer opens, so the picker can show real samples. */
 function usePreloadFonts(open: boolean) {
     useEffect(() => {
@@ -128,6 +185,8 @@ export function SettingsDrawer() {
         theme: useQuranStore((st) => st.theme),
         viewMode: useQuranStore((st) => st.viewMode),
         translations: useQuranStore((st) => st.translations),
+        showArabic: useQuranStore((st) => st.showArabic),
+        setShowArabic: useQuranStore((st) => st.setShowArabic),
         arabicFont: useQuranStore((st) => st.arabicFont),
         arabicSize: useQuranStore((st) => st.arabicSize),
         translationSize: useQuranStore((st) => st.translationSize),
@@ -140,6 +199,11 @@ export function SettingsDrawer() {
         resetSettings: useQuranStore((st) => st.resetSettings),
     };
     usePreloadFonts(open);
+
+    const translationView = s.viewMode === "translation";
+    const arabicVisible = !translationView || s.showArabic || s.translations.length === 0;
+    // With Arabic hidden, the last selected translation cannot be turned off.
+    const lockLastTranslation = translationView && !s.showArabic && s.translations.length === 1;
 
     return (
         <Drawer
@@ -172,9 +236,11 @@ export function SettingsDrawer() {
                     <p className="text-[11px] font-semibold uppercase tracking-wider text-muted">
                         {t.preview}
                     </p>
-                    <p dir="rtl" lang="ar" className="ayah-arabic mt-1 text-right text-ink">
-                        {bismillah.ar}
-                    </p>
+                    {arabicVisible && (
+                        <p dir="rtl" lang="ar" className="ayah-arabic mt-1 text-right text-ink">
+                            {bismillah.ar}
+                        </p>
+                    )}
                     {s.viewMode === "translation" &&
                         s.translations.map((id) => (
                             <p
@@ -214,21 +280,38 @@ export function SettingsDrawer() {
                 </p>
             </Section>
 
-            {s.viewMode === "translation" && (
-                <Section title={t.translations} hint={t.translationsHint}>
+            {translationView && (
+                <Section title={t.arabicText} hint={t.arabicTextHint}>
+                    <Switch
+                        label={t.showArabic}
+                        checked={s.showArabic}
+                        onChange={s.setShowArabic}
+                        disabled={s.translations.length === 0}
+                        note={s.translations.length === 0 ? t.needTranslation : undefined}
+                    />
+                </Section>
+            )}
+
+            {translationView && (
+                <Section
+                    title={t.translations}
+                    hint={s.showArabic ? t.translationsHint : t.translationsHintNoArabic}
+                >
                     <div className="space-y-2">
                         {TRANSLATIONS.map((tr) => {
                             const on = s.translations.includes(tr.id);
+                            const locked = on && lockLastTranslation;
                             return (
                                 <label
                                     key={tr.id}
-                                    className={`press flex cursor-pointer items-center gap-3 rounded-xl px-3 py-2.5 ring-1 ${
-                                        on ? "bg-brand-50 ring-brand-600/30" : "ring-line hover:bg-panel"
-                                    }`}
+                                    className={`press flex items-center gap-3 rounded-xl px-3 py-2.5 ring-1 ${
+                                        locked ? "cursor-not-allowed" : "cursor-pointer"
+                                    } ${on ? "bg-brand-50 ring-brand-600/30" : "ring-line hover:bg-panel"}`}
                                 >
                                     <input
                                         type="checkbox"
                                         checked={on}
+                                        disabled={locked}
                                         onChange={() => s.toggleTranslation(tr.id)}
                                         className="sr-only"
                                     />

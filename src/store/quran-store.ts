@@ -15,6 +15,8 @@ type Settings = {
     viewMode: ViewMode;
     /** Selected translations in display order; empty means Arabic only. */
     translations: TranslationId[];
+    /** Translation view only: false hides the Arabic text (translation-only reading). */
+    showArabic: boolean;
     arabicFont: string;
     arabicSize: number;
     translationSize: number;
@@ -24,6 +26,7 @@ export const DEFAULT_SETTINGS: Settings = {
     theme: "system",
     viewMode: "translation",
     translations: ["bn"],
+    showArabic: true,
     arabicFont: DEFAULT_ARABIC_FONT,
     arabicSize: 5,
     translationSize: 4,
@@ -38,6 +41,7 @@ export type QuranStore = Settings & {
     setTheme: (theme: Theme) => void;
     setViewMode: (viewMode: ViewMode) => void;
     toggleTranslation: (id: TranslationId) => void;
+    setShowArabic: (show: boolean) => void;
     setArabicFont: (id: string) => void;
     setArabicSize: (size: number) => void;
     setTranslationSize: (size: number) => void;
@@ -70,10 +74,19 @@ export const useQuranStore = create<QuranStore>()(
                     const next = on
                         ? state.translations.filter((t) => t !== id)
                         : [...state.translations, id];
+                    // With Arabic hidden, keep at least one translation so the page is never empty.
+                    if (next.length === 0 && !state.showArabic) return state;
                     return {
                         translations: ORDER.filter((t) => next.includes(t)),
                     };
                 }),
+            setShowArabic: (showArabic) =>
+                set((state) =>
+                    // Hiding Arabic needs a translation to show instead.
+                    !showArabic && state.translations.length === 0
+                        ? state
+                        : { showArabic }
+                ),
             setArabicFont: (arabicFont) => set({ arabicFont }),
             setArabicSize: (size) => set({ arabicSize: clampSize(size) }),
             setTranslationSize: (size) =>
@@ -107,6 +120,7 @@ export const useQuranStore = create<QuranStore>()(
                 theme: state.theme,
                 viewMode: state.viewMode,
                 translations: state.translations,
+                showArabic: state.showArabic,
                 arabicFont: state.arabicFont,
                 arabicSize: state.arabicSize,
                 translationSize: state.translationSize,

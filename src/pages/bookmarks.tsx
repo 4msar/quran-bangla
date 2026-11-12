@@ -16,8 +16,10 @@ export function Bookmarks() {
     const bookmarks = useQuranStore((s) => s.bookmarks);
     const toggleBookmark = useQuranStore((s) => s.toggleBookmark);
     const firstTranslation = useQuranStore((s) => s.translations[0] ?? null);
+    // Translation-only readers see translation snippets (Arabic needs a translation to hide behind).
+    const showArabic = useQuranStore((s) => s.showArabic) || !firstTranslation;
 
-    const arabic = useAyats(bookmarks.length ? "ar" : null);
+    const arabic = useAyats(bookmarks.length && showArabic ? "ar" : null);
     const translated = useAyats(bookmarks.length ? firstTranslation : null);
     const arIndex = useMemo(() => (arabic ? indexAyats(arabic) : null), [arabic]);
     const trIndex = useMemo(() => (translated ? indexAyats(translated) : null), [translated]);
@@ -75,11 +77,17 @@ export function Bookmarks() {
                                     </button>
                                 </div>
                                 <Link to={`/${sura}#ayah-${sura}-${aya}`} className="mt-2 block">
-                                    <p dir="rtl" lang="ar" className="font-arabic line-clamp-2 text-right text-2xl leading-loose text-ink">
-                                        {ar ? stripBismillah(ar).text : "…"}
-                                    </p>
+                                    {showArabic && (
+                                        <p dir="rtl" lang="ar" className="font-arabic line-clamp-2 text-right text-2xl leading-loose text-ink">
+                                            {ar ? stripBismillah(ar).text : "…"}
+                                        </p>
+                                    )}
                                     {tr && (
-                                        <p className={`mt-1 line-clamp-2 text-sm text-muted ${firstTranslation === "bn" ? "font-bangla text-base" : ""}`}>
+                                        <p
+                                            className={`line-clamp-2 ${
+                                                showArabic ? "mt-1 text-sm text-muted" : "text-base text-ink/85"
+                                            } ${firstTranslation === "bn" ? "font-bangla text-base" : ""}`}
+                                        >
                                             {tr.text}
                                         </p>
                                     )}

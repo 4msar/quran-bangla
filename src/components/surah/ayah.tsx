@@ -21,13 +21,15 @@ type AyahItemProps = {
     row: AyahRow;
     shown: TranslationId[];
     ui: UiLang;
+    /** False in translation-only reading. */
+    showArabic: boolean;
 };
 
 const actionButton =
     "press flex h-9 w-9 items-center justify-center rounded-full text-muted hover:bg-panel hover:text-ink";
 
 /** One verse in the translation view: key + actions, Arabic, translations. */
-export const AyahItem = memo(function AyahItem({ row, shown, ui }: AyahItemProps) {
+export const AyahItem = memo(function AyahItem({ row, shown, ui, showArabic }: AyahItemProps) {
     const { arabic, translations } = row;
     const key = posKey(arabic.sura, arabic.aya);
     const sajdah = hasSajdah(arabic.sura, arabic.aya);
@@ -115,17 +117,19 @@ export const AyahItem = memo(function AyahItem({ row, shown, ui }: AyahItemProps
                 </div>
             </div>
 
-            <p dir="rtl" lang="ar" className="ayah-arabic text-right text-ink">
-                {arabic.text}
-                {rukuEnd && <RukuEndMark ruku={rukuEnd} ui={ui} />}
-            </p>
+            {showArabic && (
+                <p dir="rtl" lang="ar" className="ayah-arabic mb-4 text-right text-ink">
+                    {arabic.text}
+                    {rukuEnd && <RukuEndMark ruku={rukuEnd} ui={ui} />}
+                </p>
+            )}
 
-            {shown.map((id) => {
+            {shown.map((id, index) => {
                 const t = translations[id];
                 if (!t) return null;
                 const meta = TRANSLATIONS.find((x) => x.id === id);
                 return (
-                    <div key={id} className="fade-rise mt-4">
+                    <div key={id} className={`fade-rise ${index > 0 ? "mt-4" : ""}`}>
                         {shown.length > 1 && (
                             <p className="text-[10px] font-semibold uppercase tracking-widest text-muted">
                                 {meta?.label}

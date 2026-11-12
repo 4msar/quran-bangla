@@ -25,7 +25,7 @@ export function Surah() {
 
 function SurahView({ surah }: { surah: SurahInfo }) {
     const ui = useUiLang();
-    const { rows, shown, viewMode, loading, translationLoading } = useQuranRows({
+    const { rows, shown, viewMode, showArabic, loading, translationLoading } = useQuranRows({
         surah: surah.id,
     });
 
@@ -77,12 +77,19 @@ function SurahView({ surah }: { surah: SurahInfo }) {
 
             {showBismillah && (
                 <div className="py-4 text-center">
-                    <p dir="rtl" lang="ar" className="font-arabic text-3xl leading-loose text-ink">
-                        {bismillah.ar}
-                    </p>
+                    {showArabic && (
+                        <p dir="rtl" lang="ar" className="font-arabic text-3xl leading-loose text-ink">
+                            {bismillah.ar}
+                        </p>
+                    )}
                     {viewMode === "translation" &&
                         shown.map((id) => (
-                            <p key={id} className={`mt-1 text-sm text-muted ${id === "bn" ? "font-bangla text-base" : ""}`}>
+                            <p
+                                key={id}
+                                className={`mt-1 ${
+                                    showArabic ? "text-sm text-muted" : "text-lg font-medium text-ink"
+                                } ${id === "bn" ? "font-bangla" : ""} ${id === "bn" && showArabic ? "text-base" : ""}`}
+                            >
                                 {bismillah[id]}
                             </p>
                         ))}
@@ -92,7 +99,7 @@ function SurahView({ surah }: { surah: SurahInfo }) {
             {loading ? (
                 <ReaderSkeleton />
             ) : (
-                <AyahList rows={rows} shown={shown} viewMode={viewMode} ui={ui} />
+                <AyahList rows={rows} shown={shown} viewMode={viewMode} showArabic={showArabic} ui={ui} />
             )}
 
             <SurahPrevNext surah={surah.id} ui={ui} />

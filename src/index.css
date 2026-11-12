@@ -286,9 +286,10 @@ body {
 
 /* Segmented control thumb slides between options. */
 .segment-thumb {
-    transition: transform 200ms var(--ease-out), width 0ms;
+    transition:
+        transform 200ms var(--ease-out),
+        translate 200ms var(--ease-out);
 }
-
 /* ---- Drawers (native <dialog>) -------------------------------------------
    Enter: opacity + 16px translate, 280ms. Exit: shorter and smaller. */
 

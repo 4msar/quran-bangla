@@ -24,7 +24,7 @@ export function JuzPage() {
 
 function JuzContent({ range }: { range: (typeof JUZ_RANGES)[number] }) {
     const ui = useUiLang();
-    const { rows, shown, viewMode, loading, translationLoading } = useQuranRows({
+    const { rows, shown, viewMode, showArabic, loading, translationLoading } = useQuranRows({
         from: range.from,
         to: range.to,
     });
@@ -59,7 +59,14 @@ function JuzContent({ range }: { range: (typeof JUZ_RANGES)[number] }) {
             {loading ? (
                 <ReaderSkeleton />
             ) : (
-                <AyahList rows={rows} shown={shown} viewMode={viewMode} ui={ui} showSurahHeaders />
+                <AyahList
+                    rows={rows}
+                    shown={shown}
+                    viewMode={viewMode}
+                    showArabic={showArabic}
+                    ui={ui}
+                    showSurahHeaders
+                />
             )}
 
             <PrevNext

@@ -20,6 +20,7 @@ export type RowScope = {
 export function useQuranRows(scope: RowScope) {
     const translations = useQuranStore((s) => s.translations);
     const viewMode = useQuranStore((s) => s.viewMode);
+    const showArabicSetting = useQuranStore((s) => s.showArabic);
     const wantTranslations = viewMode === "translation";
 
     const wantBn = wantTranslations && translations.includes("bn");
@@ -69,6 +70,9 @@ export function useQuranRows(scope: RowScope) {
         viewMode,
         /** Translations to show, in order (empty in the Quran view). */
         shown: wantTranslations ? translations : [],
+        /** The Quran view is Arabic by definition; the setting applies to the translation view. */
+        showArabic:
+            !wantTranslations || showArabicSetting || translations.length === 0,
         loading: arabic === null,
         translationLoading: (wantBn && bn === null) || (wantEn && en === null),
     };
