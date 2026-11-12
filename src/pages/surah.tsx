@@ -1,4 +1,5 @@
-import { useParams } from "react-router-dom";
+import { useLayoutEffect } from "react";
+import { useLocation, useParams } from "react-router-dom";
 import { AyahList, Layouts, ReaderBar, SurahPrevNext } from "src/components";
 import { useHashTarget } from "src/hooks/use-hash-target";
 import { usePageMeta } from "src/hooks/use-page-meta";
@@ -30,6 +31,14 @@ function SurahView({ surah }: { surah: SurahInfo }) {
     const { rows, shown, viewMode, showArabic, loading, translationLoading } = useQuranRows({
         surah: surah.id,
     });
+
+    // A new surah opens at the top unless the link targets an ayah/ruku (#hash).
+    const { hash } = useLocation();
+    useLayoutEffect(() => {
+        if (!hash) window.scrollTo(0, 0);
+        // Mount only: SurahView is keyed by surah id, so this runs once per surah.
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     useHashTarget(!loading && !translationLoading, viewMode);
     usePageMeta({
