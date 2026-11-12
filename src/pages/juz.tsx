@@ -3,7 +3,6 @@ import {
     AyahList,
     JuzList,
     Layouts,
-    NavTabs,
     TranslationPicker,
 } from "src/components";
 import { useQuranRows } from "src/hooks/use-quran-rows";
@@ -19,7 +18,6 @@ import {
 export function JuzIndex() {
     return (
         <Layouts>
-            <NavTabs />
             <JuzList />
         </Layouts>
     );
@@ -32,7 +30,6 @@ export function JuzPage() {
     if (!range) {
         return (
             <Layouts>
-                <NavTabs />
                 <p className="text-center">Juz not found</p>
             </Layouts>
         );
@@ -58,25 +55,23 @@ function JuzContent({
 
     return (
         <Layouts>
-            <NavTabs />
-
-            <header className="mb-4 flex flex-wrap items-start justify-between gap-3 rounded-2xl bg-white p-5 shadow-sm">
-                <div>
-                    <h1 className="text-2xl font-bold text-gray-900">
-                        {getJuzPrefix(ui)} {range.id}
-                    </h1>
-                    <p className="text-sm text-gray-500">
-                        {fromSurah ? getSurahName(fromSurah, ui) : ""}{" "}
-                        {range.from.sura}:{range.from.aya} —{" "}
-                        {toSurah ? getSurahName(toSurah, ui) : ""}{" "}
-                        {range.to.sura}:{range.to.aya}
-                    </p>
+            <header className="mb-6 rounded-2xl border border-[var(--line)] bg-brand-50/60 px-6 py-8 text-center">
+                <h1 className="text-2xl font-semibold text-ink">
+                    {getJuzPrefix(ui)} {range.id}
+                </h1>
+                <p className="mt-2 text-sm text-muted">
+                    {fromSurah ? getSurahName(fromSurah, ui) : ""}{" "}
+                    {range.from.sura}:{range.from.aya} —{" "}
+                    {toSurah ? getSurahName(toSurah, ui) : ""}{" "}
+                    {range.to.sura}:{range.to.aya}
+                </p>
+                <div className="mt-5 flex justify-center">
+                    <TranslationPicker loading={translationLoading} />
                 </div>
-                <TranslationPicker loading={translationLoading} />
             </header>
 
             {loading ? (
-                <p className="text-center text-gray-400">Loading…</p>
+                <p className="text-center text-muted">Loading…</p>
             ) : (
                 <AyahList
                     rows={rows}

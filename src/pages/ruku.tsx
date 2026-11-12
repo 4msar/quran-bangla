@@ -1,9 +1,8 @@
-import { Layouts, NavTabs, RukuList } from "src/components";
+import { Layouts, RukuList } from "src/components";
 
 export function RukuIndex() {
     return (
         <Layouts>
-            <NavTabs />
             <RukuList />
         </Layouts>
     );

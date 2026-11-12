@@ -1,4 +1,6 @@
 import { Header } from "./header";
+import { NavTabs } from "./nav-tabs";
+import { SurahSidebar } from "./surah-sidebar";
 
 export function Layouts({
     children,
@@ -8,11 +10,20 @@ export function Layouts({
     children: React.ReactNode;
 }) {
     return (
-        <div className="main-app app-full">
+        <div className="min-h-screen bg-white">
             <Header />
+            <SurahSidebar />
 
-            <main className={`mt-20 app-full content-container ${className}`}>
-                {children}
+            <main
+                className={`min-h-screen pt-16 md:pl-80 ${className ?? ""}`}
+            >
+                <div className="mx-auto max-w-3xl px-4 py-6 md:px-10 md:py-8">
+                    {/* The sidebar carries the tabs on desktop; show them inline on mobile. */}
+                    <div className="mb-6 md:hidden">
+                        <NavTabs />
+                    </div>
+                    {children}
+                </div>
             </main>
         </div>
     );
