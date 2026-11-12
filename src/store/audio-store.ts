@@ -10,6 +10,9 @@ const pad = (n: number) => String(n).padStart(3, "0");
 export const ayahAudioUrl = ({ sura, aya }: Position) =>
     `https://everyayah.com/data/${getReciter(useQuranStore.getState().reciter).id}/${pad(sura)}${pad(aya)}.mp3`;
 
+/** Every surah opens with the Bismillah except Al-Fatihah (it is verse 1) and At-Tawbah. */
+const hasBismillah = ({ sura, aya }: Position) => aya === 1 && sura !== 1 && sura !== 9;
+
 const LAST_ORDINAL = SURAHS.reduce((sum, s) => sum + s.ayas, 0) - 1;
 
 /** The ayah `delta` steps away, or null past either end of the Quran. */
@@ -21,11 +24,14 @@ const step = (position: Position, delta: number): Position | null => {
 type AudioStore = {
     /** The ayah loaded in the player; null when the player is closed. */
     current: Position | null;
+    /** True while the Bismillah is recited ahead of `current` (ayah 1). */
+    intro: boolean;
     playing: boolean;
     loading: boolean;
     error: boolean;
 
-    play: (position: Position) => void;
+    /** `bismillah` recites the Bismillah first when `position` opens a surah that has one. */
+    play: (position: Position, options?: { bismillah?: boolean }) => void;
     toggle: () => void;
     next: () => void;
     prev: () => void;
@@ -56,15 +62,22 @@ export const useAudioStore = create<AudioStore>()((set, get) => {
             // A new reciter takes over from the start of the current ayah.
             const { current, playing } = get();
             if (state.reciter !== previous.reciter && current) {
-                if (playing) get().play(current);
-                else el.src = ayahAudioUrl(current);
+                const { intro } = get();
+                if (playing) get().play(current, { bismillah: intro });
+                else el.src = ayahAudioUrl(intro ? { sura: 1, aya: 1 } : current);
             }
         });
 
         el.addEventListener("ended", () => {
             const { current } = get();
-            if (useQuranStore.getState().repeatAyah && current) get().play(current);
-            else get().next();
+            if (!current) return;
+            // The Bismillah is done; move on to the ayah it introduced.
+            if (get().intro) return get().play(current);
+            if (useQuranStore.getState().repeatAyah) return get().play(current);
+            // Recitation runs to the end of the surah, then stops there.
+            const upcoming = step(current, 1);
+            if (upcoming && upcoming.sura === current.sura) get().play(upcoming);
+            else get().stop();
         });
         el.addEventListener("playing", () => set({ playing: true, loading: false }));
         el.addEventListener("waiting", () => set({ loading: true }));
@@ -98,14 +111,17 @@ export const useAudioStore = create<AudioStore>()((set, get) => {
 
     return {
         current: null,
+        intro: false,
         playing: false,
         loading: false,
         error: false,
 
-        play: (position) => {
+        play: (position, options) => {
             const el = getAudio();
-            el.src = ayahAudioUrl(position);
-            set({ current: position, playing: true, loading: true, error: false });
+            const intro = Boolean(options?.bismillah) && hasBismillah(position);
+            // The Bismillah is Al-Fatihah 1:1 in the per-ayah recordings.
+            el.src = ayahAudioUrl(intro ? { sura: 1, aya: 1 } : position);
+            set({ current: position, intro, playing: true, loading: true, error: false });
             start(el);
 
             if ("mediaSession" in navigator && "MediaMetadata" in window) {
@@ -118,8 +134,8 @@ export const useAudioStore = create<AudioStore>()((set, get) => {
             }
 
             // Warm the cache so the next ayah starts without a gap.
-            const upcoming = step(position, 1);
-            if (upcoming) {
+            const upcoming = intro ? position : step(position, 1);
+            if (upcoming && upcoming.sura === position.sura) {
                 preloader ??= new Audio();
                 preloader.preload = "auto";
                 preloader.src = ayahAudioUrl(upcoming);
@@ -129,7 +145,7 @@ export const useAudioStore = create<AudioStore>()((set, get) => {
         toggle: () => {
             const { current, error } = get();
             if (!current) return;
-            if (error) return get().play(current);
+            if (error) return get().play(current, { bismillah: get().intro });
             const el = getAudio();
             if (el.paused) {
                 set({ playing: true });
@@ -158,11 +174,11 @@ export const useAudioStore = create<AudioStore>()((set, get) => {
                 audio.removeAttribute("src");
                 audio.load();
             }
-            set({ current: null, playing: false, loading: false, error: false });
+            set({ current: null, intro: false, playing: false, loading: false, error: false });
         },
     };
 });
 
-/** True while this ayah is the one loaded in the player. */
+/** True while this ayah is the one being recited (not during its Bismillah). */
 export const useIsAyahActive = (sura: number, aya: number) =>
-    useAudioStore((s) => s.current?.sura === sura && s.current.aya === aya);
+    useAudioStore((s) => !s.intro && s.current?.sura === sura && s.current.aya === aya);

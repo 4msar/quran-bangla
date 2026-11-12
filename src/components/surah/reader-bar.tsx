@@ -55,7 +55,7 @@ export function ReaderBar({ title, ui, from, to, loading }: ReaderBarProps) {
             </div>
             <button
                 type="button"
-                onClick={() => (playingHere ? toggle() : play(here))}
+                onClick={() => (playingHere ? toggle() : play(here, { bismillah: true }))}
                 aria-label={
                     playingHere && playing
                         ? ui === "en" ? "Pause recitation" : "তিলাওয়াত থামান"

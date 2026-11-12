@@ -113,6 +113,7 @@ export function AudioPlayer() {
     const playing = useAudioStore((s) => s.playing);
     const loading = useAudioStore((s) => s.loading);
     const error = useAudioStore((s) => s.error);
+    const intro = useAudioStore((s) => s.intro);
     const toggle = useAudioStore((s) => s.toggle);
     const next = useAudioStore((s) => s.next);
     const prev = useAudioStore((s) => s.prev);
@@ -185,7 +186,8 @@ export function AudioPlayer() {
 
                 <Link to={`/${current.sura}#ayah-${current.sura}-${current.aya}`} className="min-w-0 flex-1 px-2">
                     <span className={`block truncate text-sm font-semibold text-ink ${en ? "" : "font-bangla"}`}>
-                        {surah ? getSurahName(surah, ui) : ""} {d(current.sura)}:{d(current.aya)}
+                        {surah ? getSurahName(surah, ui) : ""}{" "}
+                        {intro ? (en ? "· Bismillah" : "· বিসমিল্লাহ") : `${d(current.sura)}:${d(current.aya)}`}
                     </span>
                     <span
                         className={`block truncate text-[11px] ${error ? "text-red-600" : "text-muted"}`}
