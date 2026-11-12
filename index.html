@@ -1,26 +1,47 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn">
     <head>
         <meta charset="UTF-8" />
         <link rel="icon" type="image" href="/favicon.ico" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="color-scheme" content="light dark" />
         <title>Al Quran</title>
+
+        <!-- Apply the saved theme before first paint so there is no flash. -->
+        <script>
+            (function () {
+                var theme = "system";
+                try {
+                    var saved = JSON.parse(
+                        localStorage.getItem("quran-store-v2") || "{}"
+                    );
+                    if (saved.state && saved.state.theme)
+                        theme = saved.state.theme;
+                } catch (e) {}
+                if (theme === "system") {
+                    theme = window.matchMedia("(prefers-color-scheme: dark)")
+                        .matches
+                        ? "dark"
+                        : "light";
+                }
+                document.documentElement.dataset.theme = theme;
+            })();
+        </script>
 
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
         <link
-            href="https://fonts.googleapis.com/css2?family=Nunito:wght@200;400;500;600;800&display=swap"
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
             rel="stylesheet"
         />
         <link
             href="https://cdn.msar.me/fonts/kalpurush/font.css"
             rel="stylesheet"
         />
-      <script type="module" crossorigin src="/assets/index-91853f77.js"></script>
-      <link rel="stylesheet" href="/assets/index-f63994d2.css">
+      <script type="module" crossorigin src="/assets/index-YeZm0C28.js"></script>
+      <link rel="stylesheet" crossorigin href="/assets/index-CMnt6RnT.css">
     </head>
     <body>
         <div id="root"></div>
-        
     </body>
 </html>
