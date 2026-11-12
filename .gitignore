@@ -9,6 +9,8 @@ lerna-debug.log*
 
 .pnp.cjs
 .pnp.loader.mjs
+yarn.lock
+package-lock.json
 
 node_modules
 dist
