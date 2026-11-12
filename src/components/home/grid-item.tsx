@@ -2,10 +2,15 @@ import { Surah } from "src/types";
 import { Link } from "react-router-dom";
 import { HeartIcon } from "src/assets/icons";
 import { useQuranStore } from "src/store";
-import { getSurahPrefix } from "src/utils";
+import {
+    getSurahName,
+    getSurahPrefix,
+    uiLang,
+} from "src/utils";
 
 export function GridItem({ surah }: { surah: Surah }) {
-    const lang = useQuranStore((state) => state.lang);
+    const ui = uiLang(useQuranStore((state) => state.translation));
+
     return (
         <Link to={`/${surah.id}`} className="p-2 md:w-72 w-full">
             <div className="flex flex-col w-full p-4 bg-white rounded-md">
@@ -14,14 +19,14 @@ export function GridItem({ surah }: { surah: Surah }) {
                         {surah.id.toString().padStart(3, "0")}
                     </span>
 
-                    <button className="flex-center">
+                    <button className="flex-center" aria-label="Favourite">
                         <HeartIcon className="w-6 h-6" />
                     </button>
                 </div>
                 <div className="flex justify-between items-end">
                     <div className="flex mt-4 flex-col">
                         <div className="text-sm font-bold text-left text-gray-600">
-                            {getSurahPrefix(lang)} {surah.bname}
+                            {getSurahPrefix(ui)} {getSurahName(surah, ui)}
                         </div>
                         <div className="text-sm mt-2 font-bold text-left text-gray-300">
                             {surah.ename}

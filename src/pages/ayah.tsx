@@ -1,3 +1,7 @@
+import { Navigate, useParams } from "react-router-dom";
+
+/** Verse links open the surah and scroll to the verse. */
 export function Ayah() {
-    return <div>Ayah</div>;
+    const { surah, ayah } = useParams();
+    return <Navigate replace to={`/${surah}#ayah-${surah}-${ayah}`} />;
 }

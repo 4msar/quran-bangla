@@ -1,26 +1,15 @@
-import { Language } from "src/types";
+import type { TranslationChoice } from "src/types";
 
-export const getLanguageName = (lang: string) => {
-    switch (lang) {
-        case "bn":
-            return "বাংলা";
-        case "en":
-            return "English";
-        case "ar":
-            return "العربية";
-        default:
-            return "বাংলা";
-    }
-};
+/** UI labels follow the translation: English stays English, everything else is Bangla. */
+export type UiLang = "bn" | "en";
+
+export const uiLang = (translation: TranslationChoice): UiLang =>
+    translation === "en" ? "en" : "bn";
 
 export const getSurahPrefix = (lang: string) => {
     switch (lang) {
-        case "bn":
-            return "সূরাহ";
         case "en":
             return "Surah";
-        case "ar":
-            return "سورة";
         default:
             return "সূরাহ";
     }
@@ -28,12 +17,8 @@ export const getSurahPrefix = (lang: string) => {
 
 export const getRukuPrefix = (lang: string) => {
     switch (lang) {
-        case "bn":
-            return "রুকু";
         case "en":
             return "Ruku";
-        case "ar":
-            return "ركوع";
         default:
             return "রুকু";
     }
@@ -41,35 +26,15 @@ export const getRukuPrefix = (lang: string) => {
 
 export const getJuzPrefix = (lang: string) => {
     switch (lang) {
-        case "bn":
-            return "পারা";
         case "en":
             return "Juz";
-        case "ar":
-            return "جزء";
         default:
             return "পারা";
     }
 };
 
-type LanguageData = {
-    id: Language;
-    name: string;
-};
-
-export const LANGS: LanguageData[] = [
-    {
-        id: "bn",
-        name: "বাংলা",
-    },
-
-    {
-        id: "en",
-        name: "English",
-    },
-
-    {
-        id: "ar",
-        name: "العربية",
-    },
+export const TRANSLATION_OPTIONS: { id: TranslationChoice; name: string }[] = [
+    { id: "bn", name: "বাংলা অনুবাদ" },
+    { id: "en", name: "English" },
+    { id: "off", name: "Arabic only" },
 ];

@@ -1,4 +1,8 @@
-export type Language = "bn" | "en" | "ar";
+/** Translation sources available as bundled JSON files (loaded on demand). */
+export type TranslationId = "bn" | "en";
+
+/** What the reader selected. "off" shows Arabic only. */
+export type TranslationChoice = TranslationId | "off";
 
 export type SurahMetaData = {
     ayahs: number;

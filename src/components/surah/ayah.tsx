@@ -1,46 +1,80 @@
-import { Ayah, Language } from "src/types";
-import { getRukuPrefix, hasSajdah } from "src/utils";
+import { Ayah, TranslationChoice } from "src/types";
+import { getRukuPrefix, hasSajdah, RUKU_BY_START, posKey } from "src/utils";
+import type { UiLang } from "src/utils";
+import type { AyahRow } from "src/utils/quran";
 
-type AyahProps = {
-    ayah: Ayah;
-    lang: Language;
-    isRukuStart: boolean;
-    rukuNumber: number;
-    totalRuku: number;
+type AyahItemProps = {
+    row: AyahRow;
+    ui: UiLang;
+    translation: TranslationChoice;
 };
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function SingleAyah({
-    isRukuStart,
-    ayah,
-    rukuNumber,
-    totalRuku,
-    lang,
-}: AyahProps) {
-    if (isRukuStart) console.log({ ayah, rukuNumber, isRukuStart });
+export function AyahItem({ row, ui, translation }: AyahItemProps) {
+    const { arabic, translation: translated } = row;
+    const ruku = RUKU_BY_START.get(posKey(arabic.sura, arabic.aya));
+    const sajdah = hasSajdah(arabic.sura, arabic.aya);
 
     return (
         <>
-            {totalRuku > 1 && isRukuStart && (
-                <p className="text-center py-2 border-t border-b border-slate-500 my-2">
-                    <span className="text-2xl">
-                        {getRukuPrefix(lang)} {rukuNumber}
+            {ruku && (
+                <div
+                    id={`ruku-${ruku.id}`}
+                    className="my-4 flex scroll-mt-24 items-center gap-3 text-sm font-bold text-green-700"
+                >
+                    <span className="h-px flex-1 bg-green-200" />
+                    <span>
+                        {getRukuPrefix(ui)} {ruku.ruku}
                     </span>
-                </p>
+                    <span className="h-px flex-1 bg-green-200" />
+                </div>
             )}
-            <p
-                className={`flex text-md mb-2 ${
-                    lang === "ar" ? "text-right flex-row-reverse" : "text-left"
-                }`}
+
+            <article
+                id={`ayah-${arabic.sura}-${arabic.aya}`}
+                className="scroll-mt-24 rounded-xl bg-white p-4 shadow-sm"
             >
-                <span className="mr-2">({ayah.aya})</span>
+                <div className="flex items-center justify-between">
+                    <span className="flex h-7 min-w-7 items-center justify-center rounded-full bg-green-50 px-2 text-xs font-bold text-green-700">
+                        {arabic.aya}
+                    </span>
+                    {sajdah && (
+                        <span className="text-xs font-bold text-green-700">
+                            ۩ Sajdah
+                        </span>
+                    )}
+                </div>
 
-                <span>{ayah.text}</span>
+                <p
+                    dir="rtl"
+                    lang="ar"
+                    className="font-arabic mt-3 text-right text-2xl leading-[2.4] text-gray-900"
+                >
+                    {arabic.text}
+                </p>
 
-                {hasSajdah(ayah.sura, ayah.aya) && (
-                    <span className="sajdah-icon">۩</span>
+                {translated && translation !== "off" && (
+                    <TranslationText ayah={translated} translation={translation} />
                 )}
-            </p>
+            </article>
         </>
+    );
+}
+
+function TranslationText({
+    ayah,
+    translation,
+}: {
+    ayah: Ayah;
+    translation: TranslationChoice;
+}) {
+    return (
+        <p
+            lang={translation}
+            className={`mt-3 border-t border-gray-100 pt-3 text-base leading-7 text-gray-700 ${
+                translation === "bn" ? "font-bangla" : ""
+            }`}
+        >
+            {ayah.text}
+        </p>
     );
 }

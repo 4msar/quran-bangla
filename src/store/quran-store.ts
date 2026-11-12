@@ -1,12 +1,12 @@
-import { Language } from "src/types";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import type { TranslationChoice } from "src/types";
 
 export type QuranStore = {
     listType: "list" | "grid";
-    lang: Language;
+    translation: TranslationChoice;
 
-    setLang: (lang: Language) => void;
+    setTranslation: (translation: TranslationChoice) => void;
     setListType: (listType: "list" | "grid") => void;
 };
 
@@ -14,14 +14,14 @@ export const useQuranStore = create<QuranStore>()(
     persist(
         (set) => ({
             listType: "grid",
+            translation: "bn",
 
-            lang: "bn",
-
-            setLang: (lang) => set({ lang }),
+            setTranslation: (translation) => set({ translation }),
             setListType: (listType) => set({ listType }),
         }),
         {
-            name: "quran-store",
+            // v2: the old store held a `lang` key that no longer exists.
+            name: "quran-store-v2",
         }
     )
 );
