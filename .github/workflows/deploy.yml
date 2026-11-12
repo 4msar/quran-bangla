@@ -17,13 +17,10 @@ jobs:
             - name: Setup Node
               uses: actions/setup-node@v4
               with:
-                  node-version: 22
+                  node-version: 24
 
             - name: Install dependencies
-              run: |
-                  corepack enable
-                  corepack install --global yarn@4.10.3
-                  yarn install --immutable
+              run: yarn install
 
             - name: Build project
               run: yarn run build && cp dist/index.html dist/404.html
