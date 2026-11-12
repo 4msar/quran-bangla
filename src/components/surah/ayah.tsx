@@ -1,6 +1,6 @@
 import { memo, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { useQuranStore, useUiStore } from "src/store";
+import { useIsAyahActive, useQuranStore, useUiStore } from "src/store";
 import type { TranslationId } from "src/types";
 import {
     getSurah,
@@ -38,6 +38,7 @@ export const AyahItem = memo(function AyahItem({ row, shown, ui, showArabic }: A
     const bookmarked = useQuranStore((s) => s.bookmarks.includes(key));
     const toggleBookmark = useQuranStore((s) => s.toggleBookmark);
     const showToast = useUiStore((s) => s.showToast);
+    const active = useIsAyahActive(arabic.sura, arabic.aya);
     const [copied, setCopied] = useState(false);
     // Icon swaps animate only after the reader acts, never on first render.
     const [touched, setTouched] = useState(false);
@@ -68,7 +69,10 @@ export const AyahItem = memo(function AyahItem({ row, shown, ui, showArabic }: A
         <article
             id={`ayah-${arabic.sura}-${arabic.aya}`}
             data-ayah={key}
-            className="scroll-mt-[calc(8rem+var(--safe-top))] rounded-2xl border-b border-line px-1 py-6 md:px-3"
+            aria-current={active || undefined}
+            className={`scroll-mt-[calc(8rem+var(--safe-top))] rounded-2xl border-b border-line px-1 py-6 transition-colors md:px-3 ${
+                active ? "bg-brand-50" : ""
+            }`}
         >
             <div className="mb-3 flex items-center gap-2">
                 <Link

@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import type { Theme, TranslationId, ViewMode } from "src/types";
-import { DEFAULT_ARABIC_FONT } from "src/utils/constants";
+import { DEFAULT_ARABIC_FONT, DEFAULT_RECITER } from "src/utils/constants";
 
 export type Position = { sura: number; aya: number };
 
@@ -20,6 +20,11 @@ type Settings = {
     arabicFont: string;
     arabicSize: number;
     translationSize: number;
+    /** Recitation: reciter id, volume 0..1, speed multiplier, repeat the current ayah. */
+    reciter: string;
+    volume: number;
+    playbackRate: number;
+    repeatAyah: boolean;
 };
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -30,6 +35,10 @@ export const DEFAULT_SETTINGS: Settings = {
     arabicFont: DEFAULT_ARABIC_FONT,
     arabicSize: 5,
     translationSize: 4,
+    reciter: DEFAULT_RECITER,
+    volume: 1,
+    playbackRate: 1,
+    repeatAyah: false,
 };
 
 export type QuranStore = Settings & {
@@ -45,6 +54,10 @@ export type QuranStore = Settings & {
     setArabicFont: (id: string) => void;
     setArabicSize: (size: number) => void;
     setTranslationSize: (size: number) => void;
+    setReciter: (id: string) => void;
+    setVolume: (volume: number) => void;
+    setPlaybackRate: (rate: number) => void;
+    setRepeatAyah: (repeat: boolean) => void;
     resetSettings: () => void;
 
     setListType: (listType: "list" | "grid") => void;
@@ -91,6 +104,11 @@ export const useQuranStore = create<QuranStore>()(
             setArabicSize: (size) => set({ arabicSize: clampSize(size) }),
             setTranslationSize: (size) =>
                 set({ translationSize: clampSize(size) }),
+            setReciter: (reciter) => set({ reciter }),
+            setVolume: (volume) =>
+                set({ volume: Math.min(1, Math.max(0, volume)) }),
+            setPlaybackRate: (playbackRate) => set({ playbackRate }),
+            setRepeatAyah: (repeatAyah) => set({ repeatAyah }),
             resetSettings: () => set({ ...DEFAULT_SETTINGS }),
 
             setListType: (listType) => set({ listType }),
@@ -124,6 +142,10 @@ export const useQuranStore = create<QuranStore>()(
                 arabicFont: state.arabicFont,
                 arabicSize: state.arabicSize,
                 translationSize: state.translationSize,
+                reciter: state.reciter,
+                volume: state.volume,
+                playbackRate: state.playbackRate,
+                repeatAyah: state.repeatAyah,
                 listType: state.listType,
                 bookmarks: state.bookmarks,
                 lastRead: state.lastRead,

@@ -321,7 +321,7 @@
         "type": "Meccan",
         "order": 48,
         "rukus": 7,
-        "bname": "নমল"
+        "bname": "আন নামল"
     },
     {
         "id": 28,
@@ -369,7 +369,7 @@
         "type": "Meccan",
         "order": 57,
         "rukus": 3,
-        "bname": "লোকমান"
+        "bname": "লুকমান"
     },
     {
         "id": 32,
@@ -381,7 +381,7 @@
         "type": "Meccan",
         "order": 75,
         "rukus": 3,
-        "bname": "সেজদাহ"
+        "bname": "আস সাজদাহ"
     },
     {
         "id": 33,
@@ -489,7 +489,7 @@
         "type": "Meccan",
         "order": 61,
         "rukus": 6,
-        "bname": "হা-মীম সেজদাহ"
+        "bname": "হা-মীম সেজদাহ (ফুসসিলাত)"
     },
     {
         "id": 42,
@@ -513,7 +513,7 @@
         "type": "Meccan",
         "order": 63,
         "rukus": 7,
-        "bname": "যুখরুফ"
+        "bname": "আয যুখরুফ"
     },
     {
         "id": 44,
@@ -525,7 +525,7 @@
         "type": "Meccan",
         "order": 64,
         "rukus": 3,
-        "bname": "আদ দোখান"
+        "bname": "আদ দুখান"
     },
     {
         "id": 45,
@@ -729,7 +729,7 @@
         "type": "Medinan",
         "order": 109,
         "rukus": 2,
-        "bname": "আছ-ছফ"
+        "bname": "আস স্বফ"
     },
     {
         "id": 62,
@@ -753,7 +753,7 @@
         "type": "Medinan",
         "order": 104,
         "rukus": 2,
-        "bname": "মুনাফিকুন"
+        "bname": "আল মুনাফিকুন"
     },
     {
         "id": 64,
@@ -861,7 +861,7 @@
         "type": "Meccan",
         "order": 40,
         "rukus": 2,
-        "bname": "আল জিন"
+        "bname": "আল জ্বীন"
     },
     {
         "id": 73,
@@ -873,7 +873,7 @@
         "type": "Meccan",
         "order": 3,
         "rukus": 2,
-        "bname": "মুযযামমিল"
+        "bname": "আল মুযযামমিল"
     },
     {
         "id": 74,
@@ -897,7 +897,7 @@
         "type": "Meccan",
         "order": 31,
         "rukus": 2,
-        "bname": "আল ক্বেয়ামাহ"
+        "bname": "আল ক্বিয়ামাহ"
     },
     {
         "id": 76,
@@ -909,7 +909,7 @@
         "type": "Medinan",
         "order": 98,
         "rukus": 2,
-        "bname": "আদ-দাহর"
+        "bname": "আদ-দাহর (ইনসান)"
     },
     {
         "id": 77,
@@ -1113,7 +1113,7 @@
         "type": "Meccan",
         "order": 11,
         "rukus": 1,
-        "bname": "আদ্ব-দ্বোহা"
+        "bname": "আদ্ব-দ্বুহা"
     },
     {
         "id": 94,
@@ -1161,7 +1161,7 @@
         "type": "Meccan",
         "order": 25,
         "rukus": 1,
-        "bname": "কদর"
+        "bname": "আল ক্বদর"
     },
     {
         "id": 98,
@@ -1173,7 +1173,7 @@
         "type": "Medinan",
         "order": 100,
         "rukus": 1,
-        "bname": "বাইয়্যিনাহ"
+        "bname": "আল বাইয়্যিনাহ"
     },
     {
         "id": 99,
@@ -1185,7 +1185,7 @@
         "type": "Medinan",
         "order": 93,
         "rukus": 1,
-        "bname": "যিলযাল"
+        "bname": "আল যিলযাল"
     },
     {
         "id": 100,
@@ -1197,7 +1197,7 @@
         "type": "Meccan",
         "order": 14,
         "rukus": 1,
-        "bname": "আদিয়াত"
+        "bname": "আল আদিয়াত"
     },
     {
         "id": 101,
@@ -1209,7 +1209,7 @@
         "type": "Meccan",
         "order": 30,
         "rukus": 1,
-        "bname": "কারেয়া"
+        "bname": "আল ক্বারিয়াহ"
     },
     {
         "id": 102,
@@ -1221,7 +1221,7 @@
         "type": "Meccan",
         "order": 16,
         "rukus": 1,
-        "bname": "তাকাসুর"
+        "bname": "আত তাকাসুর"
     },
     {
         "id": 103,
@@ -1233,7 +1233,7 @@
         "type": "Meccan",
         "order": 13,
         "rukus": 1,
-        "bname": "আসর"
+        "bname": "আল আসর"
     },
     {
         "id": 104,
@@ -1245,7 +1245,7 @@
         "type": "Meccan",
         "order": 32,
         "rukus": 1,
-        "bname": "হুমাযাহ"
+        "bname": "আল হুমাযাহ"
     },
     {
         "id": 105,
@@ -1269,7 +1269,7 @@
         "type": "Meccan",
         "order": 29,
         "rukus": 1,
-        "bname": "কুরাইশ"
+        "bname": "আল কুরাইশ"
     },
     {
         "id": 107,
@@ -1281,7 +1281,7 @@
         "type": "Meccan",
         "order": 17,
         "rukus": 1,
-        "bname": "মাঊন"
+        "bname": "আল মাঊন"
     },
     {
         "id": 108,
@@ -1293,7 +1293,7 @@
         "type": "Meccan",
         "order": 15,
         "rukus": 1,
-        "bname": "কাওসার"
+        "bname": "আল কাওসার"
     },
     {
         "id": 109,
@@ -1305,7 +1305,7 @@
         "type": "Meccan",
         "order": 18,
         "rukus": 1,
-        "bname": "কাফিরুন"
+        "bname": "আল কাফিরুন"
     },
     {
         "id": 110,

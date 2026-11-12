@@ -1,6 +1,6 @@
 import { Fragment, useEffect, useRef } from "react";
 import type { TranslationId, ViewMode } from "src/types";
-import { useQuranStore } from "src/store";
+import { useIsAyahActive, useQuranStore } from "src/store";
 import {
     bismillah,
     getSurah,
@@ -197,28 +197,36 @@ function QuranView({
                             lang="ar"
                             className="ayah-arabic px-1 text-justify text-ink [text-align-last:center] md:px-3"
                         >
-                            {group.rows.map(({ arabic }) => {
-                                const key = posKey(arabic.sura, arabic.aya);
-                                const rukuEnd = RUKU_BY_END.get(key);
-                                return (
-                                    <span
-                                        key={arabic.aya}
-                                        id={`ayah-${arabic.sura}-${arabic.aya}`}
-                                        data-ayah={key}
-                                        className="scroll-mt-[calc(8rem+var(--safe-top))] rounded-md"
-                                    >
-                                        {arabic.text}
-                                        <span className="ayah-marker" aria-label={`Ayah ${arabic.aya}`}>
-                                            {toArabicDigits(arabic.aya)}
-                                        </span>
-                                        {rukuEnd && <RukuEndMark ruku={rukuEnd} ui={ui} />}{" "}
-                                    </span>
-                                );
-                            })}
+                            {group.rows.map(({ arabic }) => (
+                                <QuranAyah key={arabic.aya} arabic={arabic} ui={ui} />
+                            ))}
                         </p>
                     </Fragment>
                 );
             })}
         </div>
+    );
+}
+
+/** One ayah inside the continuous text; tinted while it is being recited. */
+function QuranAyah({ arabic, ui }: { arabic: AyahRow["arabic"]; ui: UiLang }) {
+    const key = posKey(arabic.sura, arabic.aya);
+    const rukuEnd = RUKU_BY_END.get(key);
+    const active = useIsAyahActive(arabic.sura, arabic.aya);
+    return (
+        <span
+            id={`ayah-${arabic.sura}-${arabic.aya}`}
+            data-ayah={key}
+            aria-current={active || undefined}
+            className={`scroll-mt-[calc(8rem+var(--safe-top))] rounded-md transition-colors ${
+                active ? "bg-brand-50" : ""
+            }`}
+        >
+            {arabic.text}
+            <span className="ayah-marker" aria-label={`Ayah ${arabic.aya}`}>
+                {toArabicDigits(arabic.aya)}
+            </span>
+            {rukuEnd && <RukuEndMark ruku={rukuEnd} ui={ui} />}{" "}
+        </span>
     );
 }

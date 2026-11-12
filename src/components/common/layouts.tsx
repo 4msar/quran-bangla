@@ -1,3 +1,4 @@
+import { useAudioStore } from "src/store";
 import { Header } from "./header";
 import { BottomBar, IconRail } from "./nav-items";
 import { ListPanel } from "./list-panel";
@@ -16,6 +17,8 @@ type LayoutsProps = {
  * Mobile: header, content, bottom tab bar.
  */
 export function Layouts({ children, withPanel = false, wide = false, className }: LayoutsProps) {
+    const playerOpen = useAudioStore((s) => s.current !== null);
+
     return (
         <div className="min-h-screen bg-page">
             <Header />
@@ -23,7 +26,11 @@ export function Layouts({ children, withPanel = false, wide = false, className }
             {withPanel && <ListPanel />}
 
             <main
-                className={`min-h-screen pb-[calc(6rem+var(--safe-bottom))] pt-[var(--header-h)] md:pb-[calc(2.5rem+var(--safe-bottom))] md:pl-20 ${
+                className={`min-h-screen pt-[var(--header-h)] md:pl-20 ${
+                    playerOpen
+                        ? "pb-[calc(10rem+var(--safe-bottom))] md:pb-[calc(6.5rem+var(--safe-bottom))]"
+                        : "pb-[calc(6rem+var(--safe-bottom))] md:pb-[calc(2.5rem+var(--safe-bottom))]"
+                } ${
                     withPanel ? "lg:pl-[25rem]" : ""
                 } ${className ?? ""}`}
             >

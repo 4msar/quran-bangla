@@ -173,3 +173,30 @@ export const LibraryIcon = (p: IconProps) => (
         <path d="m13.5 4.5 5 15" />
     </Icon>
 );
+
+export const PlayIcon = (p: IconProps) => (
+    <Icon {...p}>
+        <path d="M7 4.5v15l12-7.5z" fill="currentColor" />
+    </Icon>
+);
+
+export const PauseIcon = (p: IconProps) => (
+    <Icon {...p}>
+        <rect x="6" y="5" width="4" height="14" rx="1" fill="currentColor" />
+        <rect x="14" y="5" width="4" height="14" rx="1" fill="currentColor" />
+    </Icon>
+);
+
+export const SkipBackIcon = (p: IconProps) => (
+    <Icon {...p}>
+        <path d="M19 5v14l-10-7z" fill="currentColor" />
+        <path d="M5 5v14" />
+    </Icon>
+);
+
+export const SkipForwardIcon = (p: IconProps) => (
+    <Icon {...p}>
+        <path d="M5 5v14l10-7z" fill="currentColor" />
+        <path d="M19 5v14" />
+    </Icon>
+);

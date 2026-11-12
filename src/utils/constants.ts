@@ -124,3 +124,23 @@ export const QUICK_LINKS: { label: string; bn: string; to: string }[] = [
     { label: "Al-Waqi'ah", bn: "আল ওয়াকিয়া", to: "/56" },
     { label: "Ayatul Kursi", bn: "আয়াতুল কুরসী", to: "/2/255" },
 ];
+
+/** Verse-by-verse reciters; `id` is the folder name on everyayah.com. */
+export const RECITERS: { id: string; name: string; bn: string }[] = [
+    { id: "Alafasy_128kbps", name: "Mishary Rashid Alafasy", bn: "মিশারি রাশিদ আল-আফাসি" },
+    { id: "Abdul_Basit_Murattal_192kbps", name: "Abdul Basit Abdus Samad", bn: "আব্দুল বাসিত আব্দুস সামাদ" },
+    { id: "Abdurrahmaan_As-Sudais_192kbps", name: "Abdur-Rahman As-Sudais", bn: "আব্দুর রহমান আস-সুদাইস" },
+    { id: "Saood_ash-Shuraym_128kbps", name: "Saud Ash-Shuraim", bn: "সৌদ আশ-শুরাইম" },
+    { id: "MaherAlMuaiqly128kbps", name: "Maher Al-Muaiqly", bn: "মাহের আল-মুয়াইকলি" },
+    { id: "Husary_128kbps", name: "Mahmoud Khalil Al-Husary", bn: "মাহমুদ খলিল আল-হুসারি" },
+    { id: "Minshawy_Murattal_128kbps", name: "Mohamed Siddiq Al-Minshawi", bn: "মুহাম্মাদ সিদ্দিক আল-মিনশাবি" },
+    { id: "Hudhaify_128kbps", name: "Ali Al-Hudhaify", bn: "আলী আল-হুযাইফি" },
+    { id: "Ghamadi_40kbps", name: "Saad Al-Ghamdi", bn: "সাদ আল-গামিদি" },
+];
+
+export const DEFAULT_RECITER = RECITERS[0].id;
+
+export const getReciter = (id: string) =>
+    RECITERS.find((r) => r.id === id) ?? RECITERS[0];
+
+export const PLAYBACK_RATES = [0.75, 1, 1.25, 1.5];

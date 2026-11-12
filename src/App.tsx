@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { Route, Routes, useLocation } from "react-router-dom";
 import { Drawer } from "src/components/common/drawer";
 import { ListPanelBody } from "src/components/common/list-panel";
+import { AudioPlayer } from "src/components/common/audio-player";
 import { Toast } from "src/components/common/toast";
 import { SettingsDrawer } from "src/components/settings/settings-drawer";
 import { useApplySettings } from "src/hooks/use-apply-settings";
@@ -57,6 +58,7 @@ function App() {
 
             <ListDrawer />
             <SettingsDrawer />
+            <AudioPlayer />
             <Toast />
         </>
     );

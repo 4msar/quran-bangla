@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import { useUiStore } from "src/store";
-import { CopyIcon, LinkIcon, MoreIcon, ShareIcon } from "src/components/ui/icons";
+import { useAudioStore, useIsAyahActive, useUiStore } from "src/store";
+import { CopyIcon, LinkIcon, MoreIcon, PauseIcon, PlayIcon, ShareIcon } from "src/components/ui/icons";
 
 type Item = { label: string; icon: React.ReactNode; run: () => void };
 
@@ -14,7 +14,7 @@ type AyahMenuProps = {
 
 const copy = (text: string) => navigator.clipboard?.writeText(text);
 
-/** "⋯" menu per ayah: copy link, share, copy Arabic only. */
+/** "⋯" menu per ayah: play, copy link, share, copy Arabic only. */
 export function AyahMenu({ sura, aya, arabic, shareText, ui }: AyahMenuProps) {
     const [open, setOpen] = useState(false);
     const rootRef = useRef<HTMLDivElement>(null);
@@ -22,8 +22,24 @@ export function AyahMenu({ sura, aya, arabic, shareText, ui }: AyahMenuProps) {
     const menuRef = useRef<HTMLUListElement>(null);
     const showToast = useUiStore((s) => s.showToast);
 
+    const active = useIsAyahActive(sura, aya);
+    const playingThis = useAudioStore((s) => s.playing) && active;
+    const play = useAudioStore((s) => s.play);
+    const toggle = useAudioStore((s) => s.toggle);
+
     const url = `${window.location.origin}/${sura}/${aya}`;
     const items: Item[] = [
+        playingThis
+            ? {
+                  label: ui === "en" ? "Pause" : "বিরতি",
+                  icon: <PauseIcon size={16} />,
+                  run: toggle,
+              }
+            : {
+                  label: ui === "en" ? "Play" : "শুনুন",
+                  icon: <PlayIcon size={16} />,
+                  run: () => (active ? toggle() : play({ sura, aya })),
+              },
         {
             label: ui === "en" ? "Copy link" : "লিংক কপি",
             icon: <LinkIcon size={16} />,
