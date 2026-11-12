@@ -19,42 +19,47 @@ export function AyahItem({ row, ui, translation }: AyahItemProps) {
             {ruku && (
                 <div
                     id={`ruku-${ruku.id}`}
-                    className="my-4 flex scroll-mt-24 items-center gap-3 text-sm font-bold text-green-700"
+                    className="flex scroll-mt-24 items-center gap-3 pt-6 text-xs font-semibold uppercase tracking-wider text-brand-700"
                 >
-                    <span className="h-px flex-1 bg-green-200" />
+                    <span className="h-px flex-1 bg-brand-100" />
                     <span>
                         {getRukuPrefix(ui)} {ruku.ruku}
                     </span>
-                    <span className="h-px flex-1 bg-green-200" />
+                    <span className="h-px flex-1 bg-brand-100" />
                 </div>
             )}
 
             <article
                 id={`ayah-${arabic.sura}-${arabic.aya}`}
-                className="scroll-mt-24 rounded-xl bg-white p-4 shadow-sm"
+                className="grid scroll-mt-24 grid-cols-[3.25rem_1fr] gap-4 border-b border-[var(--line)] py-6 md:grid-cols-[4rem_1fr] md:gap-6"
             >
-                <div className="flex items-center justify-between">
-                    <span className="flex h-7 min-w-7 items-center justify-center rounded-full bg-green-50 px-2 text-xs font-bold text-green-700">
-                        {arabic.aya}
-                    </span>
+                <div className="pt-1">
+                    <p className="text-sm font-semibold text-brand-700">
+                        {arabic.sura}:{arabic.aya}
+                    </p>
                     {sajdah && (
-                        <span className="text-xs font-bold text-green-700">
-                            ۩ Sajdah
-                        </span>
+                        <p className="mt-1 text-xs text-brand-700" title="Sajdah">
+                            ۩
+                        </p>
                     )}
                 </div>
 
-                <p
-                    dir="rtl"
-                    lang="ar"
-                    className="font-arabic mt-3 text-right text-2xl leading-[2.4] text-gray-900"
-                >
-                    {arabic.text}
-                </p>
+                <div className="min-w-0">
+                    <p
+                        dir="rtl"
+                        lang="ar"
+                        className="font-arabic text-right text-2xl leading-[2.2] text-ink md:text-3xl"
+                    >
+                        {arabic.text}
+                    </p>
 
-                {translated && translation !== "off" && (
-                    <TranslationText ayah={translated} translation={translation} />
-                )}
+                    {translated && translation !== "off" && (
+                        <TranslationText
+                            ayah={translated}
+                            translation={translation}
+                        />
+                    )}
+                </div>
             </article>
         </>
     );
@@ -68,13 +73,18 @@ function TranslationText({
     translation: TranslationChoice;
 }) {
     return (
-        <p
-            lang={translation}
-            className={`mt-3 border-t border-gray-100 pt-3 text-base leading-7 text-gray-700 ${
-                translation === "bn" ? "font-bangla" : ""
-            }`}
-        >
-            {ayah.text}
-        </p>
+        <div className="fade-rise mt-4">
+            <p className="text-[11px] font-semibold uppercase tracking-wider text-muted">
+                {translation === "bn" ? "Bangla" : "English"}
+            </p>
+            <p
+                lang={translation}
+                className={`mt-1 leading-7 text-ink/90 ${
+                    translation === "bn" ? "font-bangla text-base" : "text-[15px]"
+                }`}
+            >
+                {ayah.text}
+            </p>
+        </div>
     );
 }

@@ -4,7 +4,6 @@ import {
     Actions,
     AyahList,
     Layouts,
-    NavTabs,
     TranslationPicker,
 } from "src/components";
 import { useQuranRows } from "src/hooks/use-quran-rows";
@@ -24,7 +23,6 @@ export function Surah() {
     if (!surah) {
         return (
             <Layouts>
-                <NavTabs />
                 <p className="text-center">Surah not found</p>
             </Layouts>
         );
@@ -59,34 +57,28 @@ function SurahView({ surah }: { surah: SurahInfo }) {
 
     return (
         <Layouts>
-            <NavTabs />
-
-            <header className="mb-4 flex flex-wrap items-start justify-between gap-3 rounded-2xl bg-white p-5 shadow-sm">
-                <div>
-                    <p className="text-xs font-bold text-green-600">
-                        {surah.id.toString().padStart(3, "0")}
-                    </p>
-                    <h1 className="font-arabic text-3xl text-gray-900">
-                        {surah.name}
-                    </h1>
-                    <h2 className="text-lg font-bold text-gray-700">
-                        {getSurahPrefix(ui)} {getSurahName(surah, ui)}
-                    </h2>
-                    <p className="mt-1 text-sm text-gray-400">
-                        {surah.type} · {surah.ayas} ayah · {surah.rukus} ruku
-                    </p>
+            <header className="mb-6 rounded-2xl border border-[var(--line)] bg-brand-50/60 px-6 py-8 text-center">
+                <p className="font-arabic text-4xl text-ink">{surah.name}</p>
+                <h1 className="mt-3 text-2xl font-semibold text-ink">
+                    {getSurahName(surah, ui)}
+                </h1>
+                <p className="mt-1 text-sm text-muted">
+                    {getSurahPrefix(ui)} · {surah.type} · {surah.ayas} ayah ·{" "}
+                    {surah.rukus} ruku
+                </p>
+                <div className="mt-5 flex justify-center">
+                    <TranslationPicker loading={translationLoading} />
                 </div>
-                <TranslationPicker loading={translationLoading} />
             </header>
 
             {showBismillah && (
-                <div className="mb-4 rounded-xl bg-white p-4 text-center shadow-sm">
-                    <p className="font-arabic text-2xl text-gray-900">
+                <div className="mb-6 text-center">
+                    <p className="font-arabic text-2xl text-ink">
                         {bismillah.ar}
                     </p>
                     {bismillahTranslation && (
                         <p
-                            className={`mt-2 text-sm text-gray-600 ${
+                            className={`mt-2 text-sm text-muted ${
                                 translation === "bn" ? "font-bangla" : ""
                             }`}
                         >
@@ -97,7 +89,7 @@ function SurahView({ surah }: { surah: SurahInfo }) {
             )}
 
             {loading ? (
-                <p className="text-center text-gray-400">Loading…</p>
+                <p className="text-center text-muted">Loading…</p>
             ) : (
                 <AyahList rows={rows} ui={ui} translation={translation} />
             )}

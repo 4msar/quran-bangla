@@ -18,15 +18,15 @@ export function AyahList({
     showSurahHeaders = false,
 }: AyahListProps) {
     return (
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col">
             {rows.map((row) => {
                 const { sura, aya } = row.arabic;
                 const surah = aya === 1 ? getSurah(sura) : undefined;
 
                 return (
-                    <div key={`${sura}-${aya}`} className="flex flex-col gap-3">
+                    <div key={`${sura}-${aya}`}>
                         {showSurahHeaders && surah && (
-                            <h3 className="mt-4 text-center text-lg font-bold text-gray-800">
+                            <h3 className="mt-8 border-b border-[var(--line)] pb-3 text-center text-lg font-semibold text-ink">
                                 {getSurahName(surah, ui)} · {surah.name}
                             </h3>
                         )}

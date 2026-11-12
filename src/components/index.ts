@@ -1,7 +1,7 @@
 export * from "./common/layouts";
 export * from "./common/header";
 export * from "./common/footer";
-export * from "./common/sidebar";
+export * from "./common/surah-sidebar";
 export * from "./common/nav-tabs";
 export * from "./common/translation-picker";
 
