@@ -1,22 +1,8 @@
 import { Link, NavLink } from "react-router-dom";
-import {
-    JuzList,
-    Layouts,
-    ListTypeToggle,
-    RukuList,
-    SearchBox,
-    SurahList,
-} from "src/components";
+import { JuzList, Layouts, ListTypeToggle, RukuList, SearchBox, SurahList } from "src/components";
 import { ChevronRightIcon } from "src/components/ui/icons";
 import { useQuranStore, useUiLang } from "src/store";
-import {
-    getJuzPrefix,
-    getRukuPrefix,
-    getSurah,
-    getSurahName,
-    QUICK_LINKS,
-    toLocaleDigits,
-} from "src/utils";
+import { getJuzPrefix, getRukuPrefix, getSurah, getSurahName, QUICK_LINKS, toLocaleDigits } from "src/utils";
 
 type Tab = "surah" | "juz" | "ruku";
 
@@ -63,17 +49,19 @@ export function Home({ tab }: { tab: Tab }) {
     return (
         <Layouts wide>
             <section className="fade-rise mx-auto max-w-2xl pb-10 pt-4 text-center md:pt-10">
-                <p lang="ar" className="font-arabic text-5xl leading-relaxed text-brand-700 md:text-6xl">
-                    القرآن الكريم
-                </p>
-                <h1 className="mt-2 font-bangla text-2xl font-semibold text-ink md:text-3xl">
-                    আল কুরআন · বাংলা অনুবাদ
-                </h1>
-                <p className="mt-2 text-sm text-muted">
-                    {ui === "en"
-                        ? "Read the Quran with Bangla and English translation"
-                        : "আরবি, বাংলা ও ইংরেজি অনুবাদসহ কুরআন পড়ুন"}
-                </p>
+                <div className="flex flex-col gap-4">
+                    <p lang="ar" className="font-arabic text-5xl leading-relaxed text-brand-700 md:text-6xl mb-4">
+                        القرآن الكريم
+                    </p>
+                    <h1 className="mt-2 font-bangla text-2xl font-semibold text-ink md:text-3xl my-2">
+                        আল কুরআন · বাংলা অনুবাদ
+                    </h1>
+                    <p className="mt-2 text-sm text-muted">
+                        {ui === "en"
+                            ? "Read the Quran with Bangla and English translation"
+                            : "আরবি, বাংলা ও ইংরেজি অনুবাদসহ কুরআন পড়ুন"}
+                    </p>
+                </div>
 
                 <div className="mt-8">
                     <SearchBox />
