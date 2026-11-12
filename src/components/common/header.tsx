@@ -17,7 +17,7 @@ export function Header() {
     const toggleTheme = () => setTheme(isDark ? "light" : "dark");
 
     return (
-        <header className="fixed inset-x-0 top-0 z-30 flex h-16 items-center gap-3 border-b border-line bg-page/90 px-3 backdrop-blur md:px-5">
+        <header className="fixed inset-x-0 top-0 z-30 flex h-[var(--header-h)] items-center pt-[var(--safe-top)] gap-3 border-b border-line bg-page/90 px-3 backdrop-blur md:px-5">
             <button
                 type="button"
                 onClick={() => setListOpen(true)}

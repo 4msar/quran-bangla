@@ -68,7 +68,7 @@ export const AyahItem = memo(function AyahItem({ row, shown, ui, showArabic }: A
         <article
             id={`ayah-${arabic.sura}-${arabic.aya}`}
             data-ayah={key}
-            className="scroll-mt-32 rounded-2xl border-b border-line px-1 py-6 md:px-3"
+            className="scroll-mt-[calc(8rem+var(--safe-top))] rounded-2xl border-b border-line px-1 py-6 md:px-3"
         >
             <div className="mb-3 flex items-center gap-2">
                 <Link

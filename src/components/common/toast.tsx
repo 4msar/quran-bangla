@@ -16,7 +16,7 @@ export function Toast() {
         <div
             role="status"
             aria-live="polite"
-            className="pointer-events-none fixed inset-x-0 bottom-24 z-50 flex justify-center md:bottom-8"
+            className="pointer-events-none fixed inset-x-0 bottom-[calc(6rem+var(--safe-bottom))] z-50 flex justify-center md:bottom-[calc(2rem+var(--safe-bottom))]"
         >
             {toast && (
                 <span

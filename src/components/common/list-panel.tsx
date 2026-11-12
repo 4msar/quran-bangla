@@ -254,7 +254,7 @@ export function ListPanel() {
     return (
         <aside
             aria-label="Browse the Quran"
-            className="fixed bottom-0 left-20 top-16 z-10 hidden w-80 border-r border-line bg-panel lg:block"
+            className="fixed bottom-0 left-20 top-[var(--header-h)] z-10 hidden w-80 border-r border-line bg-panel lg:block"
         >
             <ListPanelBody />
         </aside>

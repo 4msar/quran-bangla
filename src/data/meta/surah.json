@@ -33,7 +33,7 @@
         "type": "Medinan",
         "order": 89,
         "rukus": 20,
-        "bname": "আল ইমরান"
+        "bname": "আলে ইমরান"
     },
     {
         "id": 4,
@@ -141,7 +141,7 @@
         "type": "Meccan",
         "order": 53,
         "rukus": 12,
-        "bname": "ইউসূফ"
+        "bname": "ইউসুফ"
     },
     {
         "id": 13,
@@ -465,7 +465,7 @@
         "type": "Meccan",
         "order": 59,
         "rukus": 8,
-        "bname": "আল-যুমার"
+        "bname": "আয-যুমার"
     },
     {
         "id": 40,
@@ -945,7 +945,7 @@
         "type": "Meccan",
         "order": 81,
         "rukus": 2,
-        "bname": "আন-নযিআ'ত"
+        "bname": "আন-নাযিআত"
     },
     {
         "id": 80,
@@ -993,7 +993,7 @@
         "type": "Meccan",
         "order": 86,
         "rukus": 1,
-        "bname": "আত-তাতফীফ"
+        "bname": "আল মুতাফ্ফিফীন"
     },
     {
         "id": 84,
@@ -1221,7 +1221,7 @@
         "type": "Meccan",
         "order": 16,
         "rukus": 1,
-        "bname": "তাকাসূর"
+        "bname": "তাকাসুর"
     },
     {
         "id": 103,

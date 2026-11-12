@@ -16,7 +16,7 @@ export function RukuDivider({ ruku, ui }: { ruku: RukuRange; ui: UiLang }) {
             id={`ruku-${ruku.id}`}
             role="separator"
             aria-label={`${getRukuPrefix(ui)} ${ruku.ruku}`}
-            className="flex scroll-mt-32 items-center gap-3 py-6"
+            className="flex scroll-mt-[calc(8rem+var(--safe-top))] items-center gap-3 py-6"
         >
             <span className="h-px flex-1 bg-gradient-to-r from-transparent to-brand-100" />
             <span className="flex items-center gap-2 rounded-full bg-brand-50 px-4 py-1.5 ring-1 ring-brand-600/20">

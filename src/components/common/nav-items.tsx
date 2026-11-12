@@ -110,7 +110,7 @@ export function IconRail() {
     return (
         <nav
             aria-label="Main"
-            className="fixed bottom-0 left-0 top-16 z-20 hidden w-20 flex-col items-center gap-1 border-r border-line bg-page px-2 py-4 md:flex"
+            className="fixed bottom-0 left-0 top-[var(--header-h)] z-20 hidden w-20 flex-col items-center gap-1 border-r border-line bg-page px-2 py-4 md:flex"
         >
             <NavItems variant="rail" />
         </nav>
@@ -121,7 +121,7 @@ export function BottomBar() {
     return (
         <nav
             aria-label="Main"
-            className="fixed inset-x-0 bottom-0 z-30 flex border-t border-line bg-page/95 px-2 pb-[max(0.25rem,env(safe-area-inset-bottom))] pt-1 backdrop-blur md:hidden"
+            className="fixed inset-x-0 bottom-0 z-30 flex border-t border-line bg-page/95 px-2 pb-[max(0.25rem,var(--safe-bottom))] pt-1 backdrop-blur md:hidden"
         >
             <NavItems variant="bar" />
         </nav>
