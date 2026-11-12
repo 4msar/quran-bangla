@@ -1,6 +1,7 @@
 import { Link, NavLink } from "react-router-dom";
 import { JuzList, Layouts, ListTypeToggle, RukuList, SearchBox, SurahList } from "src/components";
 import { ChevronRightIcon } from "src/components/ui/icons";
+import { usePageMeta } from "src/hooks/use-page-meta";
 import { useQuranStore, useUiLang } from "src/store";
 import { getJuzPrefix, getRukuPrefix, getSurah, getSurahName, QUICK_LINKS, toLocaleDigits } from "src/utils";
 
@@ -40,6 +41,14 @@ function ContinueReading() {
 
 export function Home({ tab }: { tab: Tab }) {
     const ui = useUiLang();
+    usePageMeta({
+        title:
+            tab === "juz"
+                ? "পারা তালিকা · Juz List"
+                : tab === "ruku"
+                  ? "রুকু তালিকা · Ruku List"
+                  : undefined,
+    });
     const tabs: { id: Tab; to: string; label: string }[] = [
         { id: "surah", to: "/", label: ui === "en" ? "Surah" : "সূরা" },
         { id: "juz", to: "/juz", label: getJuzPrefix(ui) },

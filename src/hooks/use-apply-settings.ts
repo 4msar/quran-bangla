@@ -28,6 +28,9 @@ export function useApplySettings() {
         const resolved =
             theme === "system" ? (systemDark ? "dark" : "light") : theme;
         document.documentElement.dataset.theme = resolved;
+        // Browser / installed-app chrome follows the page colour.
+        const page = getComputedStyle(document.documentElement).getPropertyValue("--page").trim();
+        if (page) document.querySelector('meta[name="theme-color"]')?.setAttribute("content", page);
         setResolvedTheme(resolved);
     }, [theme, systemDark, setResolvedTheme]);
 

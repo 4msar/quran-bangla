@@ -1,6 +1,7 @@
 import { useParams } from "react-router-dom";
 import { AyahList, Layouts, ReaderBar, SurahPrevNext } from "src/components";
 import { useHashTarget } from "src/hooks/use-hash-target";
+import { usePageMeta } from "src/hooks/use-page-meta";
 import { useQuranRows } from "src/hooks/use-quran-rows";
 import { useUiLang } from "src/store";
 import type { Surah as SurahInfo } from "src/types";
@@ -8,6 +9,7 @@ import {
     bismillah,
     getSurahInfo,
     getSurahName,
+    getSurahPrefix,
     revelationLabel,
     toLocaleDigits,
 } from "src/utils";
@@ -30,6 +32,10 @@ function SurahView({ surah }: { surah: SurahInfo }) {
     });
 
     useHashTarget(!loading && !translationLoading, viewMode);
+    usePageMeta({
+        title: `${getSurahPrefix(ui)} ${getSurahName(surah, ui)} (${surah.tname})`,
+        description: `সূরাহ ${surah.bname} (${surah.name}) — কুরআনের ${toLocaleDigits(surah.id, "bn")} নম্বর সূরা, ${toLocaleDigits(surah.ayas, "bn")} আয়াত, ${revelationLabel(surah.type, "bn")}। আরবি ও বাংলা অনুবাদসহ পড়ুন। Surah ${surah.tname} (${surah.ename}), ${surah.ayas} ayahs, with Bangla and English translation.`,
+    });
 
     // Bismillah is not recited at the start of Al-Fatihah (it is verse 1) or Al-Tawbah.
     const showBismillah = surah.id !== 1 && surah.id !== 9;

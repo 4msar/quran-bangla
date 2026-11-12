@@ -1,6 +1,7 @@
 import { useParams } from "react-router-dom";
 import { AyahList, Layouts, PrevNext, ReaderBar } from "src/components";
 import { useHashTarget } from "src/hooks/use-hash-target";
+import { usePageMeta } from "src/hooks/use-page-meta";
 import { useQuranRows } from "src/hooks/use-quran-rows";
 import { useUiLang } from "src/store";
 import {
@@ -34,6 +35,10 @@ function JuzContent({ range }: { range: (typeof JUZ_RANGES)[number] }) {
     const fromSurah = getSurah(range.from.sura);
     const toSurah = getSurah(range.to.sura);
     const title = `${getJuzPrefix(ui)} ${d(range.id)}`;
+    usePageMeta({
+        title: `${title} (Juz ${range.id})`,
+        description: `কুরআনের পারা ${toLocaleDigits(range.id, "bn")} — ${fromSurah?.bname ?? ""} ${range.from.sura}:${range.from.aya} থেকে ${toSurah?.bname ?? ""} ${range.to.sura}:${range.to.aya}। আরবি ও বাংলা অনুবাদসহ পড়ুন। Juz ${range.id} of the Quran with Bangla and English translation.`,
+    });
 
     return (
         <Layouts withPanel>

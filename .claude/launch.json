@@ -4,8 +4,24 @@
     {
       "name": "quran-bangla",
       "runtimeExecutable": "yarn",
-      "runtimeArgs": ["dev", "--port", "5173", "--strictPort"],
+      "runtimeArgs": [
+        "dev",
+        "--port",
+        "5173",
+        "--strictPort"
+      ],
       "port": 5173
+    },
+    {
+      "name": "quran-bangla-preview",
+      "runtimeExecutable": "yarn",
+      "runtimeArgs": [
+        "preview",
+        "--port",
+        "4173",
+        "--strictPort"
+      ],
+      "port": 4173
     }
   ]
 }

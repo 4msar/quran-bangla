@@ -1,7 +1,9 @@
 import { Link } from "react-router-dom";
 import { Layouts } from "src/components";
+import { usePageMeta } from "src/hooks/use-page-meta";
 
 export function NotFound() {
+    usePageMeta({ title: "পাতাটি পাওয়া যায়নি · Page not found", noIndex: true });
     return (
         <Layouts>
             <div className="py-24 text-center">

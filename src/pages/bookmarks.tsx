@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Layouts } from "src/components";
 import { BookmarkIcon, TrashIcon } from "src/components/ui/icons";
 import { useAyats } from "src/hooks/use-ayats";
+import { usePageMeta } from "src/hooks/use-page-meta";
 import { useQuranStore, useUiLang } from "src/store";
 import {
     getSurah,
@@ -13,6 +14,7 @@ import {
 
 export function Bookmarks() {
     const ui = useUiLang();
+    usePageMeta({ title: ui === "en" ? "Bookmarks" : "বুকমার্ক", noIndex: true });
     const bookmarks = useQuranStore((s) => s.bookmarks);
     const toggleBookmark = useQuranStore((s) => s.toggleBookmark);
     const firstTranslation = useQuranStore((s) => s.translations[0] ?? null);
