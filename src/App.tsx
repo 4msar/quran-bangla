@@ -16,6 +16,7 @@ import {
     Home,
     JuzPage,
     NotFound,
+    Search,
     Surah,
 } from "src/pages";
 
@@ -52,6 +53,7 @@ function App() {
                 <Route path="/juz" element={<Home tab="juz" />} />
                 <Route path="/juz/:juz" element={<JuzPage />} />
                 <Route path="/ruku" element={<Home tab="ruku" />} />
+                <Route path="/search" element={<Search />} />
                 <Route path="/bookmarks" element={<Bookmarks />} />
                 <Route path="/:surah" element={<Surah />} />
                 <Route path="/:surah/:ayah" element={<Ayah />} />

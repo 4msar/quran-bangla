@@ -103,13 +103,19 @@ export function ListPanelBody() {
     );
 
     // Bring the active item into view inside the list (not the page).
+    // Deferred a frame: in the mobile drawer the <dialog> is only shown after
+    // this component mounts, so layout is not measurable yet.
     useEffect(() => {
-        const list = listRef.current;
-        const active = list?.querySelector<HTMLElement>("[data-active='true']");
-        if (list && active) {
-            list.scrollTop =
-                active.offsetTop - list.clientHeight / 2 + active.clientHeight / 2;
-        }
+        const frame = requestAnimationFrame(() => {
+            const list = listRef.current;
+            const active = list?.querySelector<HTMLElement>("[data-active='true']");
+            if (!list || !active) return;
+            const offset =
+                active.getBoundingClientRect().top - list.getBoundingClientRect().top;
+            list.scrollTop +=
+                offset - list.clientHeight / 2 + active.clientHeight / 2;
+        });
+        return () => cancelAnimationFrame(frame);
     }, [tab, position.surah, position.juz]);
 
     const labels = TAB_LABELS[ui];

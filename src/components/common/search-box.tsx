@@ -1,23 +1,21 @@
 import { FormEvent, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useUiStore } from "src/store";
 import { resolveSearch } from "src/utils";
 import { SearchIcon } from "src/components/ui/icons";
 
-/** Search by surah name, number, or a verse reference like 2:255. */
-export function SearchBox({ compact = false }: { compact?: boolean }) {
+/** Surah name/number or verse reference jumps straight there; anything else runs a full-text search. */
+export function SearchBox({ compact = false, initial = "" }: { compact?: boolean; initial?: string }) {
     const navigate = useNavigate();
-    const showToast = useUiStore((s) => s.showToast);
-    const [query, setQuery] = useState("");
+    const [query, setQuery] = useState(initial);
 
     const onSubmit = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         const target = resolveSearch(query);
         if (target) {
             navigate(target);
-            setQuery("");
+            if (!initial) setQuery("");
         } else if (query.trim()) {
-            showToast("কিছু পাওয়া যায়নি · No match");
+            navigate(`/search?q=${encodeURIComponent(query.trim())}`);
         }
     };
 
@@ -35,8 +33,8 @@ export function SearchBox({ compact = false }: { compact?: boolean }) {
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder={
                     compact
-                        ? "সূরা খুঁজুন বা 2:255"
-                        : "কী পড়তে চান? সূরার নাম, নম্বর বা 2:255"
+                        ? "সূরা বা শব্দ খুঁজুন"
+                        : "সূরা, 2:255 বা যেকোনো শব্দ খুঁজুন"
                 }
                 aria-label="Search the Quran"
                 className={`w-full rounded-full border border-line bg-panel text-ink outline-none transition-colors placeholder:text-muted focus:border-brand-600 focus:bg-surface ${
