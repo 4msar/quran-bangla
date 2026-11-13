@@ -64,12 +64,10 @@ function useTrackReading(containerRef: React.RefObject<HTMLElement | null>, deps
                 }, 700);
             },
             // Ignore the area under the sticky header and the lower half of the screen.
-            { rootMargin: "-128px 0px -55% 0px" }
+            { rootMargin: "-128px 0px -55% 0px" },
         );
 
-        container
-            .querySelectorAll<HTMLElement>("[data-ayah]")
-            .forEach((el) => observer.observe(el));
+        container.querySelectorAll<HTMLElement>("[data-ayah]").forEach((el) => observer.observe(el));
 
         return () => {
             window.clearTimeout(timer);
@@ -100,17 +98,20 @@ function SurahStart({
                 {toLocaleDigits(surah.id, ui)}. {getSurahName(surah, ui)}
             </h3>
             <p className="text-xs text-muted">
-                {revelationLabel(surah.type, ui)} · {toLocaleDigits(surah.ayas, ui)}{" "}
-                {ui === "en" ? "ayahs" : "আয়াত"}
+                {revelationLabel(surah.type, ui)} · {toLocaleDigits(surah.ayas, ui)} {ui === "en" ? "ayahs" : "আয়াত"}
             </p>
-            {sura !== 1 && sura !== 9 &&
+            {sura !== 1 &&
+                sura !== 9 &&
                 (showArabic ? (
                     <p dir="rtl" lang="ar" className="font-arabic mt-3 text-xl text-ink/90">
                         {bismillah.ar}
                     </p>
                 ) : (
                     shown.map((id) => (
-                        <p key={id} className={`mt-2 text-sm text-ink/80 ${id === "bn" ? "font-bangla text-base" : ""}`}>
+                        <p
+                            key={id}
+                            className={`mt-2 text-sm text-ink/80 ${id === "bn" ? "font-bangla text-base" : ""}`}
+                        >
                             {bismillah[id]}
                         </p>
                     ))
@@ -119,14 +120,7 @@ function SurahStart({
     );
 }
 
-export function AyahList({
-    rows,
-    shown,
-    viewMode,
-    showArabic,
-    ui,
-    showSurahHeaders = false,
-}: AyahListProps) {
+export function AyahList({ rows, shown, viewMode, showArabic, ui, showSurahHeaders = false }: AyahListProps) {
     const ref = useRef<HTMLDivElement>(null);
     useTrackReading(ref, [rows, viewMode]);
 
@@ -139,7 +133,7 @@ export function AyahList({
     }
 
     return (
-        <div ref={ref} className="flex flex-col">
+        <div ref={ref} className="flex flex-col gap-y-1">
             {rows.map((row) => {
                 const { sura, aya } = row.arabic;
                 const ruku = RUKU_BY_START.get(posKey(sura, aya));
@@ -164,15 +158,7 @@ type Group = { ruku?: ReturnType<typeof RUKU_BY_START.get>; startsSurah?: number
  * Arabic only, as continuous text like a printed mushaf, broken into one
  * block per ruku. Each ayah stays addressable (#ayah-S-A) for links.
  */
-function QuranView({
-    rows,
-    ui,
-    showSurahHeaders,
-}: {
-    rows: AyahRow[];
-    ui: UiLang;
-    showSurahHeaders: boolean;
-}) {
+function QuranView({ rows, ui, showSurahHeaders }: { rows: AyahRow[]; ui: UiLang; showSurahHeaders: boolean }) {
     const groups: Group[] = [];
     for (const row of rows) {
         const { sura, aya } = row.arabic;

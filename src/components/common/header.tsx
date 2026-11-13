@@ -31,12 +31,8 @@ export function Header() {
             <Link to="/" className="flex shrink-0 items-center gap-2.5">
                 <img src="/logo.svg" alt="" className="h-9 w-9" />
                 <span className="leading-tight">
-                    <span className="block text-base font-semibold text-ink">
-                        Quran Bangla
-                    </span>
-                    <span className="hidden text-[11px] text-muted sm:block">
-                        পড়ুন, বুঝুন, আমল করুন
-                    </span>
+                    <span className="block text-base font-semibold text-ink">আল কুরআন</span>
+                    <span className="hidden text-[11px] text-muted sm:block">পড়ুন, বুঝুন, আমল করুন</span>
                 </span>
             </Link>
 
@@ -71,7 +67,11 @@ export function Header() {
                     aria-haspopup="dialog"
                     className={iconButton}
                 >
-                    <motion.span className="flex" whileHover={{ rotate: 60 }} transition={{ type: "spring", stiffness: 300, damping: 15 }}>
+                    <motion.span
+                        className="flex"
+                        whileHover={{ rotate: 60 }}
+                        transition={{ type: "spring", stiffness: 300, damping: 15 }}
+                    >
                         <SettingsIcon size={18} />
                     </motion.span>
                 </button>

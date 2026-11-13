@@ -153,7 +153,7 @@
         "type": "Medinan",
         "order": 96,
         "rukus": 6,
-        "bname": "রা'দ"
+        "bname": "আর রা'দ"
     },
     {
         "id": 14,
@@ -177,7 +177,7 @@
         "type": "Meccan",
         "order": 54,
         "rukus": 6,
-        "bname": "হিজর"
+        "bname": "আল হিজর"
     },
     {
         "id": 16,
@@ -189,7 +189,7 @@
         "type": "Meccan",
         "order": 70,
         "rukus": 16,
-        "bname": "নাহল"
+        "bname": "আন নাহল"
     },
     {
         "id": 17,
@@ -213,7 +213,7 @@
         "type": "Meccan",
         "order": 69,
         "rukus": 12,
-        "bname": "কাহফ"
+        "bname": "আল কাহফ"
     },
     {
         "id": 19,
@@ -249,7 +249,7 @@
         "type": "Meccan",
         "order": 73,
         "rukus": 7,
-        "bname": "আম্বিয়া"
+        "bname": "আল আম্বিয়া"
     },
     {
         "id": 22,
@@ -261,7 +261,7 @@
         "type": "Medinan",
         "order": 103,
         "rukus": 10,
-        "bname": "হাজ্জ্ব"
+        "bname": "আল হাজ্জ্ব"
     },
     {
         "id": 23,
@@ -309,7 +309,7 @@
         "type": "Meccan",
         "order": 47,
         "rukus": 11,
-        "bname": "আশ-শো'আরা"
+        "bname": "আশ-শু'আরা"
     },
     {
         "id": 27,
@@ -489,7 +489,7 @@
         "type": "Meccan",
         "order": 61,
         "rukus": 6,
-        "bname": "হা-মীম সেজদাহ (ফুসসিলাত)"
+        "bname": "ফুসসিলাত"
     },
     {
         "id": 42,
@@ -825,7 +825,7 @@
         "type": "Meccan",
         "order": 78,
         "rukus": 2,
-        "bname": "আল হাক্বক্বাহ"
+        "bname": "আল হাক্বাহ"
     },
     {
         "id": 70,
@@ -909,7 +909,7 @@
         "type": "Medinan",
         "order": 98,
         "rukus": 2,
-        "bname": "আদ-দাহর (ইনসান)"
+        "bname": "আল ইনসান"
     },
     {
         "id": 77,
@@ -1137,7 +1137,7 @@
         "type": "Meccan",
         "order": 28,
         "rukus": 1,
-        "bname": "ত্বীন"
+        "bname": "আত ত্বীন"
     },
     {
         "id": 96,
@@ -1149,7 +1149,7 @@
         "type": "Meccan",
         "order": 1,
         "rukus": 1,
-        "bname": "আলাক"
+        "bname": "আল আলাক"
     },
     {
         "id": 97,
