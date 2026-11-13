@@ -55,7 +55,7 @@ export function Drawer({
                         <CloseIcon size={18} />
                     </button>
                 </div>
-                <div className="min-h-0 flex-1 overflow-y-auto">{children}</div>
+                <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain">{children}</div>
                 {footer && (
                     <div className="border-t border-line px-5 py-3">{footer}</div>
                 )}

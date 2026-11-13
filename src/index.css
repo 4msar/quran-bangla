@@ -369,6 +369,17 @@ button.ayah-marker-button:active {
 /* ---- Drawers (native <dialog>) -------------------------------------------
    Enter: opacity + 16px translate, 280ms. Exit: shorter and smaller. */
 
+/* Lock page scroll while any modal dialog is open (drawers, share dialog). */
+html {
+    scrollbar-gutter: stable;
+}
+
+html:has(dialog[open]),
+html:has(dialog[open]) body {
+    overflow: hidden;
+    overscroll-behavior: none;
+}
+
 dialog.drawer {
     position: fixed;
     margin: 0;
@@ -379,6 +390,9 @@ dialog.drawer {
     background: var(--surface);
     color: var(--ink);
     box-shadow: var(--shadow-lg);
+    /* Only the drawer body scrolls, never the dialog itself (iOS showed two scrollbars). */
+    overflow: hidden;
+    overscroll-behavior: contain;
     opacity: 0;
     transition:
         opacity 180ms var(--ease-in),
@@ -455,6 +469,11 @@ dialog.drawer-left {
         padding-top: 0;
         border-radius: 1.25rem 1.25rem 0 0;
         translate: 0 8px;
+    }
+
+    /* The safe-area padding sits inside the sheet's max-height, so leave room for it. */
+    dialog.drawer-right > div {
+        max-height: calc(88dvh - var(--safe-bottom));
     }
 
     @starting-style {
