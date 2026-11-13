@@ -145,7 +145,7 @@ export function BottomBar() {
     return (
         <nav
             aria-label="Main"
-            className="fixed inset-x-0 bottom-0 z-30 flex border-t border-line bg-page/95 px-2 pb-[max(0.25rem,var(--safe-bottom))] pt-1 backdrop-blur md:hidden"
+            className="transition-transform duration-300 group-data-[hide-chrome=true]/chrome:translate-y-full fixed inset-x-0 bottom-0 z-30 flex border-t border-line bg-page/95 px-2 pb-[max(0.25rem,var(--safe-bottom))] pt-1 backdrop-blur md:hidden"
         >
             <NavItems variant="bar" />
         </nav>

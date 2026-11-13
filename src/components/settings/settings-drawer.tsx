@@ -2,7 +2,11 @@ import { useEffect } from "react";
 import { SIZE_MAX, SIZE_MIN, useQuranStore, useUiLang, useUiStore } from "src/store";
 import {
     ARABIC_FONTS,
+    BANGLA_FONTS,
     bismillah,
+    ENGLISH_FONTS,
+    loadGoogleFont,
+    TextFont,
     THEMES,
     toLocaleDigits,
     TRANSLATIONS,
@@ -26,6 +30,8 @@ const T = {
         showArabic: "আরবি দেখান",
         needTranslation: "আগে একটি অনুবাদ চালু করুন",
         font: "আরবি ফন্ট",
+        banglaFont: "বাংলা ফন্ট",
+        englishFont: "ইংরেজি ফন্ট",
         arabicSize: "আরবি লেখার আকার",
         translationSize: "অনুবাদের লেখার আকার",
         reset: "রিসেট",
@@ -44,6 +50,8 @@ const T = {
         showArabic: "Show Arabic",
         needTranslation: "Turn on a translation first",
         font: "Arabic font",
+        banglaFont: "Bangla font",
+        englishFont: "English font",
         arabicSize: "Arabic font size",
         translationSize: "Translation font size",
         reset: "Reset",
@@ -162,16 +170,58 @@ function Switch({
 function usePreloadFonts(open: boolean) {
     useEffect(() => {
         if (!open) return;
-        for (const font of ARABIC_FONTS) {
-            const id = `arabic-font-${font.id}`;
-            if (document.getElementById(id)) continue;
-            const link = document.createElement("link");
-            link.id = id;
-            link.rel = "stylesheet";
-            link.href = `https://fonts.googleapis.com/css2?family=${font.google}&display=swap`;
-            document.head.appendChild(link);
-        }
+        for (const font of ARABIC_FONTS) loadGoogleFont("arabic", font);
+        for (const font of BANGLA_FONTS) loadGoogleFont("bangla", font);
+        for (const font of ENGLISH_FONTS) loadGoogleFont("english", font);
     }, [open]);
+}
+
+function FontPicker({
+    label,
+    fonts,
+    value,
+    onChange,
+    sample,
+    lang,
+}: {
+    label: string;
+    fonts: TextFont[];
+    value: string;
+    onChange: (id: string) => void;
+    sample: string;
+    lang: string;
+}) {
+    return (
+        <div role="radiogroup" aria-label={label} className="grid grid-cols-2 gap-2">
+            {fonts.map((font) => {
+                const on = value === font.id;
+                return (
+                    <button
+                        key={font.id}
+                        type="button"
+                        role="radio"
+                        aria-checked={on}
+                        onClick={() => onChange(font.id)}
+                        className={`press rounded-xl px-3 py-2.5 text-left ring-1 ${
+                            on ? "bg-brand-50 ring-brand-600/40" : "ring-line hover:bg-panel"
+                        }`}
+                    >
+                        <span
+                            lang={lang}
+                            className="block truncate text-base leading-[1.9] text-ink"
+                            style={{ fontFamily: font.family }}
+                        >
+                            {sample}
+                        </span>
+                        <span className={`block text-xs font-semibold ${on ? "text-brand-700" : "text-ink"}`}>
+                            {font.name}
+                        </span>
+                        <span className="block text-[11px] text-muted">{font.note}</span>
+                    </button>
+                );
+            })}
+        </div>
+    );
 }
 
 export function SettingsDrawer() {
@@ -188,6 +238,10 @@ export function SettingsDrawer() {
         showArabic: useQuranStore((st) => st.showArabic),
         setShowArabic: useQuranStore((st) => st.setShowArabic),
         arabicFont: useQuranStore((st) => st.arabicFont),
+        banglaFont: useQuranStore((st) => st.banglaFont),
+        englishFont: useQuranStore((st) => st.englishFont),
+        setBanglaFont: useQuranStore((st) => st.setBanglaFont),
+        setEnglishFont: useQuranStore((st) => st.setEnglishFont),
         arabicSize: useQuranStore((st) => st.arabicSize),
         translationSize: useQuranStore((st) => st.translationSize),
         setTheme: useQuranStore((st) => st.setTheme),
@@ -366,6 +420,32 @@ export function SettingsDrawer() {
                     })}
                 </div>
             </Section>
+
+            {translationView && s.translations.includes("bn") && (
+                <Section title={t.banglaFont}>
+                    <FontPicker
+                        label={t.banglaFont}
+                        fonts={BANGLA_FONTS}
+                        value={s.banglaFont}
+                        onChange={s.setBanglaFont}
+                        sample="বিসমিল্লাহির রাহমানির রাহিম"
+                        lang="bn"
+                    />
+                </Section>
+            )}
+
+            {translationView && s.translations.includes("en") && (
+                <Section title={t.englishFont}>
+                    <FontPicker
+                        label={t.englishFont}
+                        fonts={ENGLISH_FONTS}
+                        value={s.englishFont}
+                        onChange={s.setEnglishFont}
+                        sample="In the name of God"
+                        lang="en"
+                    />
+                </Section>
+            )}
 
             <Section title={ui === "en" ? "Font size" : "লেখার আকার"}>
                 <div className="space-y-3">

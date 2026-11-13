@@ -70,8 +70,8 @@ export type ArabicFont = {
     name: string;
     /** CSS font-family value. */
     family: string;
-    /** Google Fonts css2 family query. */
-    google: string;
+    /** Google Fonts css2 family query. Omit when the face is declared in index.css. */
+    google?: string;
     note: string;
 };
 
@@ -98,6 +98,39 @@ export const ARABIC_FONTS: ArabicFont[] = [
         note: "Modern, even strokes",
     },
     {
+        id: "uthman-hafs",
+        name: "KFGQPC Uthmanic Hafs",
+        family: "'Uthman Hafs', 'Amiri Quran', serif",
+        note: "King Fahd Complex, Madinah Mushaf",
+    },
+    {
+        id: "uthman-naskh",
+        name: "KFGQPC Uthman Taha Naskh",
+        family: "'Uthman Naskh', 'Amiri', serif",
+        note: "King Fahd Complex, Naskh",
+    },
+    {
+        id: "amiri",
+        name: "Amiri",
+        family: "'Amiri', serif",
+        google: "Amiri:wght@400;700",
+        note: "Elegant, Bulaq-press Naskh",
+    },
+    {
+        id: "harmattan",
+        name: "Harmattan",
+        family: "'Harmattan', serif",
+        google: "Harmattan:wght@400;600",
+        note: "Compact, light Naskh",
+    },
+    {
+        id: "markazi",
+        name: "Markazi Text",
+        family: "'Markazi Text', serif",
+        google: "Markazi+Text:wght@400;600",
+        note: "Calligraphic, tall strokes",
+    },
+    {
         id: "lateef",
         name: "Lateef",
         family: "'Lateef', serif",
@@ -105,6 +138,51 @@ export const ARABIC_FONTS: ArabicFont[] = [
         note: "IndoPak-leaning style",
     },
 ];
+
+export type TextFont = {
+    id: string;
+    name: string;
+    /** CSS font-family value. */
+    family: string;
+    /** Google Fonts css2 family query. Omit for fonts loaded in index.html or the system. */
+    google?: string;
+    note: string;
+};
+
+export const BANGLA_FONTS: TextFont[] = [
+    { id: "kalpurush", name: "Kalpurush", family: "'Kalpurush', sans-serif", note: "Default, familiar print style" },
+    { id: "noto-sans-bengali", name: "Noto Sans Bengali", family: "'Noto Sans Bengali', sans-serif", google: "Noto+Sans+Bengali:wght@400;600", note: "Clean, modern sans" },
+    { id: "hind-siliguri", name: "Hind Siliguri", family: "'Hind Siliguri', sans-serif", google: "Hind+Siliguri:wght@400;600", note: "Light, UI-friendly sans" },
+    { id: "mukta", name: "Mukta", family: "'Mukta', sans-serif", google: "Mukta:wght@400;600", note: "Open, rounded sans" },
+    { id: "anek-bangla", name: "Anek Bangla", family: "'Anek Bangla', sans-serif", google: "Anek+Bangla:wght@400;600", note: "Contemporary, wide" },
+    { id: "noto-serif-bengali", name: "Noto Serif Bengali", family: "'Noto Serif Bengali', serif", google: "Noto+Serif+Bengali:wght@400;600", note: "Book-style serif" },
+    { id: "tiro-bangla", name: "Tiro Bangla", family: "'Tiro Bangla', serif", google: "Tiro+Bangla", note: "Classic text serif" },
+];
+
+export const ENGLISH_FONTS: TextFont[] = [
+    { id: "inter", name: "Inter", family: "Inter, ui-sans-serif, system-ui, sans-serif", note: "Default sans" },
+    { id: "source-serif", name: "Source Serif 4", family: "'Source Serif 4', serif", google: "Source+Serif+4:wght@400;600", note: "Readable book serif" },
+    { id: "lora", name: "Lora", family: "'Lora', serif", google: "Lora:wght@400;600", note: "Warm, calligraphic serif" },
+    { id: "merriweather", name: "Merriweather", family: "'Merriweather', serif", google: "Merriweather:wght@400;700", note: "Sturdy, screen-friendly serif" },
+    { id: "atkinson", name: "Atkinson Hyperlegible", family: "'Atkinson Hyperlegible', sans-serif", google: "Atkinson+Hyperlegible:wght@400;700", note: "Maximum legibility" },
+];
+
+export const DEFAULT_BANGLA_FONT = BANGLA_FONTS[0].id;
+export const DEFAULT_ENGLISH_FONT = ENGLISH_FONTS[0].id;
+export const getBanglaFont = (id: string) => BANGLA_FONTS.find((f) => f.id === id) ?? BANGLA_FONTS[0];
+export const getEnglishFont = (id: string) => ENGLISH_FONTS.find((f) => f.id === id) ?? ENGLISH_FONTS[0];
+
+/** Load a Google font once (no-op for fonts without a `google` query). */
+export function loadGoogleFont(kind: string, font: { id: string; google?: string }) {
+    if (!font.google) return;
+    const id = `${kind}-font-${font.id}`;
+    if (document.getElementById(id)) return;
+    const link = document.createElement("link");
+    link.id = id;
+    link.rel = "stylesheet";
+    link.href = `https://fonts.googleapis.com/css2?family=${font.google}&display=swap`;
+    document.head.appendChild(link);
+}
 
 export const DEFAULT_ARABIC_FONT = ARABIC_FONTS[0].id;
 

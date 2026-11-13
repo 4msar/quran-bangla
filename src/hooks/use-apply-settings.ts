@@ -3,6 +3,9 @@ import { useQuranStore, useUiStore } from "src/store";
 import {
     arabicSizeRem,
     getArabicFont,
+    getBanglaFont,
+    getEnglishFont,
+    loadGoogleFont,
     translationSizeRem,
 } from "src/utils/constants";
 
@@ -12,6 +15,8 @@ const darkQuery = () => window.matchMedia("(prefers-color-scheme: dark)");
 export function useApplySettings() {
     const theme = useQuranStore((s) => s.theme);
     const arabicFont = useQuranStore((s) => s.arabicFont);
+    const banglaFont = useQuranStore((s) => s.banglaFont);
+    const englishFont = useQuranStore((s) => s.englishFont);
     const arabicSize = useQuranStore((s) => s.arabicSize);
     const translationSize = useQuranStore((s) => s.translationSize);
     const [systemDark, setSystemDark] = useState(() => darkQuery().matches);
@@ -36,16 +41,21 @@ export function useApplySettings() {
 
     useEffect(() => {
         const font = getArabicFont(arabicFont);
-        const id = `arabic-font-${font.id}`;
-        if (!document.getElementById(id)) {
-            const link = document.createElement("link");
-            link.id = id;
-            link.rel = "stylesheet";
-            link.href = `https://fonts.googleapis.com/css2?family=${font.google}&display=swap`;
-            document.head.appendChild(link);
-        }
+        loadGoogleFont("arabic", font);
         document.documentElement.style.setProperty("--arabic-font", font.family);
     }, [arabicFont]);
+
+    useEffect(() => {
+        const font = getBanglaFont(banglaFont);
+        loadGoogleFont("bangla", font);
+        document.documentElement.style.setProperty("--bangla-font", font.family);
+    }, [banglaFont]);
+
+    useEffect(() => {
+        const font = getEnglishFont(englishFont);
+        loadGoogleFont("english", font);
+        document.documentElement.style.setProperty("--english-font", font.family);
+    }, [englishFont]);
 
     useEffect(() => {
         const root = document.documentElement.style;

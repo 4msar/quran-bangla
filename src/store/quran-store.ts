@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import type { Theme, TranslationId, ViewMode } from "src/types";
-import { DEFAULT_ARABIC_FONT, DEFAULT_RECITER } from "src/utils/constants";
+import { DEFAULT_ARABIC_FONT, DEFAULT_BANGLA_FONT, DEFAULT_ENGLISH_FONT, DEFAULT_RECITER } from "src/utils/constants";
 
 export type Position = { sura: number; aya: number };
 
@@ -18,6 +18,8 @@ type Settings = {
     /** Translation view only: false hides the Arabic text (translation-only reading). */
     showArabic: boolean;
     arabicFont: string;
+    banglaFont: string;
+    englishFont: string;
     arabicSize: number;
     translationSize: number;
     /** Recitation: reciter id, volume 0..1, speed multiplier, repeat the current ayah. */
@@ -35,6 +37,8 @@ export const DEFAULT_SETTINGS: Settings = {
     translations: ["bn"],
     showArabic: true,
     arabicFont: DEFAULT_ARABIC_FONT,
+    banglaFont: DEFAULT_BANGLA_FONT,
+    englishFont: DEFAULT_ENGLISH_FONT,
     arabicSize: 5,
     translationSize: 4,
     reciter: DEFAULT_RECITER,
@@ -55,6 +59,8 @@ export type QuranStore = Settings & {
     toggleTranslation: (id: TranslationId) => void;
     setShowArabic: (show: boolean) => void;
     setArabicFont: (id: string) => void;
+    setBanglaFont: (id: string) => void;
+    setEnglishFont: (id: string) => void;
     setArabicSize: (size: number) => void;
     setTranslationSize: (size: number) => void;
     setReciter: (id: string) => void;
@@ -105,6 +111,8 @@ export const useQuranStore = create<QuranStore>()(
                         : { showArabic }
                 ),
             setArabicFont: (arabicFont) => set({ arabicFont }),
+            setBanglaFont: (banglaFont) => set({ banglaFont }),
+            setEnglishFont: (englishFont) => set({ englishFont }),
             setArabicSize: (size) => set({ arabicSize: clampSize(size) }),
             setTranslationSize: (size) =>
                 set({ translationSize: clampSize(size) }),
@@ -145,6 +153,8 @@ export const useQuranStore = create<QuranStore>()(
                 translations: state.translations,
                 showArabic: state.showArabic,
                 arabicFont: state.arabicFont,
+                banglaFont: state.banglaFont,
+                englishFont: state.englishFont,
                 arabicSize: state.arabicSize,
                 translationSize: state.translationSize,
                 reciter: state.reciter,

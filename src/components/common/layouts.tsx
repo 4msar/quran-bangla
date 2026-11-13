@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { motion } from "motion/react";
 import { useAudioStore } from "src/store";
 import { Header } from "./header";
@@ -19,9 +20,37 @@ type LayoutsProps = {
  */
 export function Layouts({ children, withPanel = false, wide = false, className }: LayoutsProps) {
     const playerOpen = useAudioStore((s) => s.current !== null);
+    const [hideChrome, setHideChrome] = useState(false);
+
+    // Reading pages on mobile: hide header and tab bar on scroll down, show on scroll up.
+    useEffect(() => {
+        if (!withPanel) return;
+        const mq = window.matchMedia("(max-width: 767px)");
+        let last = window.scrollY;
+        let ticking = false;
+        const update = () => {
+            ticking = false;
+            const y = window.scrollY;
+            const delta = y - last;
+            if (!mq.matches || y < 80) setHideChrome(false);
+            else if (delta > 8) setHideChrome(true);
+            else if (delta < -8) setHideChrome(false);
+            if (Math.abs(delta) > 8 || y < 80) last = y;
+        };
+        const onScroll = () => {
+            if (ticking) return;
+            ticking = true;
+            requestAnimationFrame(update);
+        };
+        window.addEventListener("scroll", onScroll, { passive: true });
+        return () => {
+            window.removeEventListener("scroll", onScroll);
+            setHideChrome(false);
+        };
+    }, [withPanel]);
 
     return (
-        <div className="min-h-screen bg-page">
+        <div className="group/chrome min-h-screen bg-page" data-hide-chrome={hideChrome}>
             <Header />
             <IconRail />
             {withPanel && <ListPanel />}
