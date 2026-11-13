@@ -4,6 +4,7 @@ import { Drawer } from "src/components/common/drawer";
 import { ListPanelBody } from "src/components/common/list-panel";
 import { AudioPlayer } from "src/components/common/audio-player";
 import { Toast } from "src/components/common/toast";
+import { UpdatePrompt } from "src/components/common/update-prompt";
 import { SettingsDrawer } from "src/components/settings/settings-drawer";
 import { ShareImageDialog } from "src/components/share/share-image-dialog";
 import { TafseerDrawer } from "src/components/tafseer/tafseer-drawer";
@@ -64,6 +65,7 @@ function App() {
             <ShareImageDialog />
             <AudioPlayer />
             <Toast />
+            <UpdatePrompt />
         </>
     );
 }

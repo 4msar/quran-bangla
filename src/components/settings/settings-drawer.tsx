@@ -1,10 +1,11 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { SIZE_MAX, SIZE_MIN, useQuranStore, useUiLang, useUiStore } from "src/store";
 import {
     ARABIC_FONTS,
     BANGLA_FONTS,
     bismillah,
     ENGLISH_FONTS,
+    isInstalledApp,
     loadGoogleFont,
     TextFont,
     THEMES,
@@ -12,6 +13,7 @@ import {
     TRANSLATIONS,
     VIEW_MODES,
 } from "src/utils";
+import { useOffline } from "src/hooks/use-offline";
 import { Drawer } from "src/components/common/drawer";
 import { Segmented } from "src/components/ui/segmented";
 import { CheckIcon, MinusIcon, PlusIcon } from "src/components/ui/icons";
@@ -35,6 +37,15 @@ const T = {
         arabicSize: "আরবি লেখার আকার",
         translationSize: "অনুবাদের লেখার আকার",
         reset: "রিসেট",
+        offline: "অফলাইন",
+        offlineHint: "ইন্টারনেট ছাড়াও কুরআন পড়ুন। অ্যাপের ফাইল ও বেছে নেওয়া ফন্ট ডিভাইসে সংরক্ষিত থাকে।",
+        offlineReady: "অফলাইনে ব্যবহারের জন্য প্রস্তুত",
+        offlineNotReady: "ডাউনলোড চলছে বা এখনো শুরু হয়নি",
+        offlineDownload: "ডাউনলোড / আপডেট",
+        offlineDownloading: "ডাউনলোড হচ্ছে…",
+        offlineReset: "মুছে নতুন করে ডাউনলোড",
+        offlineResetting: "রিসেট হচ্ছে…",
+        offlineError: "সম্পূর্ণ হয়নি। ইন্টারনেট দেখে আবার চেষ্টা করুন।",
         done: "সম্পন্ন",
     },
     en: {
@@ -55,6 +66,15 @@ const T = {
         arabicSize: "Arabic font size",
         translationSize: "Translation font size",
         reset: "Reset",
+        offline: "Offline",
+        offlineHint: "Read without internet. App files and your chosen fonts are stored on this device.",
+        offlineReady: "Ready for offline use",
+        offlineNotReady: "Downloading, or not started yet",
+        offlineDownload: "Download / update",
+        offlineDownloading: "Downloading…",
+        offlineReset: "Clear and re-download",
+        offlineResetting: "Resetting…",
+        offlineError: "Not completed. Check your connection and try again.",
         done: "Done",
     },
 };
@@ -176,6 +196,34 @@ function usePreloadFonts(open: boolean) {
     }, [open]);
 }
 
+function OfflineSection({ t, ui }: { t: (typeof T)["bn"]; ui: "bn" | "en" }) {
+    const { status, busy, error, download, reset } = useOffline();
+    if (!status.supported) return null;
+    const mb = status.bytes != null ? ` · ${toLocaleDigits(Math.round(status.bytes / 1048576), ui)} MB` : "";
+    const btn = "press flex-1 rounded-xl px-3 py-2.5 text-sm font-semibold ring-1 ring-line hover:bg-panel disabled:opacity-50";
+    return (
+        <Section title={t.offline} hint={t.offlineHint}>
+            <p className="text-sm text-ink" role="status">
+                <span
+                    aria-hidden="true"
+                    className={`mr-2 inline-block h-2 w-2 rounded-full ${status.ready ? "bg-brand-600" : "bg-muted"}`}
+                />
+                {status.ready ? t.offlineReady : t.offlineNotReady}
+                <span className="text-muted">{mb}</span>
+            </p>
+            {error && <p className="text-xs text-red-600">{t.offlineError}</p>}
+            <div className="flex gap-2">
+                <button type="button" disabled={busy !== null} onClick={download} className={`${btn} bg-brand-50 text-brand-700`}>
+                    {busy === "download" ? t.offlineDownloading : t.offlineDownload}
+                </button>
+                <button type="button" disabled={busy !== null} onClick={reset} className={`${btn} text-ink`}>
+                    {busy === "reset" ? t.offlineResetting : t.offlineReset}
+                </button>
+            </div>
+        </Section>
+    );
+}
+
 function FontPicker({
     label,
     fonts,
@@ -253,6 +301,7 @@ export function SettingsDrawer() {
         resetSettings: useQuranStore((st) => st.resetSettings),
     };
     usePreloadFonts(open);
+    const [installed] = useState(isInstalledApp);
 
     const translationView = s.viewMode === "translation";
     const arabicVisible = !translationView || s.showArabic || s.translations.length === 0;
@@ -460,6 +509,8 @@ export function SettingsDrawer() {
                     )}
                 </div>
             </Section>
+
+            {open && installed && <OfflineSection t={t} ui={ui} />}
         </Drawer>
     );
 }

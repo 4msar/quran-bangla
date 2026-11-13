@@ -10,7 +10,8 @@ export default defineConfig({
         react(),
         tailwindcss(),
         VitePWA({
-            registerType: "autoUpdate",
+            // Installed app shows an "Update" prompt; see components/common/update-prompt.tsx.
+            registerType: "prompt",
             includeAssets: ["favicon.ico", "logo.svg", "apple-touch-icon.png"],
             manifest: {
                 id: "/",
@@ -62,6 +63,7 @@ export default defineConfig({
                         // Font files.
                         urlPattern: ({ url }) =>
                             url.origin === "https://fonts.gstatic.com" ||
+                            (url.origin === "https://cdn.jsdelivr.net" && url.pathname.includes("qpc-fonts")) ||
                             (url.origin === "https://cdn.msar.me" && url.pathname.startsWith("/fonts/")),
                         handler: "CacheFirst",
                         options: {
