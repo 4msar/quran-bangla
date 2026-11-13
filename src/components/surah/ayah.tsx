@@ -1,4 +1,5 @@
 import { memo, useEffect, useState } from "react";
+import { AnimatePresence, motion } from "motion/react";
 import { Link } from "react-router-dom";
 import { useIsAyahActive, useQuranStore, useUiStore } from "src/store";
 import type { TranslationId } from "src/types";
@@ -26,7 +27,15 @@ type AyahItemProps = {
 };
 
 const actionButton =
-    "press flex h-9 w-9 items-center justify-center rounded-full text-muted hover:bg-panel hover:text-ink";
+    "flex h-9 w-9 items-center justify-center rounded-full text-muted transition-colors hover:bg-panel hover:text-ink";
+
+const tap = { scale: 0.86 };
+const iconSwap = {
+    initial: { opacity: 0, scale: 0.6, filter: "blur(2px)" },
+    animate: { opacity: 1, scale: 1, filter: "blur(0px)" },
+    exit: { opacity: 0, scale: 0.6, filter: "blur(2px)" },
+    transition: { type: "spring", stiffness: 600, damping: 30 },
+} as const;
 
 /** One verse in the translation view: key + actions, Arabic, translations. */
 export const AyahItem = memo(function AyahItem({ row, shown, ui, showArabic }: AyahItemProps) {
@@ -40,9 +49,6 @@ export const AyahItem = memo(function AyahItem({ row, shown, ui, showArabic }: A
     const showToast = useUiStore((s) => s.showToast);
     const active = useIsAyahActive(arabic.sura, arabic.aya);
     const [copied, setCopied] = useState(false);
-    // Icon swaps animate only after the reader acts, never on first render.
-    const [touched, setTouched] = useState(false);
-    const swap = touched ? "icon-swap" : "";
 
     useEffect(() => {
         if (!copied) return;
@@ -60,7 +66,6 @@ export const AyahItem = memo(function AyahItem({ row, shown, ui, showArabic }: A
 
     const onCopy = () => {
         navigator.clipboard?.writeText(fullText);
-        setTouched(true);
         setCopied(true);
         showToast(ui === "en" ? "Ayah copied" : "আয়াত কপি হয়েছে");
     };
@@ -92,25 +97,27 @@ export const AyahItem = memo(function AyahItem({ row, shown, ui, showArabic }: A
                 )}
 
                 <div className="ml-auto flex items-center">
-                    <button
+                    <motion.button
                         type="button"
-                        onClick={() => {
-                            setTouched(true);
-                            toggleBookmark(key);
-                        }}
+                        whileTap={tap}
+                        onClick={() => toggleBookmark(key)}
                         aria-pressed={bookmarked}
                         aria-label={bookmarked ? "Remove bookmark" : "Bookmark"}
                         className={`${actionButton} ${bookmarked ? "text-brand-600" : ""}`}
                     >
-                        <BookmarkIcon key={String(bookmarked)} size={18} filled={bookmarked} className={swap} />
-                    </button>
-                    <button type="button" onClick={onCopy} aria-label="Copy ayah" className={actionButton}>
-                        {copied ? (
-                            <CheckIcon key="check" size={18} className={`${swap} text-brand-600`} />
-                        ) : (
-                            <CopyIcon key="copy" size={18} className={swap} />
-                        )}
-                    </button>
+                        <AnimatePresence mode="popLayout" initial={false}>
+                            <motion.span key={String(bookmarked)} className="flex" {...iconSwap}>
+                                <BookmarkIcon size={18} filled={bookmarked} />
+                            </motion.span>
+                        </AnimatePresence>
+                    </motion.button>
+                    <motion.button type="button" whileTap={tap} onClick={onCopy} aria-label="Copy ayah" className={actionButton}>
+                        <AnimatePresence mode="popLayout" initial={false}>
+                            <motion.span key={copied ? "check" : "copy"} className="flex" {...iconSwap}>
+                                {copied ? <CheckIcon size={18} className="text-brand-600" /> : <CopyIcon size={18} />}
+                            </motion.span>
+                        </AnimatePresence>
+                    </motion.button>
                     <AyahMenu
                         sura={arabic.sura}
                         aya={arabic.aya}

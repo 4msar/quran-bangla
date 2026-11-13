@@ -1,6 +1,6 @@
 import { Fragment, useEffect, useRef } from "react";
 import type { TranslationId, ViewMode } from "src/types";
-import { useIsAyahActive, useQuranStore } from "src/store";
+import { useIsAyahActive, useQuranStore, useUiStore } from "src/store";
 import {
     bismillah,
     getSurah,
@@ -213,6 +213,7 @@ function QuranAyah({ arabic, ui }: { arabic: AyahRow["arabic"]; ui: UiLang }) {
     const key = posKey(arabic.sura, arabic.aya);
     const rukuEnd = RUKU_BY_END.get(key);
     const active = useIsAyahActive(arabic.sura, arabic.aya);
+    const openTafseer = useUiStore((s) => s.openTafseer);
     return (
         <span
             id={`ayah-${arabic.sura}-${arabic.aya}`}
@@ -223,9 +224,15 @@ function QuranAyah({ arabic, ui }: { arabic: AyahRow["arabic"]; ui: UiLang }) {
             }`}
         >
             {arabic.text}
-            <span className="ayah-marker" aria-label={`Ayah ${arabic.aya}`}>
+            <button
+                type="button"
+                className="ayah-marker ayah-marker-button"
+                onClick={() => openTafseer({ sura: arabic.sura, aya: arabic.aya })}
+                aria-label={ui === "en" ? `Ayah ${arabic.aya} — open tafsir` : `আয়াত ${arabic.aya} — তাফসীর দেখুন`}
+                title={ui === "en" ? "Tafsir" : "তাফসীর"}
+            >
                 {toArabicDigits(arabic.aya)}
-            </span>
+            </button>
             {rukuEnd && <RukuEndMark ruku={rukuEnd} ui={ui} />}{" "}
         </span>
     );

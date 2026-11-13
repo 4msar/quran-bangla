@@ -1,3 +1,4 @@
+import { motion } from "motion/react";
 import { Link, NavLink } from "react-router-dom";
 import { JuzList, Layouts, ListTypeToggle, RukuList, SearchBox, SurahList } from "src/components";
 import { ChevronRightIcon } from "src/components/ui/icons";
@@ -6,6 +7,17 @@ import { useQuranStore, useUiLang } from "src/store";
 import { getJuzPrefix, getRukuPrefix, getSurah, getSurahName, QUICK_LINKS, toLocaleDigits } from "src/utils";
 
 type Tab = "surah" | "juz" | "ruku";
+
+const MotionLink = motion.create(Link);
+
+const hero = {
+    hidden: {},
+    show: { transition: { staggerChildren: 0.07, delayChildren: 0.05 } },
+};
+const heroItem = {
+    hidden: { opacity: 0, y: 12, filter: "blur(4px)" },
+    show: { opacity: 1, y: 0, filter: "blur(0px)", transition: { duration: 0.45, ease: [0.22, 1, 0.36, 1] } },
+} as const;
 
 function ContinueReading() {
     const lastRead = useQuranStore((s) => s.lastRead);
@@ -19,9 +31,12 @@ function ContinueReading() {
             <h2 id="continue" className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted">
                 {ui === "en" ? "Continue reading" : "যেখানে ছিলেন"}
             </h2>
-            <Link
+            <MotionLink
                 to={`/${lastRead.sura}#ayah-${lastRead.sura}-${lastRead.aya}`}
-                className="press group flex items-center gap-4 rounded-2xl bg-brand-50 p-5 ring-1 ring-brand-600/20 hover:ring-brand-600/40"
+                whileHover={{ y: -2 }}
+                whileTap={{ scale: 0.98 }}
+                transition={{ type: "spring", stiffness: 420, damping: 28 }}
+                className="group flex items-center gap-4 rounded-2xl bg-brand-50 p-5 ring-1 ring-brand-600/20 hover:ring-brand-600/40"
             >
                 <span className="font-arabic text-3xl text-brand-700">{surah.name}</span>
                 <span className="min-w-0 flex-1">
@@ -33,8 +48,8 @@ function ContinueReading() {
                         {toLocaleDigits(surah.ayas, ui)}
                     </span>
                 </span>
-                <ChevronRightIcon className="text-brand-700" />
-            </Link>
+                <ChevronRightIcon className="text-brand-700 transition-transform group-hover:translate-x-1" />
+            </MotionLink>
         </section>
     );
 }
@@ -57,8 +72,13 @@ export function Home({ tab }: { tab: Tab }) {
 
     return (
         <Layouts wide>
-            <section className="fade-rise mx-auto max-w-2xl pb-10 pt-4 text-center md:pt-10">
-                <div className="flex flex-col gap-4">
+            <motion.section
+                variants={hero}
+                initial="hidden"
+                animate="show"
+                className="mx-auto max-w-2xl pb-10 pt-4 text-center md:pt-10"
+            >
+                <motion.div variants={heroItem} className="flex flex-col gap-4">
                     <p lang="ar" className="font-arabic text-5xl leading-relaxed text-brand-700 md:text-6xl mb-4">
                         القرآن الكريم
                     </p>
@@ -70,27 +90,29 @@ export function Home({ tab }: { tab: Tab }) {
                             ? "Read the Quran with Bangla and English translation"
                             : "আরবি, বাংলা ও ইংরেজি অনুবাদসহ কুরআন পড়ুন"}
                     </p>
-                </div>
+                </motion.div>
 
-                <div className="mt-8">
+                <motion.div variants={heroItem} className="mt-8">
                     <SearchBox />
-                </div>
+                </motion.div>
 
-                <ul className="mt-4 flex flex-wrap justify-center gap-2">
+                <motion.ul variants={heroItem} className="mt-4 flex flex-wrap justify-center gap-2">
                     {QUICK_LINKS.map((link) => (
                         <li key={link.to}>
-                            <Link
+                            <MotionLink
                                 to={link.to}
-                                className={`press inline-block rounded-full bg-panel px-4 py-1.5 text-sm text-ink/80 ring-1 ring-line hover:bg-brand-50 hover:text-brand-700 ${
+                                whileHover={{ y: -2 }}
+                                whileTap={{ scale: 0.95 }}
+                                className={`inline-block rounded-full bg-panel px-4 py-1.5 text-sm text-ink/80 ring-1 ring-line hover:bg-brand-50 hover:text-brand-700 ${
                                     ui === "bn" ? "font-bangla text-base" : ""
                                 }`}
                             >
                                 {ui === "en" ? link.label : link.bn}
-                            </Link>
+                            </MotionLink>
                         </li>
                     ))}
-                </ul>
-            </section>
+                </motion.ul>
+            </motion.section>
 
             <ContinueReading />
 
@@ -102,12 +124,23 @@ export function Home({ tab }: { tab: Tab }) {
                             to={t.to}
                             end
                             className={({ isActive }) =>
-                                `press rounded-full px-5 py-1.5 text-sm font-medium ${
-                                    isActive ? "bg-surface text-brand-700 shadow-card" : "text-muted hover:text-ink"
+                                `press relative rounded-full px-5 py-1.5 text-sm font-medium ${
+                                    isActive ? "text-brand-700" : "text-muted hover:text-ink"
                                 }`
                             }
                         >
-                            {t.label}
+                            {({ isActive }) => (
+                                <>
+                                    {isActive && (
+                                        <motion.span
+                                            layoutId="home-tab"
+                                            className="absolute inset-0 rounded-full bg-surface shadow-card"
+                                            transition={{ type: "spring", stiffness: 480, damping: 36 }}
+                                        />
+                                    )}
+                                    <span className="relative">{t.label}</span>
+                                </>
+                            )}
                         </NavLink>
                     ))}
                 </nav>

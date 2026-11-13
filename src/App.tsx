@@ -5,6 +5,7 @@ import { ListPanelBody } from "src/components/common/list-panel";
 import { AudioPlayer } from "src/components/common/audio-player";
 import { Toast } from "src/components/common/toast";
 import { SettingsDrawer } from "src/components/settings/settings-drawer";
+import { TafseerDrawer } from "src/components/tafseer/tafseer-drawer";
 import { useApplySettings } from "src/hooks/use-apply-settings";
 import { useUiLang, useUiStore } from "src/store";
 import {
@@ -58,6 +59,7 @@ function App() {
 
             <ListDrawer />
             <SettingsDrawer />
+            <TafseerDrawer />
             <AudioPlayer />
             <Toast />
         </>

@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { AnimatePresence, motion } from "motion/react";
 import { useAudioStore, useUiStore } from "src/store";
 
 /** Short confirmation ("Link copied") above the bottom bar. */
@@ -23,14 +24,20 @@ export function Toast() {
                     : "bottom-[calc(6rem+var(--safe-bottom))] md:bottom-[calc(2rem+var(--safe-bottom))]"
             }`}
         >
-            {toast && (
-                <span
-                    key={toast.id}
-                    className="fade-rise rounded-full bg-ink px-4 py-2 text-sm font-medium text-page shadow-float"
-                >
-                    {toast.message}
-                </span>
-            )}
+            <AnimatePresence mode="popLayout">
+                {toast && (
+                    <motion.span
+                        key={toast.id}
+                        initial={{ opacity: 0, y: 16, scale: 0.9 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: 8, scale: 0.95, transition: { duration: 0.15 } }}
+                        transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                        className="rounded-full bg-ink px-4 py-2 text-sm font-medium text-page shadow-float"
+                    >
+                        {toast.message}
+                    </motion.span>
+                )}
+            </AnimatePresence>
         </div>
     );
 }

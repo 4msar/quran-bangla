@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
+import { AnimatePresence, motion } from "motion/react";
 import { useAudioStore, useIsAyahActive, useUiStore } from "src/store";
-import { CopyIcon, LinkIcon, MoreIcon, PauseIcon, PlayIcon, ShareIcon } from "src/components/ui/icons";
+import { BookOpenIcon, CopyIcon, LinkIcon, MoreIcon, PauseIcon, PlayIcon, ShareIcon } from "src/components/ui/icons";
 
 type Item = { label: string; icon: React.ReactNode; run: () => void };
 
@@ -21,6 +22,7 @@ export function AyahMenu({ sura, aya, arabic, shareText, ui }: AyahMenuProps) {
     const triggerRef = useRef<HTMLButtonElement>(null);
     const menuRef = useRef<HTMLUListElement>(null);
     const showToast = useUiStore((s) => s.showToast);
+    const openTafseer = useUiStore((s) => s.openTafseer);
 
     const active = useIsAyahActive(sura, aya);
     const playingThis = useAudioStore((s) => s.playing) && active;
@@ -40,6 +42,11 @@ export function AyahMenu({ sura, aya, arabic, shareText, ui }: AyahMenuProps) {
                   icon: <PlayIcon size={16} />,
                   run: () => (active ? toggle() : play({ sura, aya })),
               },
+        {
+            label: ui === "en" ? "Tafsir" : "তাফসীর",
+            icon: <BookOpenIcon size={16} />,
+            run: () => openTafseer({ sura, aya }),
+        },
         {
             label: ui === "en" ? "Copy link" : "লিংক কপি",
             icon: <LinkIcon size={16} />,
@@ -113,14 +120,26 @@ export function AyahMenu({ sura, aya, arabic, shareText, ui }: AyahMenuProps) {
                 <MoreIcon size={18} />
             </button>
 
+            <AnimatePresence>
             {open && (
-                <ul
+                <motion.ul
                     ref={menuRef}
                     role="menu"
-                    className="menu-pop absolute right-0 top-full z-20 mt-1 w-48 rounded-xl bg-surface p-1 shadow-float"
+                    initial={{ opacity: 0, scale: 0.92, y: -4 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.95, y: -2, transition: { duration: 0.12 } }}
+                    transition={{ type: "spring", stiffness: 520, damping: 32 }}
+                    style={{ transformOrigin: "top right" }}
+                    className="absolute right-0 top-full z-20 mt-1 w-48 rounded-xl bg-surface p-1 shadow-float"
                 >
-                    {items.map((item) => (
-                        <li key={item.label} role="none">
+                    {items.map((item, i) => (
+                        <motion.li
+                            key={item.label}
+                            role="none"
+                            initial={{ opacity: 0, x: 6 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: 0.02 + i * 0.025, duration: 0.18 }}
+                        >
                             <button
                                 type="button"
                                 role="menuitem"
@@ -134,10 +153,11 @@ export function AyahMenu({ sura, aya, arabic, shareText, ui }: AyahMenuProps) {
                                 <span className="text-muted">{item.icon}</span>
                                 {item.label}
                             </button>
-                        </li>
+                        </motion.li>
                     ))}
-                </ul>
+                </motion.ul>
             )}
+            </AnimatePresence>
         </div>
     );
 }

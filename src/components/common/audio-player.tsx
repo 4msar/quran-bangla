@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { AnimatePresence, motion } from "motion/react";
 import { Link } from "react-router-dom";
 import { useAudioStore, useQuranStore, useUiLang } from "src/store";
 import { getReciter, getSurah, getSurahName, PLAYBACK_RATES, RECITERS, toLocaleDigits } from "src/utils";
@@ -43,10 +44,15 @@ function PlayerSettings({ ui }: { ui: UiLang }) {
     const percent = Math.round(volume * 100);
 
     return (
-        <div
+        <motion.div
             role="dialog"
             aria-label={en ? "Audio settings" : "অডিও সেটিংস"}
-            className="fade-rise absolute bottom-full right-0 mb-4 w-72 max-w-full space-y-4 rounded-2xl bg-surface p-4 shadow-float"
+            initial={{ opacity: 0, y: 10, scale: 0.96 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 6, scale: 0.97, transition: { duration: 0.14 } }}
+            transition={{ type: "spring", stiffness: 460, damping: 32 }}
+            style={{ transformOrigin: "bottom right" }}
+            className="absolute bottom-full right-0 mb-4 w-72 max-w-full space-y-4 rounded-2xl bg-surface p-4 shadow-float"
         >
             <label className="block">
                 <span className={fieldLabel}>{en ? "Reciter" : "ক্বারী"}</span>
@@ -102,7 +108,7 @@ function PlayerSettings({ ui }: { ui: UiLang }) {
                     className="h-4 w-4 accent-[var(--color-brand-600)]"
                 />
             </label>
-        </div>
+        </motion.div>
     );
 }
 
@@ -157,10 +163,13 @@ export function AudioPlayer() {
 
     return (
         <div className="pointer-events-none fixed inset-x-0 bottom-[calc(4.5rem+var(--safe-bottom))] z-40 flex justify-center px-3 md:bottom-[calc(1.25rem+var(--safe-bottom))] md:pl-20">
-            <section
+            <motion.section
                 ref={rootRef}
                 aria-label={en ? "Audio player" : "অডিও প্লেয়ার"}
-                className="fade-rise pointer-events-auto relative flex w-full max-w-md items-center gap-1 rounded-full bg-surface py-1.5 pl-2 pr-1.5 shadow-float mb-2"
+                initial={{ opacity: 0, y: 24, scale: 0.94 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                className="pointer-events-auto relative flex w-full max-w-md items-center gap-1 rounded-full bg-surface py-1.5 pl-2 pr-1.5 shadow-float mb-2"
             >
                 <button
                     type="button"
@@ -197,7 +206,7 @@ export function AudioPlayer() {
                     </span>
                 </Link>
 
-                {open && <PlayerSettings ui={ui} />}
+                <AnimatePresence>{open && <PlayerSettings key="settings" ui={ui} />}</AnimatePresence>
                 <button
                     type="button"
                     onClick={() => setSettingsOpen((v) => !v)}
@@ -216,7 +225,7 @@ export function AudioPlayer() {
                 >
                     <CloseIcon size={18} />
                 </button>
-            </section>
+            </motion.section>
         </div>
     );
 }

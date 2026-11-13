@@ -70,6 +70,17 @@ export default defineConfig({
                             expiration: { maxEntries: 60, maxAgeSeconds: 60 * 60 * 24 * 365 },
                         },
                     },
+                    {
+                        // Tafsir passages read once stay available offline.
+                        urlPattern: ({ url }) =>
+                            url.origin === "https://api.quran.com" && url.pathname.startsWith("/api/v4/tafsirs/"),
+                        handler: "StaleWhileRevalidate",
+                        options: {
+                            cacheName: "tafseer",
+                            cacheableResponse: { statuses: [0, 200] },
+                            expiration: { maxEntries: 400, maxAgeSeconds: 60 * 60 * 24 * 90 },
+                        },
+                    },
                 ],
             },
         }),

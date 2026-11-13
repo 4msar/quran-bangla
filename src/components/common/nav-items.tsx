@@ -1,3 +1,4 @@
+import { motion } from "motion/react";
 import { NavLink, useLocation } from "react-router-dom";
 import { useQuranStore, useUiLang, useUiStore } from "src/store";
 import {
@@ -25,9 +26,32 @@ const itemClass = (variant: Variant, active: boolean) =>
           }`;
 
 const iconWrap = (variant: Variant, active: boolean) =>
-    `flex items-center justify-center rounded-full transition-colors ${
+    `relative flex items-center justify-center rounded-full transition-colors ${
         variant === "rail" ? "h-10 w-10" : "h-8 w-12"
-    } ${active ? "bg-brand-50 text-brand-700" : "group-hover:bg-panel"}`;
+    } ${active ? "text-brand-700" : "group-hover:bg-panel"}`;
+
+/** Active background that glides from the old tab to the new one. */
+function NavIcon({ variant, active, children }: { variant: Variant; active: boolean; children: React.ReactNode }) {
+    return (
+        <span className={iconWrap(variant, active)}>
+            {active && (
+                <motion.span
+                    layoutId={`nav-pill-${variant}`}
+                    className="absolute inset-0 rounded-full bg-brand-50"
+                    transition={{ type: "spring", stiffness: 500, damping: 38 }}
+                />
+            )}
+            <motion.span
+                className="relative flex"
+                animate={{ scale: active ? 1.06 : 1 }}
+                whileTap={{ scale: 0.88 }}
+                transition={{ type: "spring", stiffness: 500, damping: 25 }}
+            >
+                {children}
+            </motion.span>
+        </span>
+    );
+}
 
 /** Home · Read · Surahs · Bookmarks · Settings, shared by the rail and the bottom bar. */
 export function NavItems({ variant }: { variant: Variant }) {
@@ -49,18 +73,18 @@ export function NavItems({ variant }: { variant: Variant }) {
             <NavLink to="/" end className={({ isActive }) => itemClass(variant, isActive)}>
                 {({ isActive }) => (
                     <>
-                        <span className={iconWrap(variant, isActive)}>
+                        <NavIcon variant={variant} active={isActive}>
                             <HomeIcon />
-                        </span>
+                        </NavIcon>
                         {t.home}
                     </>
                 )}
             </NavLink>
 
             <NavLink to={readTo} className={() => itemClass(variant, reading)}>
-                <span className={iconWrap(variant, reading)}>
+                <NavIcon variant={variant} active={reading}>
                     <BookOpenIcon />
-                </span>
+                </NavIcon>
                 {t.read}
             </NavLink>
 
@@ -70,9 +94,9 @@ export function NavItems({ variant }: { variant: Variant }) {
                 onClick={() => setListOpen(true)}
                 className={`${itemClass(variant, false)} ${variant === "rail" ? "lg:hidden" : ""}`}
             >
-                <span className={iconWrap(variant, false)}>
+                <NavIcon variant={variant} active={false}>
                     <ListIcon />
-                </span>
+                </NavIcon>
                 {t.surahs}
             </button>
 
@@ -82,9 +106,9 @@ export function NavItems({ variant }: { variant: Variant }) {
             >
                 {({ isActive }) => (
                     <>
-                        <span className={iconWrap(variant, isActive)}>
+                        <NavIcon variant={variant} active={isActive}>
                             <BookmarkIcon />
-                        </span>
+                        </NavIcon>
                         {t.bookmarks}
                     </>
                 )}
@@ -97,9 +121,9 @@ export function NavItems({ variant }: { variant: Variant }) {
                 aria-expanded={settingsOpen}
                 className={itemClass(variant, settingsOpen)}
             >
-                <span className={iconWrap(variant, settingsOpen)}>
+                <NavIcon variant={variant} active={settingsOpen}>
                     <SettingsIcon />
-                </span>
+                </NavIcon>
                 {t.settings}
             </button>
         </>

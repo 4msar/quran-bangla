@@ -1,3 +1,5 @@
+import { motion } from "motion/react";
+
 type Option<T extends string> = { id: T; label: string };
 
 type SegmentedProps<T extends string> = {
@@ -30,13 +32,13 @@ export function Segmented<T extends string>({
             className={`relative grid rounded-full bg-panel p-1 ring-1 ring-line ${className}`}
             style={{ gridTemplateColumns: `repeat(${options.length}, 1fr)` }}
         >
-            <span
+            <motion.span
                 aria-hidden="true"
-                className="segment-thumb absolute inset-y-1 left-1 rounded-full bg-surface shadow-card"
-                style={{
-                    width: `calc((100% - 0.5rem) / ${options.length})`,
-                    transform: `translateX(${index * 100}%)`,
-                }}
+                className="absolute inset-y-1 left-1 rounded-full bg-surface shadow-card"
+                style={{ width: `calc((100% - 0.5rem) / ${options.length})` }}
+                initial={false}
+                animate={{ x: `${index * 100}%` }}
+                transition={{ type: "spring", stiffness: 520, damping: 38 }}
             />
             {options.map((option) => {
                 const active = option.id === value;

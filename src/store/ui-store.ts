@@ -7,7 +7,11 @@ type UiStore = {
     settingsOpen: boolean;
     listOpen: boolean;
     toast: { id: number; message: string } | null;
+    /** Ayah shown in the tafsir sheet; null when closed. */
+    tafseer: { sura: number; aya: number } | null;
 
+    openTafseer: (position: { sura: number; aya: number }) => void;
+    closeTafseer: () => void;
     setResolvedTheme: (theme: "light" | "dark" | "sepia") => void;
     setSettingsOpen: (open: boolean) => void;
     setListOpen: (open: boolean) => void;
@@ -21,6 +25,10 @@ export const useUiStore = create<UiStore>()((set) => ({
     settingsOpen: false,
     listOpen: false,
     toast: null,
+    tafseer: null,
+
+    openTafseer: (tafseer) => set({ tafseer }),
+    closeTafseer: () => set({ tafseer: null }),
 
     setSettingsOpen: (settingsOpen) => set({ settingsOpen }),
     setListOpen: (listOpen) => set({ listOpen }),

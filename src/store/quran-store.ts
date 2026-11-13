@@ -25,6 +25,8 @@ type Settings = {
     volume: number;
     playbackRate: number;
     repeatAyah: boolean;
+    /** Tafsir Ibn Kathir language. */
+    tafseerLang: "bn" | "en";
 };
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -39,6 +41,7 @@ export const DEFAULT_SETTINGS: Settings = {
     volume: 1,
     playbackRate: 1,
     repeatAyah: false,
+    tafseerLang: "bn",
 };
 
 export type QuranStore = Settings & {
@@ -58,6 +61,7 @@ export type QuranStore = Settings & {
     setVolume: (volume: number) => void;
     setPlaybackRate: (rate: number) => void;
     setRepeatAyah: (repeat: boolean) => void;
+    setTafseerLang: (lang: "bn" | "en") => void;
     resetSettings: () => void;
 
     setListType: (listType: "list" | "grid") => void;
@@ -109,6 +113,7 @@ export const useQuranStore = create<QuranStore>()(
                 set({ volume: Math.min(1, Math.max(0, volume)) }),
             setPlaybackRate: (playbackRate) => set({ playbackRate }),
             setRepeatAyah: (repeatAyah) => set({ repeatAyah }),
+            setTafseerLang: (tafseerLang) => set({ tafseerLang }),
             resetSettings: () => set({ ...DEFAULT_SETTINGS }),
 
             setListType: (listType) => set({ listType }),
@@ -146,6 +151,7 @@ export const useQuranStore = create<QuranStore>()(
                 volume: state.volume,
                 playbackRate: state.playbackRate,
                 repeatAyah: state.repeatAyah,
+                tafseerLang: state.tafseerLang,
                 listType: state.listType,
                 bookmarks: state.bookmarks,
                 lastRead: state.lastRead,

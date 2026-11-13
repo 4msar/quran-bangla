@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import { AnimatePresence, motion } from "motion/react";
 import { Link } from "react-router-dom";
 import { Layouts } from "src/components";
 import { BookmarkIcon, TrashIcon } from "src/components/ui/icons";
@@ -33,7 +34,12 @@ export function Bookmarks() {
             </h1>
 
             {bookmarks.length === 0 ? (
-                <div className="rounded-3xl bg-panel px-6 py-14 text-center ring-1 ring-line">
+                <motion.div
+                    initial={{ opacity: 0, scale: 0.97 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+                    className="rounded-3xl bg-panel px-6 py-14 text-center ring-1 ring-line"
+                >
                     <BookmarkIcon size={32} className="mx-auto text-muted" />
                     <p className="mt-4 font-semibold text-ink">
                         {ui === "en" ? "No bookmarks yet" : "এখনো কোনো বুকমার্ক নেই"}
@@ -49,16 +55,25 @@ export function Bookmarks() {
                     >
                         {ui === "en" ? "Start reading" : "পড়া শুরু করুন"}
                     </Link>
-                </div>
+                </motion.div>
             ) : (
                 <ul className="flex flex-col gap-3">
-                    {bookmarks.map((key) => {
+                    <AnimatePresence initial={true}>
+                    {bookmarks.map((key, index) => {
                         const [sura, aya] = key.split(":").map(Number);
                         const surah = getSurah(sura);
                         const ar = arIndex?.get(key);
                         const tr = trIndex?.get(key);
                         return (
-                            <li key={key} className="rounded-2xl bg-surface p-4 shadow-card">
+                            <motion.li
+                                key={key}
+                                layout
+                                initial={{ opacity: 0, y: 12 }}
+                                animate={{ opacity: 1, y: 0, transition: { delay: Math.min(index, 10) * 0.04 } }}
+                                exit={{ opacity: 0, x: -40, scale: 0.96, transition: { duration: 0.2 } }}
+                                transition={{ type: "spring", stiffness: 420, damping: 34 }}
+                                className="rounded-2xl bg-surface p-4 shadow-card"
+                            >
                                 <div className="flex items-center gap-2">
                                     <Link
                                         to={`/${sura}#ayah-${sura}-${aya}`}
@@ -94,9 +109,10 @@ export function Bookmarks() {
                                         </p>
                                     )}
                                 </Link>
-                            </li>
+                            </motion.li>
                         );
                     })}
+                    </AnimatePresence>
                 </ul>
             )}
         </Layouts>

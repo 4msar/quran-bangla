@@ -152,6 +152,48 @@ body {
     font-size: calc(var(--translation-size) * 1.08);
 }
 
+/* Tafsir text (sanitised HTML from the API). */
+.tafseer-body {
+    font-size: var(--translation-size);
+    line-height: 1.85;
+    color: color-mix(in srgb, var(--ink) 88%, transparent);
+}
+
+.tafseer-body.font-bangla {
+    font-size: calc(var(--translation-size) * 1.08);
+}
+
+.tafseer-body p + p,
+.tafseer-body div + p {
+    margin-top: 0.9em;
+}
+
+.tafseer-body h3,
+.tafseer-body h4 {
+    margin: 1.4em 0 0.5em;
+    font-weight: 600;
+    line-height: 1.4;
+    color: var(--brand-700);
+}
+
+.tafseer-body h3:first-child {
+    margin-top: 0;
+}
+
+.tafseer-body blockquote {
+    margin: 1em 0;
+    padding-left: 1em;
+    border-left: 3px solid var(--brand-100);
+    color: var(--muted);
+}
+
+.tafseer-body ul,
+.tafseer-body ol {
+    margin: 0.8em 0;
+    padding-left: 1.4em;
+    list-style: disc;
+}
+
 /* End-of-ayah marker used in the continuous Quran view. */
 .ayah-marker {
     display: inline-flex;
@@ -169,6 +211,23 @@ body {
     vertical-align: middle;
     font-family: Inter, ui-sans-serif, system-ui, sans-serif;
     font-weight: 600;
+}
+
+/* Quran view: the marker opens that ayah's tafsir. */
+button.ayah-marker-button {
+    cursor: pointer;
+    background: transparent;
+    transition:
+        background-color 150ms var(--ease-out),
+        transform 150ms var(--ease-out);
+}
+
+button.ayah-marker-button:hover {
+    background: var(--brand-50);
+}
+
+button.ayah-marker-button:active {
+    transform: scale(0.9);
 }
 
 /* In the components layer so utilities (e.g. `absolute`) can override it. */
@@ -274,19 +333,6 @@ body {
     animation: target-fade 1400ms var(--ease-out) 200ms both;
 }
 
-/* Icon swap (bookmark on/off, copy → check). */
-.icon-swap {
-    animation: icon-in 160ms var(--ease-out) both;
-}
-
-@keyframes icon-in {
-    from {
-        opacity: 0;
-        transform: scale(0.8);
-        filter: blur(2px);
-    }
-}
-
 /* Segmented control thumb slides between options. */
 .segment-thumb {
     transition:
@@ -389,19 +435,6 @@ dialog.drawer-left {
             opacity: 0;
             translate: 0 16px;
         }
-    }
-}
-
-/* Ayah action menu: grows from its trigger (top right). */
-.menu-pop {
-    transform-origin: top right;
-    animation: menu-in 140ms var(--ease-out) both;
-}
-
-@keyframes menu-in {
-    from {
-        opacity: 0;
-        transform: scale(0.96);
     }
 }
 

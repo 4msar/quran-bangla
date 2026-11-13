@@ -1,4 +1,5 @@
 import { useLayoutEffect } from "react";
+import { motion } from "motion/react";
 import { useLocation, useParams } from "react-router-dom";
 import { AyahList, Layouts, ReaderBar, SurahPrevNext } from "src/components";
 import { useHashTarget } from "src/hooks/use-hash-target";
@@ -52,7 +53,12 @@ function SurahView({ surah }: { surah: SurahInfo }) {
 
     return (
         <Layouts withPanel>
-            <header className="relative mb-2 overflow-hidden rounded-3xl bg-brand-50 px-6 py-8 text-center ring-1 ring-brand-600/15">
+            <motion.header
+                initial={{ opacity: 0, scale: 0.97 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                className="relative mb-2 overflow-hidden rounded-3xl bg-brand-50 px-6 py-8 text-center ring-1 ring-brand-600/15"
+            >
                 <span
                     aria-hidden="true"
                     className="diamond absolute left-5 top-5 h-12 w-12 text-sm font-semibold text-brand-700"
@@ -60,9 +66,15 @@ function SurahView({ surah }: { surah: SurahInfo }) {
                 >
                     <span>{d(surah.id)}</span>
                 </span>
-                <p lang="ar" className="font-arabic text-4xl leading-relaxed text-ink md:text-5xl">
+                <motion.p
+                    lang="ar"
+                    initial={{ opacity: 0, y: 10, filter: "blur(6px)" }}
+                    animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                    transition={{ duration: 0.6, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
+                    className="font-arabic text-4xl leading-relaxed text-ink md:text-5xl"
+                >
                     {surah.name}
-                </p>
+                </motion.p>
                 <h1 className={`mt-2 text-2xl font-semibold text-ink ${ui === "bn" ? "font-bangla text-3xl" : ""}`}>
                     {getSurahName(surah, ui)}
                 </h1>
@@ -80,7 +92,7 @@ function SurahView({ surah }: { surah: SurahInfo }) {
                         {d(surah.rukus)} {ui === "en" ? "rukus" : "রুকু"}
                     </li>
                 </ul>
-            </header>
+            </motion.header>
 
             <ReaderBar
                 title={`${d(surah.id)}. ${getSurahName(surah, ui)}`}

@@ -1,4 +1,5 @@
-import { useAudioStore, useQuranStore } from "src/store";
+import { motion } from "motion/react";
+import { useAudioStore, useQuranStore, useUiStore } from "src/store";
 import {
     getAyahLabel,
     getJuzAt,
@@ -10,7 +11,7 @@ import {
     toLocaleDigits,
     UiLang,
 } from "src/utils";
-import { PauseIcon, PlayIcon } from "src/components/ui/icons";
+import { BookOpenIcon, PauseIcon, PlayIcon } from "src/components/ui/icons";
 import { Segmented } from "src/components/ui/segmented";
 
 type ReaderBarProps = {
@@ -32,6 +33,7 @@ export function ReaderBar({ title, ui, from, to, loading }: ReaderBarProps) {
     const playing = useAudioStore((s) => s.playing);
     const play = useAudioStore((s) => s.play);
     const toggle = useAudioStore((s) => s.toggle);
+    const openTafseer = useUiStore((s) => s.openTafseer);
     // The player belongs to this page when its ayah is within the scope on screen.
     const playingHere = current !== null && inRange(current, from, to);
 
@@ -53,18 +55,30 @@ export function ReaderBar({ title, ui, from, to, loading }: ReaderBarProps) {
                     {loading && (ui === "en" ? " · loading translation…" : " · অনুবাদ লোড হচ্ছে…")}
                 </p>
             </div>
-            <button
+            <motion.button
                 type="button"
+                whileTap={{ scale: 0.88 }}
+                onClick={() => openTafseer(here)}
+                aria-label={ui === "en" ? "Open tafsir" : "তাফসীর দেখুন"}
+                aria-haspopup="dialog"
+                title={ui === "en" ? "Tafsir" : "তাফসীর"}
+                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-panel text-ink/80 ring-1 ring-line transition-colors hover:bg-brand-50 hover:text-brand-700"
+            >
+                <BookOpenIcon size={17} />
+            </motion.button>
+            <motion.button
+                type="button"
+                whileTap={{ scale: 0.88 }}
                 onClick={() => (playingHere ? toggle() : play(here, { bismillah: true }))}
                 aria-label={
                     playingHere && playing
                         ? ui === "en" ? "Pause recitation" : "তিলাওয়াত থামান"
                         : ui === "en" ? "Play recitation" : "তিলাওয়াত শুনুন"
                 }
-                className="press flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-brand-50 text-brand-700 hover:bg-brand-100"
+                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-brand-50 text-brand-700 transition-colors hover:bg-brand-100"
             >
                 {playingHere && playing ? <PauseIcon size={18} /> : <PlayIcon size={18} />}
-            </button>
+            </motion.button>
             <Segmented
                 size="sm"
                 label={ui === "en" ? "View" : "পড়ার ধরন"}

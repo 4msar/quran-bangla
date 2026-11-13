@@ -1,3 +1,4 @@
+import { AnimatePresence, motion } from "motion/react";
 import { Link } from "react-router-dom";
 import { useQuranStore, useUiStore } from "src/store";
 import { MenuIcon, MoonIcon, SettingsIcon, SunIcon } from "src/components/ui/icons";
@@ -50,7 +51,18 @@ export function Header() {
                     aria-label={isDark ? "Switch to light theme" : "Switch to dark theme"}
                     className={iconButton}
                 >
-                    {isDark ? <SunIcon size={18} /> : <MoonIcon size={18} />}
+                    <AnimatePresence mode="popLayout" initial={false}>
+                        <motion.span
+                            key={isDark ? "sun" : "moon"}
+                            className="flex"
+                            initial={{ opacity: 0, rotate: -90, scale: 0.5 }}
+                            animate={{ opacity: 1, rotate: 0, scale: 1 }}
+                            exit={{ opacity: 0, rotate: 90, scale: 0.5 }}
+                            transition={{ type: "spring", stiffness: 400, damping: 22 }}
+                        >
+                            {isDark ? <SunIcon size={18} /> : <MoonIcon size={18} />}
+                        </motion.span>
+                    </AnimatePresence>
                 </button>
                 <button
                     type="button"
@@ -59,7 +71,9 @@ export function Header() {
                     aria-haspopup="dialog"
                     className={iconButton}
                 >
-                    <SettingsIcon size={18} />
+                    <motion.span className="flex" whileHover={{ rotate: 60 }} transition={{ type: "spring", stiffness: 300, damping: 15 }}>
+                        <SettingsIcon size={18} />
+                    </motion.span>
                 </button>
             </div>
         </header>
