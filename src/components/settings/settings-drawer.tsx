@@ -45,6 +45,7 @@ const T = {
         offlineDownloading: "ডাউনলোড হচ্ছে…",
         offlineReset: "মুছে নতুন করে ডাউনলোড",
         offlineResetting: "রিসেট হচ্ছে…",
+        offlineDone: "ডাউনলোড সম্পন্ন হয়েছে।",
         offlineError: "সম্পূর্ণ হয়নি। ইন্টারনেট দেখে আবার চেষ্টা করুন।",
         done: "সম্পন্ন",
     },
@@ -74,6 +75,7 @@ const T = {
         offlineDownloading: "Downloading…",
         offlineReset: "Clear and re-download",
         offlineResetting: "Resetting…",
+        offlineDone: "Download complete.",
         offlineError: "Not completed. Check your connection and try again.",
         done: "Done",
     },
@@ -197,7 +199,8 @@ function usePreloadFonts(open: boolean) {
 }
 
 function OfflineSection({ t, ui }: { t: (typeof T)["bn"]; ui: "bn" | "en" }) {
-    const { status, busy, error, download, reset } = useOffline();
+    const { status, busy, error, done, progress, download, reset } = useOffline();
+    const pct = Math.min(100, Math.round((progress.done / progress.total) * 100));
     if (!status.supported) return null;
     const mb = status.bytes != null ? ` · ${toLocaleDigits(Math.round(status.bytes / 1048576), ui)} MB` : "";
     const btn = "press flex-1 rounded-xl px-3 py-2.5 text-sm font-semibold ring-1 ring-line hover:bg-panel disabled:opacity-50";
@@ -211,6 +214,27 @@ function OfflineSection({ t, ui }: { t: (typeof T)["bn"]; ui: "bn" | "en" }) {
                 {status.ready ? t.offlineReady : t.offlineNotReady}
                 <span className="text-muted">{mb}</span>
             </p>
+            {busy === "download" && (
+                <div className="space-y-1">
+                    <div
+                        role="progressbar"
+                        aria-label={t.offlineDownloading}
+                        aria-valuemin={0}
+                        aria-valuemax={100}
+                        aria-valuenow={pct}
+                        className="h-2 overflow-hidden rounded-full bg-line"
+                    >
+                        <div
+                            className="h-full rounded-full bg-brand-600 transition-[width] duration-200"
+                            style={{ width: `${pct}%` }}
+                        />
+                    </div>
+                    <p className="text-xs text-muted">
+                        {toLocaleDigits(pct, ui)}% · {toLocaleDigits(progress.done, ui)}/{toLocaleDigits(progress.total, ui)}
+                    </p>
+                </div>
+            )}
+            {done && busy === null && <p className="text-xs text-brand-700">{t.offlineDone}</p>}
             {error && <p className="text-xs text-red-600">{t.offlineError}</p>}
             <div className="flex gap-2">
                 <button type="button" disabled={busy !== null} onClick={download} className={`${btn} bg-brand-50 text-brand-700`}>
