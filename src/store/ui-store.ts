@@ -10,6 +10,10 @@ type UiStore = {
     /** Ayah shown in the tafsir sheet; null when closed. */
     tafseer: { sura: number; aya: number } | null;
 
+    /** Ayah being exported as an image; null when the dialog is closed. */
+    shareImage: { sura: number; aya: number } | null;
+    openShareImage: (position: { sura: number; aya: number }) => void;
+    closeShareImage: () => void;
     openTafseer: (position: { sura: number; aya: number }) => void;
     closeTafseer: () => void;
     setResolvedTheme: (theme: "light" | "dark" | "sepia") => void;
@@ -26,6 +30,9 @@ export const useUiStore = create<UiStore>()((set) => ({
     listOpen: false,
     toast: null,
     tafseer: null,
+    shareImage: null,
+    openShareImage: (shareImage) => set({ shareImage }),
+    closeShareImage: () => set({ shareImage: null }),
 
     openTafseer: (tafseer) => set({ tafseer }),
     closeTafseer: () => set({ tafseer: null }),

@@ -2,23 +2,17 @@ import { motion } from "motion/react";
 import { Link } from "react-router-dom";
 import { useQuranStore, useUiLang } from "src/store";
 import type { Surah } from "src/types";
-import {
-    getJuzInfo,
-    getSurahName,
-    revelationLabel,
-    SURAHS,
-    toLocaleDigits,
-    UiLang,
-} from "src/utils";
+import { getJuzInfo, getSurahName, revelationLabel, SURAHS, toLocaleDigits, UiLang } from "src/utils";
 
 const MotionLink = motion.create(Link);
 
 /** Cards cascade in; the delay is capped so long lists don't keep you waiting. */
-const enter = (index: number) => ({
-    initial: { opacity: 0, y: 14 },
-    animate: { opacity: 1, y: 0 },
-    transition: { duration: 0.35, ease: [0.22, 1, 0.36, 1], delay: Math.min(index, 18) * 0.025 },
-}) as const;
+const enter = (index: number) =>
+    ({
+        initial: { opacity: 0, y: 14 },
+        animate: { opacity: 1, y: 0 },
+        transition: { duration: 0.35, ease: [0.22, 1, 0.36, 1], delay: Math.min(index, 18) * 0.025 },
+    }) as const;
 
 function Badge({ n, ui }: { n: number; ui: UiLang }) {
     return (
@@ -39,12 +33,14 @@ function SurahCard({ surah, ui, index }: { surah: Surah; ui: UiLang; index: numb
         >
             <Badge n={surah.id} ui={ui} />
             <span className="min-w-0 flex-1">
-                <span className={`block truncate font-semibold text-ink ${ui === "bn" ? "font-bangla text-base" : "text-sm"}`}>
+                <span
+                    className={`block truncate font-semibold text-ink ${ui === "bn" ? "font-bangla text-base" : "text-sm"}`}
+                >
                     {getSurahName(surah, ui)}
                 </span>
                 <span className="block truncate text-xs text-muted">{surah.ename}</span>
             </span>
-            <span className="text-right">
+            <span className="text-right flex flex-col items-end gap-1">
                 <span className="font-arabic block text-xl leading-tight text-ink/85">{surah.name}</span>
                 <span className="block text-[11px] text-muted">
                     {toLocaleDigits(surah.ayas, ui)} {ui === "en" ? "ayahs" : "আয়াত"}
@@ -72,7 +68,8 @@ function SurahRow({ surah, ui, index }: { surah: Surah; ui: UiLang; index: numbe
                     {surah.ename} · {revelationLabel(surah.type, ui)} · {toLocaleDigits(surah.ayas, ui)}{" "}
                     {ui === "en" ? "ayahs" : "আয়াত"} · {toLocaleDigits(surah.rukus, ui)}{" "}
                     {ui === "en" ? "rukus" : "রুকু"}
-                    {juz.length > 0 && ` · ${ui === "en" ? "Juz" : "পারা"} ${juz.map((j) => toLocaleDigits(j, ui)).join(", ")}`}
+                    {juz.length > 0 &&
+                        ` · ${ui === "en" ? "Juz" : "পারা"} ${juz.map((j) => toLocaleDigits(j, ui)).join(", ")}`}
                 </span>
             </span>
             <span className="font-arabic text-2xl text-ink/85">{surah.name}</span>

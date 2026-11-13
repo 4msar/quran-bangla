@@ -174,6 +174,14 @@ export const LibraryIcon = (p: IconProps) => (
     </Icon>
 );
 
+export const ImageIcon = (p: IconProps) => (
+    <Icon {...p}>
+        <rect x="3" y="3" width="18" height="18" rx="2" />
+        <circle cx="9" cy="9" r="2" />
+        <path d="m21 15-3.1-3.1a2 2 0 0 0-2.8 0L6 21" />
+    </Icon>
+);
+
 export const PlayIcon = (p: IconProps) => (
     <Icon {...p}>
         <path d="M7 4.5v15l12-7.5z" fill="currentColor" />

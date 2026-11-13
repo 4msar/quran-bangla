@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { useAudioStore, useIsAyahActive, useUiStore } from "src/store";
-import { BookOpenIcon, CopyIcon, LinkIcon, MoreIcon, PauseIcon, PlayIcon, ShareIcon } from "src/components/ui/icons";
+import { BookOpenIcon, CopyIcon, ImageIcon, LinkIcon, MoreIcon, PauseIcon, PlayIcon, ShareIcon } from "src/components/ui/icons";
 
 type Item = { label: string; icon: React.ReactNode; run: () => void };
 
@@ -23,6 +23,7 @@ export function AyahMenu({ sura, aya, arabic, shareText, ui }: AyahMenuProps) {
     const menuRef = useRef<HTMLUListElement>(null);
     const showToast = useUiStore((s) => s.showToast);
     const openTafseer = useUiStore((s) => s.openTafseer);
+    const openShareImage = useUiStore((s) => s.openShareImage);
 
     const active = useIsAyahActive(sura, aya);
     const playingThis = useAudioStore((s) => s.playing) && active;
@@ -46,6 +47,11 @@ export function AyahMenu({ sura, aya, arabic, shareText, ui }: AyahMenuProps) {
             label: ui === "en" ? "Tafsir" : "তাফসীর",
             icon: <BookOpenIcon size={16} />,
             run: () => openTafseer({ sura, aya }),
+        },
+        {
+            label: ui === "en" ? "Share as image" : "ছবি হিসেবে শেয়ার",
+            icon: <ImageIcon size={16} />,
+            run: () => openShareImage({ sura, aya }),
         },
         {
             label: ui === "en" ? "Copy link" : "লিংক কপি",
