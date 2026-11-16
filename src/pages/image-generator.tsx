@@ -3,10 +3,10 @@ import { AnimatePresence, motion } from "motion/react";
 import { useSearchParams } from "react-router-dom";
 import { Layouts } from "src/components";
 import { Segmented } from "src/components/ui/segmented";
-import { BackgroundPicker, SiteHostSwitch, ThemePicker } from "src/components/share/image-options";
+import { BackgroundPicker, FramePicker, SiteHostSwitch, ThemePicker } from "src/components/share/image-options";
 import { downloadBlobUrl, useAyahImage, useBackgroundPhoto } from "src/components/share/image-tools";
 import type { BackgroundKind } from "src/components/share/image-tools";
-import { DEFAULT_PHOTO_OVERLAY, getImageTheme, IMAGE_SIZES } from "src/components/share/render-ayah-image";
+import { DEFAULT_PHOTO_OVERLAY, getImageFrame, getImageTheme, IMAGE_SIZES } from "src/components/share/render-ayah-image";
 import type { AyahImageInput, ImageOrientation } from "src/components/share/render-ayah-image";
 import { useAyats } from "src/hooks/use-ayats";
 import { usePageMeta } from "src/hooks/use-page-meta";
@@ -16,6 +16,8 @@ import { useAyatsMap } from "src/hooks/use-ayats";
 import {
     getArabicFont,
     getAyahLabel,
+    getBanglaFont,
+    getEnglishFont,
     getSurah,
     getSurahName,
     getSurahPrefix,
@@ -96,8 +98,12 @@ export function ImageGenerator() {
     const showToast = useUiStore((s) => s.showToast);
     const storeTranslations = useQuranStore((s) => s.translations);
     const arabicFont = useQuranStore((s) => s.arabicFont);
+    const banglaFont = useQuranStore((s) => s.banglaFont);
+    const englishFont = useQuranStore((s) => s.englishFont);
     const theme = useQuranStore((s) => s.imageTheme);
     const setTheme = useQuranStore((s) => s.setImageTheme);
+    const frame = useQuranStore((s) => s.imageFrame);
+    const setFrame = useQuranStore((s) => s.setImageFrame);
 
     // Selection lives in the URL so a link can open a given passage.
     const [params, setParams] = useSearchParams();
@@ -150,7 +156,7 @@ export function ImageGenerator() {
 
     const photoPending = bgKind === "photo" && photoStatus === "loading";
     const bgKey = bgKind === "photo" ? `photo-${sig}-${photoStatus}-${overlay}` : "theme";
-    const styleKey = `${orientation}:${getImageTheme(theme).id}:${bgKey}:${arabicFont}:${langs.join("")}:${showHost}`;
+    const styleKey = `${orientation}:${getImageTheme(theme).id}:${getImageFrame(frame).id}:${bgKey}:${arabicFont}:${banglaFont}:${englishFont}:${langs.join("")}:${showHost}`;
 
     /** Image input for ayahs `nums`; several are joined with ayah markers. */
     const buildInput = (nums: number[]): AyahImageInput | null => {
@@ -184,8 +190,11 @@ export function ImageGenerator() {
             surahName,
             reference: refFor(nums[0], nums[nums.length - 1]),
             arabicFamily: getArabicFont(arabicFont).family,
+            banglaFamily: getBanglaFont(banglaFont).family,
+            englishFamily: getEnglishFont(englishFont).family,
             orientation,
             theme: getImageTheme(theme).id,
+            frame: getImageFrame(frame).id,
             photo: bgKind === "photo" ? photo : null,
             photoOverlay: overlay,
             showSiteHost: showHost,
@@ -327,6 +336,10 @@ export function ImageGenerator() {
 
                     <Field label={en ? "Theme" : "থিম"} en={en}>
                         <ThemePicker value={theme} onChange={setTheme} en={en} />
+                    </Field>
+
+                    <Field label={en ? "Border" : "বর্ডার"} en={en}>
+                        <FramePicker value={frame} onChange={setFrame} en={en} />
                     </Field>
 
                     <Field label={en ? "Background" : "ব্যাকগ্রাউন্ড"} en={en}>

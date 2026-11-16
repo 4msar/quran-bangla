@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { motion } from "motion/react";
 import { Segmented } from "src/components/ui/segmented";
-import { getImageTheme, IMAGE_THEMES } from "./render-ayah-image";
-import type { ImageThemeId } from "./render-ayah-image";
+import { getImageFrame, getImageTheme, IMAGE_FRAMES, IMAGE_THEMES } from "./render-ayah-image";
+import type { ImageFrameChoice, ImageThemeId } from "./render-ayah-image";
 import type { BackgroundKind, PhotoStatus } from "./image-tools";
 
 /** Row of round swatches, one per image theme. */
@@ -45,6 +45,40 @@ export function ThemePicker({
                         <span className={`text-[11px] ${on ? "font-semibold text-brand-700" : "text-muted"} ${en ? "" : "font-bangla text-xs"}`}>
                             {en ? t.label : t.bn}
                         </span>
+                    </button>
+                );
+            })}
+        </div>
+    );
+}
+
+/** Chips for the border style, independent of the colour theme. */
+export function FramePicker({
+    value,
+    onChange,
+    en,
+}: {
+    value: string;
+    onChange: (id: ImageFrameChoice) => void;
+    en: boolean;
+}) {
+    const active = getImageFrame(value).id;
+    return (
+        <div role="radiogroup" aria-label={en ? "Border style" : "বর্ডারের ধরন"} className="flex flex-wrap gap-2">
+            {IMAGE_FRAMES.map((f) => {
+                const on = f.id === active;
+                return (
+                    <button
+                        key={f.id}
+                        type="button"
+                        role="radio"
+                        aria-checked={on}
+                        onClick={() => onChange(f.id)}
+                        className={`press rounded-full px-3.5 py-1.5 text-sm font-medium ring-1 transition-colors ${
+                            on ? "bg-brand-600 text-on-brand ring-brand-600" : "bg-panel text-ink ring-line hover:bg-brand-50"
+                        } ${en ? "" : "font-bangla"}`}
+                    >
+                        {en ? f.label : f.bn}
                     </button>
                 );
             })}

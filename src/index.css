@@ -81,6 +81,7 @@
     --ease-in: cubic-bezier(0.55, 0, 1, 0.45);
     --arabic-font: "Amiri Quran", "Amiri", serif;
     --bangla-font: "Kalpurush", sans-serif;
+    --arabic-number-font: "Uthman Hafs", serif;
     --english-font: Inter, ui-sans-serif, system-ui, sans-serif;
     --arabic-size: 24px;
     --translation-size: 18px;
@@ -121,12 +122,14 @@ body {
     src: local("KFGQPC Uthmanic Script HAFS"),
         url("https://cdn.jsdelivr.net/gh/mustafa0x/qpc-fonts@f93bf5f3/various-woff2/UthmanicHafs1%20Ver09.woff2") format("woff2");
 }
+
 @font-face {
     font-family: "Uthman Naskh";
     font-display: swap;
     src: local("KFGQPC Uthman Taha Naskh"),
         url("https://cdn.jsdelivr.net/gh/mustafa0x/qpc-fonts@f93bf5f3/various-woff2/UthmanTN1%20Ver10.woff2") format("woff2");
 }
+
 @font-face {
     font-family: "Uthman Naskh";
     font-weight: 700;
@@ -190,8 +193,8 @@ body {
     font-size: calc(var(--translation-size) * 1.08);
 }
 
-.tafseer-body p + p,
-.tafseer-body div + p {
+.tafseer-body p+p,
+.tafseer-body div+p {
     margin-top: 0.9em;
 }
 
@@ -226,18 +229,13 @@ body {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-width: 1.6em;
-    height: 1.6em;
-    margin-inline: 0.2em;
     padding-inline: 0.15em;
-    border: 1.5px solid var(--brand-600);
-    border-radius: 999px;
     color: var(--brand-700);
-    font-size: 0.5em;
+    font-size: 1em;
     line-height: 1;
     vertical-align: middle;
-    font-family: Inter, ui-sans-serif, system-ui, sans-serif;
     font-weight: 600;
+    font-family: var(--arabic-number-font);
 }
 
 /* Quran view: the marker opens that ayah's tafsir. */
@@ -259,6 +257,7 @@ button.ayah-marker-button:active {
 
 /* In the components layer so utilities (e.g. `absolute`) can override it. */
 @layer components {
+
     /* Ruku end sign: ruku number / ع / ayah count, stacked in a small pill. */
     .ruku-mark {
         display: inline-flex;
@@ -307,7 +306,7 @@ button.ayah-marker-button:active {
         border: 1px solid var(--diamond-line, var(--line));
     }
 
-    .diamond > * {
+    .diamond>* {
         position: relative;
     }
 }
@@ -323,6 +322,7 @@ button.ayah-marker-button:active {
         transform: translateY(6px);
         filter: blur(4px);
     }
+
     to {
         opacity: 1;
         transform: none;
@@ -351,6 +351,7 @@ button.ayah-marker-button:active {
     from {
         background-color: var(--highlight);
     }
+
     to {
         background-color: transparent;
     }
@@ -366,6 +367,7 @@ button.ayah-marker-button:active {
         transform 200ms var(--ease-out),
         translate 200ms var(--ease-out);
 }
+
 /* ---- Drawers (native <dialog>) -------------------------------------------
    Enter: opacity + 16px translate, 280ms. Exit: shorter and smaller. */
 
@@ -472,7 +474,7 @@ dialog.drawer-left {
     }
 
     /* The safe-area padding sits inside the sheet's max-height, so leave room for it. */
-    dialog.drawer-right > div {
+    dialog.drawer-right>div {
         max-height: calc(88dvh - var(--safe-bottom));
     }
 
@@ -485,6 +487,7 @@ dialog.drawer-left {
 }
 
 @media (prefers-reduced-motion: reduce) {
+
     *,
     *::before,
     *::after {

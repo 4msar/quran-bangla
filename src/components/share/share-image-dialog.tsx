@@ -19,9 +19,9 @@ import {
     toLocaleDigits,
 } from "src/utils";
 import type { Position } from "src/utils";
-import { DEFAULT_PHOTO_OVERLAY, getImageTheme, IMAGE_SIZES } from "./render-ayah-image";
+import { DEFAULT_PHOTO_OVERLAY, getImageFrame, getImageTheme, IMAGE_SIZES } from "./render-ayah-image";
 import type { ImageOrientation } from "./render-ayah-image";
-import { BackgroundPicker, SiteHostSwitch, ThemePicker } from "./image-options";
+import { BackgroundPicker, FramePicker, SiteHostSwitch, ThemePicker } from "./image-options";
 import { downloadBlobUrl, useAyahImage, useBackgroundPhoto } from "./image-tools";
 import type { BackgroundKind } from "./image-tools";
 
@@ -54,6 +54,8 @@ function ShareImageBody({ pos }: { pos: Position }) {
     const [orientation, setOrientation] = useState<ImageOrientation>("portrait");
     const theme = useQuranStore((s) => s.imageTheme);
     const setTheme = useQuranStore((s) => s.setImageTheme);
+    const frame = useQuranStore((s) => s.imageFrame);
+    const setFrame = useQuranStore((s) => s.setImageFrame);
     const closeDialog = useUiStore((s) => s.closeShareImage);
     const [bgKind, setBgKind] = useState<BackgroundKind>("theme");
     const [sig, setSig] = useState(() => Math.floor(Math.random() * 1000));
@@ -91,7 +93,7 @@ function ShareImageBody({ pos }: { pos: Position }) {
     const fileName = `quran-${pos.sura}-${pos.aya}-${orientation}.png`;
 
     const bgKey = bgKind === "photo" ? `photo-${sig}-${photoStatus}-${overlay}` : "theme";
-    const renderKey = `${key}:${orientation}:${theme}:${bgKey}:${arabicFont}:${showHost}`;
+    const renderKey = `${key}:${orientation}:${theme}:${frame}:${bgKey}:${arabicFont}:${showHost}`;
     const photoPending = bgKind === "photo" && photoStatus === "loading";
 
     const input = useMemo(() => {
@@ -104,6 +106,7 @@ function ShareImageBody({ pos }: { pos: Position }) {
             arabicFamily: getArabicFont(arabicFont).family,
             orientation,
             theme: getImageTheme(theme).id,
+            frame: getImageFrame(frame).id,
             photo: bgKind === "photo" ? photo : null,
             photoOverlay: overlay,
             showSiteHost: showHost,
@@ -145,6 +148,8 @@ function ShareImageBody({ pos }: { pos: Position }) {
             />
 
             <ThemePicker value={theme} onChange={setTheme} en={en} />
+
+            <FramePicker value={frame} onChange={setFrame} en={en} />
 
             <BackgroundPicker
                 value={bgKind}

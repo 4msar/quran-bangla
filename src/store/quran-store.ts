@@ -40,6 +40,8 @@ type Settings = {
     tafseerLang: "bn" | "en";
     /** Share-as-image theme id (see IMAGE_THEMES). */
     imageTheme: string;
+    /** Share-as-image border id (see IMAGE_FRAMES); "auto" follows the theme. */
+    imageFrame: string;
 };
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -58,6 +60,7 @@ export const DEFAULT_SETTINGS: Settings = {
     repeatAyah: false,
     tafseerLang: "bn",
     imageTheme: "emerald",
+    imageFrame: "auto",
 };
 
 export type QuranStore = Settings & {
@@ -81,6 +84,7 @@ export type QuranStore = Settings & {
     setRepeatAyah: (repeat: boolean) => void;
     setTafseerLang: (lang: "bn" | "en") => void;
     setImageTheme: (id: string) => void;
+    setImageFrame: (id: string) => void;
     resetSettings: () => void;
 
     setListType: (listType: "list" | "grid") => void;
@@ -129,6 +133,7 @@ export const useQuranStore = create<QuranStore>()(
             setRepeatAyah: (repeatAyah) => set({ repeatAyah }),
             setTafseerLang: (tafseerLang) => set({ tafseerLang }),
             setImageTheme: (imageTheme) => set({ imageTheme }),
+            setImageFrame: (imageFrame) => set({ imageFrame }),
             resetSettings: () => set({ ...DEFAULT_SETTINGS }),
 
             setListType: (listType) => set({ listType }),
@@ -174,6 +179,7 @@ export const useQuranStore = create<QuranStore>()(
                 repeatAyah: state.repeatAyah,
                 tafseerLang: state.tafseerLang,
                 imageTheme: state.imageTheme,
+                imageFrame: state.imageFrame,
                 listType: state.listType,
                 bookmarks: state.bookmarks,
                 lastRead: state.lastRead,
