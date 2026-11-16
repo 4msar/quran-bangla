@@ -1,5 +1,6 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
+import { Link } from "react-router-dom";
 import { Drawer } from "src/components/common/drawer";
 import { Segmented } from "src/components/ui/segmented";
 import { useAyats } from "src/hooks/use-ayats";
@@ -16,8 +17,11 @@ import {
     toLocaleDigits,
 } from "src/utils";
 import type { Position } from "src/utils";
-import { canvasToBlob, IMAGE_SIZES, renderAyahImage } from "./render-ayah-image";
+import { getImageTheme, IMAGE_SIZES } from "./render-ayah-image";
 import type { ImageOrientation } from "./render-ayah-image";
+import { BackgroundPicker, ThemePicker } from "./image-options";
+import { downloadBlobUrl, useAyahImage, useBackgroundPhoto } from "./image-tools";
+import type { BackgroundKind } from "./image-tools";
 
 /** "Share as image": live preview, portrait / landscape, download or share. */
 export function ShareImageDialog() {
@@ -46,6 +50,12 @@ function ShareImageBody({ pos }: { pos: Position }) {
     const showArabicSetting = useQuranStore((s) => s.showArabic);
     const arabicFont = useQuranStore((s) => s.arabicFont);
     const [orientation, setOrientation] = useState<ImageOrientation>("portrait");
+    const theme = useQuranStore((s) => s.imageTheme);
+    const setTheme = useQuranStore((s) => s.setImageTheme);
+    const closeDialog = useUiStore((s) => s.closeShareImage);
+    const [bgKind, setBgKind] = useState<BackgroundKind>("theme");
+    const [sig, setSig] = useState(() => Math.floor(Math.random() * 1000));
+    const { photo, status: photoStatus } = useBackgroundPhoto(bgKind === "photo", orientation, sig);
 
     // Same content the reader shows for this ayah.
     const shown = viewMode === "quran" ? [] : translations;
@@ -72,53 +82,33 @@ function ShareImageBody({ pos }: { pos: Position }) {
     const reference = `${getAyahLabel(ui)} ${toLocaleDigits(pos.sura, ui)}:${toLocaleDigits(pos.aya, ui)}`;
     const fileName = `quran-${pos.sura}-${pos.aya}-${orientation}.png`;
 
-    const [image, setImage] = useState<{ url: string; blob: Blob; for: string } | null>(null);
-    const [failed, setFailed] = useState(false);
-    const renderKey = `${key}:${orientation}`;
+    const bgKey = bgKind === "photo" ? `photo-${sig}-${photoStatus}` : "theme";
+    const renderKey = `${key}:${orientation}:${theme}:${bgKey}:${arabicFont}`;
+    const photoPending = bgKind === "photo" && photoStatus === "loading";
 
-    useEffect(() => {
-        if (!ready) return;
-        let active = true;
-        let url: string | null = null;
+    const input = useMemo(() => {
+        if (!ready || photoPending) return null;
         const trs: { lang: "bn" | "en"; text: string }[] = [];
         if (bnText && shown.includes("bn")) trs.push({ lang: "bn", text: bnText });
         if (enText && shown.includes("en")) trs.push({ lang: "en", text: enText });
-
-        renderAyahImage({
+        return {
             arabic: showArabic ? arText : null,
             translations: trs,
             surahName,
             reference,
             arabicFamily: getArabicFont(arabicFont).family,
             orientation,
-        })
-            .then(canvasToBlob)
-            .then((blob) => {
-                if (!active) return;
-                url = URL.createObjectURL(blob);
-                setImage({ url, blob, for: renderKey });
-                setFailed(false);
-            })
-            .catch(() => active && setFailed(true));
-
-        return () => {
-            active = false;
-            if (url) URL.revokeObjectURL(url);
+            theme: getImageTheme(theme).id,
+            photo: bgKind === "photo" ? photo : null,
         };
-        // shown is derived from the store; its contents are captured by the texts.
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [ready, arText, bnText, enText, orientation, arabicFont, surahName, reference]);
+    }, [ready, photoPending, renderKey, arText, bnText, enText]);
 
-    const current = image?.for === renderKey ? image : null;
+    const { current, failed } = useAyahImage(input, renderKey);
 
     const download = () => {
         if (!current) return;
-        const a = document.createElement("a");
-        a.href = current.url;
-        a.download = fileName;
-        document.body.append(a);
-        a.click();
-        a.remove();
+        downloadBlobUrl(current.url, fileName);
         showToast(en ? "Image downloaded" : "ছবি ডাউনলোড হয়েছে");
     };
 
@@ -147,11 +137,22 @@ function ShareImageBody({ pos }: { pos: Position }) {
                 ]}
             />
 
+            <ThemePicker value={theme} onChange={setTheme} en={en} />
+
+            <BackgroundPicker
+                value={bgKind}
+                onChange={setBgKind}
+                onShuffle={() => setSig((n) => n + 1)}
+                photoStatus={photoStatus}
+                en={en}
+            />
+
             <motion.div
                 layout
                 transition={{ type: "spring", stiffness: 300, damping: 32 }}
-                className="relative mx-auto overflow-hidden rounded-xl bg-[#145c3f] shadow-float"
+                className="relative mx-auto overflow-hidden rounded-xl shadow-float"
                 style={{
+                    background: getImageTheme(theme).palette.bg[1],
                     aspectRatio: `${w} / ${h}`,
                     width: orientation === "portrait" ? "min(100%, 22rem)" : "100%",
                 }}
@@ -171,7 +172,8 @@ function ShareImageBody({ pos }: { pos: Position }) {
                     ) : (
                         <motion.div
                             key="loading"
-                            className="absolute inset-0 flex items-center justify-center text-sm text-white/70"
+                            className="absolute inset-0 flex items-center justify-center text-sm"
+                            style={{ color: getImageTheme(theme).palette.muted }}
                             animate={{ opacity: [0.5, 1, 0.5] }}
                             transition={{ duration: 1.4, repeat: Infinity }}
                         >
@@ -208,6 +210,14 @@ function ShareImageBody({ pos }: { pos: Position }) {
                     </motion.button>
                 )}
             </div>
+
+            <Link
+                to={`/image-generator?surah=${pos.sura}&from=${pos.aya}`}
+                onClick={closeDialog}
+                className={`block text-center text-sm font-medium text-brand-700 hover:underline ${en ? "" : "font-bangla text-base"}`}
+            >
+                {en ? "Make an image with more ayahs →" : "একাধিক আয়াত দিয়ে ছবি বানান →"}
+            </Link>
         </div>
     );
 }

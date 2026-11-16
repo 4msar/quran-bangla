@@ -29,6 +29,12 @@ const before = ({ sura, aya }) =>
 const pages = [
     { path: "/juz", title: "পারা তালিকা · Juz List" },
     { path: "/ruku", title: "রুকু তালিকা · Ruku List" },
+    // Keep in sync with usePageMeta() in src/pages/image-generator.tsx.
+    {
+        path: "/image-generator",
+        title: "আয়াতের ছবি তৈরি",
+        description: "আরবি, বাংলা ও ইংরেজি অনুবাদসহ কুরআনের আয়াতের সুন্দর ছবি তৈরি করুন — বিভিন্ন থিম ও ব্যাকগ্রাউন্ড ছবিসহ।",
+    },
     ...surahs.map((s) => ({
         path: `/${s.id}`,
         title: `সূরাহ ${s.bname} (${s.tname})`,

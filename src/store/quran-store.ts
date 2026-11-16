@@ -29,6 +29,8 @@ type Settings = {
     repeatAyah: boolean;
     /** Tafsir Ibn Kathir language. */
     tafseerLang: "bn" | "en";
+    /** Share-as-image theme id (see IMAGE_THEMES). */
+    imageTheme: string;
 };
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -46,6 +48,7 @@ export const DEFAULT_SETTINGS: Settings = {
     playbackRate: 1,
     repeatAyah: false,
     tafseerLang: "bn",
+    imageTheme: "emerald",
 };
 
 export type QuranStore = Settings & {
@@ -68,6 +71,7 @@ export type QuranStore = Settings & {
     setPlaybackRate: (rate: number) => void;
     setRepeatAyah: (repeat: boolean) => void;
     setTafseerLang: (lang: "bn" | "en") => void;
+    setImageTheme: (id: string) => void;
     resetSettings: () => void;
 
     setListType: (listType: "list" | "grid") => void;
@@ -122,6 +126,7 @@ export const useQuranStore = create<QuranStore>()(
             setPlaybackRate: (playbackRate) => set({ playbackRate }),
             setRepeatAyah: (repeatAyah) => set({ repeatAyah }),
             setTafseerLang: (tafseerLang) => set({ tafseerLang }),
+            setImageTheme: (imageTheme) => set({ imageTheme }),
             resetSettings: () => set({ ...DEFAULT_SETTINGS }),
 
             setListType: (listType) => set({ listType }),
@@ -162,6 +167,7 @@ export const useQuranStore = create<QuranStore>()(
                 playbackRate: state.playbackRate,
                 repeatAyah: state.repeatAyah,
                 tafseerLang: state.tafseerLang,
+                imageTheme: state.imageTheme,
                 listType: state.listType,
                 bookmarks: state.bookmarks,
                 lastRead: state.lastRead,

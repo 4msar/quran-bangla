@@ -201,6 +201,7 @@ export const QUICK_LINKS: { label: string; bn: string; to: string }[] = [
     { label: "Ar-Rahman", bn: "আর রাহমান", to: "/55" },
     { label: "Al-Waqi'ah", bn: "আল ওয়াকিয়া", to: "/56" },
     { label: "Ayatul Kursi", bn: "আয়াতুল কুরসী", to: "/2/255" },
+    { label: "Ayah image", bn: "আয়াতের ছবি", to: "/image-generator" },
 ];
 
 /** Verse-by-verse reciters; `id` is the folder name on everyayah.com. */

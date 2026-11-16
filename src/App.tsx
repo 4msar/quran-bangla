@@ -14,6 +14,7 @@ import {
     Ayah,
     Bookmarks,
     Home,
+    ImageGenerator,
     JuzPage,
     NotFound,
     Search,
@@ -55,6 +56,7 @@ function App() {
                 <Route path="/ruku" element={<Home tab="ruku" />} />
                 <Route path="/search" element={<Search />} />
                 <Route path="/bookmarks" element={<Bookmarks />} />
+                <Route path="/image-generator" element={<ImageGenerator />} />
                 <Route path="/:surah" element={<Surah />} />
                 <Route path="/:surah/:ayah" element={<Ayah />} />
 
