@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from "motion/react";
 import { Link } from "react-router-dom";
 import { useIsAyahActive, useQuranStore, useUiStore } from "src/store";
 import type { TranslationId } from "src/types";
+import { translationLang } from "src/utils/constants";
 import {
     getSurah,
     getSurahName,
@@ -147,12 +148,12 @@ export const AyahItem = memo(function AyahItem({ row, shown, ui, showArabic }: A
                             </p>
                         )}
                         <p
-                            lang={id}
+                            lang={translationLang(id)}
                             className={`ayah-translation mt-1 text-ink/85 ${
-                                id === "bn" ? "font-bangla" : ""
+                                translationLang(id) === "bn" ? "font-bangla" : ""
                             }`}
                         >
-                            {id === "bn" && (
+                            {index === shown.findIndex((x) => translationLang(x) === "bn") && (
                                 <span className="mr-1 text-brand-700">
                                     {toLocaleDigits(arabic.aya, "bn")}.
                                 </span>

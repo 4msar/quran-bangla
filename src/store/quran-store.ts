@@ -1,7 +1,14 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import type { Theme, TranslationId, ViewMode } from "src/types";
-import { DEFAULT_ARABIC_FONT, DEFAULT_BANGLA_FONT, DEFAULT_ENGLISH_FONT, DEFAULT_RECITER } from "src/utils/constants";
+import {
+    DEFAULT_ARABIC_FONT,
+    DEFAULT_BANGLA_FONT,
+    DEFAULT_ENGLISH_FONT,
+    DEFAULT_RECITER,
+    TRANSLATIONS,
+    translationLang,
+} from "src/utils/constants";
 
 export type Position = { sura: number; aya: number };
 
@@ -82,8 +89,8 @@ export type QuranStore = Settings & {
 const clampSize = (size: number) =>
     Math.min(SIZE_MAX, Math.max(SIZE_MIN, Math.round(size)));
 
-/** Keep Bangla before English regardless of the order they were ticked. */
-const ORDER: TranslationId[] = ["bn", "en"];
+/** Keep Bangla before English, in the settings order, regardless of the order they were ticked. */
+const ORDER: TranslationId[] = TRANSLATIONS.map((t) => t.id);
 
 export const useQuranStore = create<QuranStore>()(
     persist(
@@ -178,4 +185,7 @@ export const useQuranStore = create<QuranStore>()(
 
 /** UI labels follow the first selected translation (Bangla when none). */
 export const useUiLang = () =>
-    useQuranStore((state) => (state.translations[0] === "en" ? "en" : "bn"));
+    useQuranStore((state) => {
+        const first = state.translations[0];
+        return first ? translationLang(first) : "bn";
+    });

@@ -1,3 +1,4 @@
+import { translationLang } from "src/utils/constants";
 import { useLayoutEffect } from "react";
 import { motion } from "motion/react";
 import { useLocation, useParams } from "react-router-dom";
@@ -115,9 +116,9 @@ function SurahView({ surah }: { surah: SurahInfo }) {
                                 key={id}
                                 className={`mt-1 ${
                                     showArabic ? "text-sm text-muted" : "text-lg font-medium text-ink"
-                                } ${id === "bn" ? "font-bangla" : ""} ${id === "bn" && showArabic ? "text-base" : ""}`}
+                                } ${translationLang(id) === "bn" ? "font-bangla" : ""} ${translationLang(id) === "bn" && showArabic ? "text-base" : ""}`}
                             >
-                                {bismillah[id]}
+                                {bismillah[translationLang(id)]}
                             </p>
                         ))}
                 </div>

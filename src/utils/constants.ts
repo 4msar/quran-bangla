@@ -29,11 +29,29 @@ const AR_DIGITS = "٠١٢٣٤٥٦٧٨٩";
 export const toArabicDigits = (value: number) =>
     String(value).replace(/\d/g, (d) => AR_DIGITS[Number(d)]);
 
-export const TRANSLATIONS: { id: TranslationId; name: string; label: string }[] =
-    [
-        { id: "bn", name: "বাংলা", label: "Bangla" },
-        { id: "en", name: "English", label: "English" },
-    ];
+export type TranslationInfo = {
+    id: TranslationId;
+    /** Language of the text; drives fonts, lang attributes and the Bangla/English settings tabs. */
+    lang: "bn" | "en";
+    /** Shown in settings. */
+    name: string;
+    /** Short English label shown alongside. */
+    label: string;
+};
+
+/** Order here is the order shown in settings and in the reader (Bangla first). */
+export const TRANSLATIONS: TranslationInfo[] = [
+    { id: "bn", lang: "bn", name: "বাংলা", label: "Bangla" },
+    { id: "taisir", lang: "bn", name: "তাইসিরুল কুরআন", label: "Taisirul Quran" },
+    { id: "mujib", lang: "bn", name: "শেখ মুজিবুর রহমান", label: "Sheikh Mujibur Rahman" },
+    { id: "rawai", lang: "bn", name: "রাওয়াইউল বায়ান", label: "Rawai Al-Bayan" },
+    { id: "en", lang: "en", name: "English", label: "English" },
+    { id: "saheeh", lang: "en", name: "Saheeh International", label: "Saheeh" },
+    { id: "translit", lang: "en", name: "English Transliteration", label: "Transliteration" },
+];
+
+export const translationLang = (id: TranslationId): "bn" | "en" =>
+    TRANSLATIONS.find((t) => t.id === id)?.lang ?? "bn";
 
 export const THEMES: { id: Theme; label: string; bn: string }[] = [
     { id: "system", label: "System", bn: "সিস্টেম" },

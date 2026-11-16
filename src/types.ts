@@ -1,5 +1,6 @@
 /** Translation sources available as bundled JSON files (loaded on demand). */
-export type TranslationId = "bn" | "en";
+/** "bn" and "en" are the original bundled translations; the rest come from scripts/fetch-translations.mjs. */
+export type TranslationId = "bn" | "en" | "taisir" | "mujib" | "rawai" | "saheeh" | "translit";
 
 export type Theme = "system" | "light" | "dark" | "sepia";
 

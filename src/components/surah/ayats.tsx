@@ -1,5 +1,6 @@
 import { Fragment, useEffect, useRef } from "react";
 import type { TranslationId, ViewMode } from "src/types";
+import { translationLang } from "src/utils/constants";
 import { useIsAyahActive, useQuranStore, useUiStore } from "src/store";
 import {
     bismillah,
@@ -110,9 +111,9 @@ function SurahStart({
                     shown.map((id) => (
                         <p
                             key={id}
-                            className={`mt-2 text-sm text-ink/80 ${id === "bn" ? "font-bangla text-base" : ""}`}
+                            className={`mt-2 text-sm text-ink/80 ${translationLang(id) === "bn" ? "font-bangla text-base" : ""}`}
                         >
-                            {bismillah[id]}
+                            {bismillah[translationLang(id)]}
                         </p>
                     ))
                 ))}

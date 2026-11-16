@@ -11,7 +11,8 @@ import type { AyahImageInput, ImageOrientation } from "src/components/share/rend
 import { useAyats } from "src/hooks/use-ayats";
 import { usePageMeta } from "src/hooks/use-page-meta";
 import { useQuranStore, useUiLang, useUiStore } from "src/store";
-import type { Ayah } from "src/types";
+import type { Ayah, TranslationId } from "src/types";
+import { useAyatsMap } from "src/hooks/use-ayats";
 import {
     getArabicFont,
     getAyahLabel,
@@ -24,12 +25,15 @@ import {
     SURAHS,
     toArabicDigits,
     toLocaleDigits,
+    TRANSLATIONS,
+    translationLang,
 } from "src/utils";
 
 /** More than this and the text gets too small to read in one image. */
 const MAX_AYAHS = 10;
 
-type Lang = "ar" | "bn" | "en";
+type Lang = "ar" | TranslationId;
+const ALL_LANGS: Lang[] = ["ar", ...TRANSLATIONS.map((t) => t.id)];
 type Mode = "combined" | "separate";
 
 const clampInt = (value: string | null, min: number, max: number, fallback: number) => {
@@ -84,7 +88,7 @@ export function ImageGenerator() {
     const toggleLang = (l: Lang) =>
         setLangs((cur) => {
             const next = cur.includes(l) ? cur.filter((x) => x !== l) : [...cur, l];
-            return next.length ? (["ar", "bn", "en"] as Lang[]).filter((x) => next.includes(x)) : cur;
+            return next.length ? ALL_LANGS.filter((x) => next.includes(x)) : cur;
         });
 
     const [mode, setMode] = useState<Mode>("combined");
@@ -96,15 +100,16 @@ export function ImageGenerator() {
     const { photo, status: photoStatus } = useBackgroundPhoto(bgKind === "photo", orientation, sig);
 
     const ar = useAyats(langs.includes("ar") ? "ar" : null);
-    const bn = useAyats(langs.includes("bn") ? "bn" : null);
-    const enTr = useAyats(langs.includes("en") ? "en" : null);
+    const selectedTr = langs.filter((l): l is TranslationId => l !== "ar");
+    const lists = useAyatsMap(selectedTr);
     const arIndex = useMemo(() => (ar ? indexAyats(ar) : null), [ar]);
-    const bnIndex = useMemo(() => (bn ? indexAyats(bn) : null), [bn]);
-    const enIndex = useMemo(() => (enTr ? indexAyats(enTr) : null), [enTr]);
+    const indexes = useMemo(() => {
+        const out: Partial<Record<TranslationId, Map<string, Ayah>>> = {};
+        for (const [id, list] of Object.entries(lists) as [TranslationId, Ayah[]][]) out[id] = indexAyats(list);
+        return out;
+    }, [lists]);
     const ready =
-        (!langs.includes("ar") || !!arIndex) &&
-        (!langs.includes("bn") || !!bnIndex) &&
-        (!langs.includes("en") || !!enIndex);
+        (!langs.includes("ar") || !!arIndex) && selectedTr.every((id) => lists[id] !== undefined);
 
     const ayahNumbers = Array.from({ length: to - from + 1 }, (_, i) => from + i);
     const multiple = ayahNumbers.length > 1;
@@ -132,17 +137,18 @@ export function ImageGenerator() {
                   })
                   .join(" ")
             : null;
-        const translations = (["bn", "en"] as const)
-            .filter((l) => langs.includes(l))
-            .map((l) => ({
-                lang: l,
+        const translations = selectedTr.map((id) => {
+            const lang = translationLang(id);
+            return {
+                lang,
                 text: nums
                     .map((a) => {
-                        const text = get(l === "bn" ? bnIndex : enIndex, a)?.text ?? "";
-                        return many ? `(${toLocaleDigits(a, l)}) ${text}` : text;
+                        const text = get(indexes[id] ?? null, a)?.text ?? "";
+                        return many ? `(${toLocaleDigits(a, lang)}) ${text}` : text;
                     })
                     .join(" "),
-            }));
+            };
+        });
         return {
             arabic,
             translations,
@@ -251,8 +257,7 @@ export function ImageGenerator() {
                             {(
                                 [
                                     ["ar", en ? "Arabic" : "আরবি"],
-                                    ["bn", en ? "Bangla" : "বাংলা"],
-                                    ["en", en ? "English" : "ইংরেজি"],
+                                    ...TRANSLATIONS.map((t) => [t.id, en ? t.label : t.name] as [Lang, string]),
                                 ] as [Lang, string][]
                             ).map(([id, label]) => {
                                 const on = langs.includes(id);

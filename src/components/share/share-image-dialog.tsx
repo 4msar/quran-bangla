@@ -1,9 +1,11 @@
+import type { Ayah, TranslationId } from "src/types";
+import { translationLang } from "src/utils/constants";
 import { useMemo, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { Link } from "react-router-dom";
 import { Drawer } from "src/components/common/drawer";
 import { Segmented } from "src/components/ui/segmented";
-import { useAyats } from "src/hooks/use-ayats";
+import { useAyats, useAyatsMap } from "src/hooks/use-ayats";
 import { useQuranStore, useUiLang, useUiStore } from "src/store";
 import {
     getArabicFont,
@@ -64,20 +66,24 @@ function ShareImageBody({ pos }: { pos: Position }) {
     const showArabic = viewMode === "quran" || showArabicSetting || shown.length === 0;
 
     const ar = useAyats(showArabic ? "ar" : null);
-    const bn = useAyats(shown.includes("bn") ? "bn" : null);
-    const enTr = useAyats(shown.includes("en") ? "en" : null);
+    const lists = useAyatsMap(shown);
+    const indexes = useMemo(() => {
+        const out: Partial<Record<TranslationId, Map<string, Ayah>>> = {};
+        for (const [id, list] of Object.entries(lists) as [TranslationId, Ayah[]][]) out[id] = indexAyats(list);
+        return out;
+    }, [lists]);
     const key = posKey(pos.sura, pos.aya);
     const arText = useMemo(() => {
         const a = ar ? indexAyats(ar).get(key) : undefined;
         return a ? stripBismillah(a).text : null;
     }, [ar, key]);
-    const bnText = useMemo(() => (bn ? indexAyats(bn).get(key)?.text ?? null : null), [bn, key]);
-    const enText = useMemo(() => (enTr ? indexAyats(enTr).get(key)?.text ?? null : null), [enTr, key]);
+    const trTexts = shown.flatMap((id) => {
+        const text = indexes[id]?.get(key)?.text;
+        return text ? [{ lang: translationLang(id), text }] : [];
+    });
+    const trKey = trTexts.map((t) => `${t.lang}:${t.text}`).join("|");
 
-    const ready =
-        (!showArabic || arText !== null) &&
-        (!shown.includes("bn") || bnText !== null) &&
-        (!shown.includes("en") || enText !== null);
+    const ready = (!showArabic || arText !== null) && shown.every((id) => lists[id] !== undefined);
 
     const surah = getSurah(pos.sura);
     const surahName = surah ? `${getSurahPrefix(ui)} ${getSurahName(surah, ui)}` : "";
@@ -90,12 +96,9 @@ function ShareImageBody({ pos }: { pos: Position }) {
 
     const input = useMemo(() => {
         if (!ready || photoPending) return null;
-        const trs: { lang: "bn" | "en"; text: string }[] = [];
-        if (bnText && shown.includes("bn")) trs.push({ lang: "bn", text: bnText });
-        if (enText && shown.includes("en")) trs.push({ lang: "en", text: enText });
         return {
             arabic: showArabic ? arText : null,
-            translations: trs,
+            translations: trTexts,
             surahName,
             reference,
             arabicFamily: getArabicFont(arabicFont).family,
@@ -106,7 +109,7 @@ function ShareImageBody({ pos }: { pos: Position }) {
             showSiteHost: showHost,
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [ready, photoPending, renderKey, arText, bnText, enText]);
+    }, [ready, photoPending, renderKey, arText, trKey]);
 
     const { current, failed } = useAyahImage(input, renderKey);
 

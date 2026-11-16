@@ -1,3 +1,6 @@
+import { useAyatsMap } from "src/hooks/use-ayats";
+import type { Ayah, TranslationId } from "src/types";
+import { translationLang } from "src/utils/constants";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion, useDragControls } from "motion/react";
 import type { PanInfo } from "motion/react";
@@ -133,12 +136,13 @@ function Sheet({ pos, onClose }: { pos: Position; onClose: () => void }) {
     const showArabic = viewMode === "quran" || showArabicSetting || shown.length === 0;
 
     const arabic = useAyats(showArabic ? "ar" : null);
-    const bn = useAyats(shown.includes("bn") ? "bn" : null);
-    const enTr = useAyats(shown.includes("en") ? "en" : null);
+    const lists = useAyatsMap(shown);
     const arIndex = useMemo(() => (arabic ? indexAyats(arabic) : null), [arabic]);
-    const bnIndex = useMemo(() => (bn ? indexAyats(bn) : null), [bn]);
-    const enIndex = useMemo(() => (enTr ? indexAyats(enTr) : null), [enTr]);
-    const trIndex = { bn: bnIndex, en: enIndex };
+    const trIndex = useMemo(() => {
+        const out: Partial<Record<TranslationId, Map<string, Ayah>>> = {};
+        for (const [id, list] of Object.entries(lists) as [TranslationId, Ayah[]][]) out[id] = indexAyats(list);
+        return out;
+    }, [lists]);
 
     const tafseer = useTafseer(lang, pos);
     const surah = getSurah(pos.sura);
@@ -366,7 +370,7 @@ function Sheet({ pos, onClose }: { pos: Position; onClose: () => void }) {
                                                 {meta?.label}
                                             </p>
                                         )}
-                                        <p lang={id} className={`ayah-translation text-ink/85 ${id === "bn" ? "font-bangla" : ""}`}>
+                                        <p lang={translationLang(id)} className={`ayah-translation text-ink/85 ${translationLang(id) === "bn" ? "font-bangla" : ""}`}>
                                             {t?.text ?? "…"}
                                         </p>
                                     </div>

@@ -1,8 +1,8 @@
 import { useMemo } from "react";
-import { useAyats } from "./use-ayats";
+import { useAyats, useAyatsMap } from "./use-ayats";
 import { useQuranStore } from "src/store";
 import { buildRows, indexAyats, Position, toOrdinal } from "src/utils";
-import type { Ayah } from "src/types";
+import type { Ayah, TranslationId } from "src/types";
 
 export type RowScope = {
     /** Show only this surah. */
@@ -23,15 +23,15 @@ export function useQuranRows(scope: RowScope) {
     const showArabicSetting = useQuranStore((s) => s.showArabic);
     const wantTranslations = viewMode === "translation";
 
-    const wantBn = wantTranslations && translations.includes("bn");
-    const wantEn = wantTranslations && translations.includes("en");
-
     const arabic = useAyats("ar");
-    const bn = useAyats(wantBn ? "bn" : null);
-    const en = useAyats(wantEn ? "en" : null);
-
-    const bnIndex = useMemo(() => (bn ? indexAyats(bn) : null), [bn]);
-    const enIndex = useMemo(() => (en ? indexAyats(en) : null), [en]);
+    const lists = useAyatsMap(wantTranslations ? translations : []);
+    const indexes = useMemo(() => {
+        const out: Partial<Record<TranslationId, Map<string, Ayah>>> = {};
+        for (const [id, list] of Object.entries(lists) as [TranslationId, Ayah[]][]) {
+            out[id] = indexAyats(list);
+        }
+        return out;
+    }, [lists]);
 
     const { surah, from, to } = scope;
     const fromSura = from?.sura;
@@ -59,11 +59,8 @@ export function useQuranRows(scope: RowScope) {
             );
         };
 
-        return buildRows(arabic.filter(inScope), {
-            ...(bnIndex ? { bn: bnIndex } : {}),
-            ...(enIndex ? { en: enIndex } : {}),
-        });
-    }, [arabic, bnIndex, enIndex, surah, fromSura, fromAya, toSura, toAya]);
+        return buildRows(arabic.filter(inScope), indexes);
+    }, [arabic, indexes, surah, fromSura, fromAya, toSura, toAya]);
 
     return {
         rows,
@@ -74,6 +71,6 @@ export function useQuranRows(scope: RowScope) {
         showArabic:
             !wantTranslations || showArabicSetting || translations.length === 0,
         loading: arabic === null,
-        translationLoading: (wantBn && bn === null) || (wantEn && en === null),
+        translationLoading: wantTranslations && translations.some((id) => !lists[id]),
     };
 }

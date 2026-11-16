@@ -1,3 +1,4 @@
+import { translationLang } from "src/utils/constants";
 import { useEffect, useState } from "react";
 import { SIZE_MAX, SIZE_MIN, useQuranStore, useUiLang, useUiStore } from "src/store";
 import {
@@ -326,6 +327,10 @@ export function SettingsDrawer() {
     };
     usePreloadFonts(open);
     const [installed] = useState(isInstalledApp);
+    // Which language tab of the translation list is open; starts on the first selected translation's.
+    const [trTab, setTrTab] = useState<"bn" | "en">(() =>
+        s.translations[0] ? translationLang(s.translations[0]) : "bn"
+    );
 
     const translationView = s.viewMode === "translation";
     const arabicVisible = !translationView || s.showArabic || s.translations.length === 0;
@@ -372,12 +377,12 @@ export function SettingsDrawer() {
                         s.translations.map((id) => (
                             <p
                                 key={id}
-                                lang={id}
+                                lang={translationLang(id)}
                                 className={`ayah-translation mt-1 text-ink/85 ${
-                                    id === "bn" ? "font-bangla" : ""
+                                    translationLang(id) === "bn" ? "font-bangla" : ""
                                 }`}
                             >
-                                {bismillah[id]}
+                                {bismillah[translationLang(id)]}
                             </p>
                         ))}
                 </div>
@@ -424,8 +429,17 @@ export function SettingsDrawer() {
                     title={t.translations}
                     hint={s.showArabic ? t.translationsHint : t.translationsHintNoArabic}
                 >
+                    <Segmented
+                        label={t.translations}
+                        value={trTab}
+                        onChange={setTrTab}
+                        options={[
+                            { id: "bn", label: "বাংলা" },
+                            { id: "en", label: "English" },
+                        ]}
+                    />
                     <div className="space-y-2">
-                        {TRANSLATIONS.map((tr) => {
+                        {TRANSLATIONS.filter((tr) => tr.lang === trTab).map((tr) => {
                             const on = s.translations.includes(tr.id);
                             const locked = on && lockLastTranslation;
                             return (
@@ -450,7 +464,7 @@ export function SettingsDrawer() {
                                     >
                                         {on && <CheckIcon size={14} strokeWidth={2.5} />}
                                     </span>
-                                    <span className={`text-sm font-medium text-ink ${tr.id === "bn" ? "font-bangla text-base" : ""}`}>
+                                    <span className={`text-sm font-medium text-ink ${tr.lang === "bn" ? "font-bangla text-base" : ""}`}>
                                         {tr.name}
                                     </span>
                                     <span className="ml-auto text-xs text-muted">{tr.label}</span>
@@ -494,7 +508,7 @@ export function SettingsDrawer() {
                 </div>
             </Section>
 
-            {translationView && s.translations.includes("bn") && (
+            {translationView && s.translations.some((id) => translationLang(id) === "bn") && (
                 <Section title={t.banglaFont}>
                     <FontPicker
                         label={t.banglaFont}
@@ -507,7 +521,7 @@ export function SettingsDrawer() {
                 </Section>
             )}
 
-            {translationView && s.translations.includes("en") && (
+            {translationView && s.translations.some((id) => translationLang(id) === "en") && (
                 <Section title={t.englishFont}>
                     <FontPicker
                         label={t.englishFont}

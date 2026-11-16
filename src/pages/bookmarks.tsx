@@ -1,3 +1,4 @@
+import { translationLang } from "src/utils/constants";
 import { useMemo } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { Link } from "react-router-dom";
@@ -103,7 +104,7 @@ export function Bookmarks() {
                                         <p
                                             className={`line-clamp-2 ${
                                                 showArabic ? "mt-1 text-sm text-muted" : "text-base text-ink/85"
-                                            } ${firstTranslation === "bn" ? "font-bangla text-base" : ""}`}
+                                            } ${firstTranslation && translationLang(firstTranslation) === "bn" ? "font-bangla text-base" : ""}`}
                                         >
                                             {tr.text}
                                         </p>
