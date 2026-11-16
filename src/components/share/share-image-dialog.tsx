@@ -19,7 +19,7 @@ import {
 import type { Position } from "src/utils";
 import { DEFAULT_PHOTO_OVERLAY, getImageTheme, IMAGE_SIZES } from "./render-ayah-image";
 import type { ImageOrientation } from "./render-ayah-image";
-import { BackgroundPicker, ThemePicker } from "./image-options";
+import { BackgroundPicker, SiteHostSwitch, ThemePicker } from "./image-options";
 import { downloadBlobUrl, useAyahImage, useBackgroundPhoto } from "./image-tools";
 import type { BackgroundKind } from "./image-tools";
 
@@ -56,6 +56,7 @@ function ShareImageBody({ pos }: { pos: Position }) {
     const [bgKind, setBgKind] = useState<BackgroundKind>("theme");
     const [sig, setSig] = useState(() => Math.floor(Math.random() * 1000));
     const [overlay, setOverlay] = useState(DEFAULT_PHOTO_OVERLAY);
+    const [showHost, setShowHost] = useState(true);
     const { photo, status: photoStatus } = useBackgroundPhoto(bgKind === "photo", orientation, sig);
 
     // Same content the reader shows for this ayah.
@@ -84,7 +85,7 @@ function ShareImageBody({ pos }: { pos: Position }) {
     const fileName = `quran-${pos.sura}-${pos.aya}-${orientation}.png`;
 
     const bgKey = bgKind === "photo" ? `photo-${sig}-${photoStatus}-${overlay}` : "theme";
-    const renderKey = `${key}:${orientation}:${theme}:${bgKey}:${arabicFont}`;
+    const renderKey = `${key}:${orientation}:${theme}:${bgKey}:${arabicFont}:${showHost}`;
     const photoPending = bgKind === "photo" && photoStatus === "loading";
 
     const input = useMemo(() => {
@@ -102,6 +103,7 @@ function ShareImageBody({ pos }: { pos: Position }) {
             theme: getImageTheme(theme).id,
             photo: bgKind === "photo" ? photo : null,
             photoOverlay: overlay,
+            showSiteHost: showHost,
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [ready, photoPending, renderKey, arText, bnText, enText]);
@@ -150,6 +152,8 @@ function ShareImageBody({ pos }: { pos: Position }) {
                 onOverlayChange={setOverlay}
                 en={en}
             />
+
+            <SiteHostSwitch checked={showHost} onChange={setShowHost} en={en} />
 
             <motion.div
                 layout

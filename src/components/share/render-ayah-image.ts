@@ -309,6 +309,8 @@ export type AyahImageInput = {
     photo?: HTMLImageElement | null;
     /** How dark the veil over the photo is, 0 (none) to 0.9. Defaults to 0.5. */
     photoOverlay?: number;
+    /** Print the site address under the surah reference. Defaults to true. */
+    showSiteHost?: boolean;
 };
 
 export const DEFAULT_PHOTO_OVERLAY = 0.5;
@@ -837,7 +839,7 @@ export async function renderAyahImage(input: AyahImageInput): Promise<HTMLCanvas
 
     ctx.font = `500 ${portrait ? 22 : 17}px ${LATIN_FAMILY}`;
     ctx.fillStyle = p.muted;
-    ctx.fillText("quran.msar.me", w / 2, fy + footerH * 0.75);
+    if (input.showSiteHost ?? true) ctx.fillText("quran.msar.me", w / 2, fy + footerH * 0.75);
     ctx.shadowBlur = 0;
 
     return canvas;

@@ -3,7 +3,7 @@ import { AnimatePresence, motion } from "motion/react";
 import { useSearchParams } from "react-router-dom";
 import { Layouts } from "src/components";
 import { Segmented } from "src/components/ui/segmented";
-import { BackgroundPicker, ThemePicker } from "src/components/share/image-options";
+import { BackgroundPicker, SiteHostSwitch, ThemePicker } from "src/components/share/image-options";
 import { downloadBlobUrl, useAyahImage, useBackgroundPhoto } from "src/components/share/image-tools";
 import type { BackgroundKind } from "src/components/share/image-tools";
 import { DEFAULT_PHOTO_OVERLAY, getImageTheme, IMAGE_SIZES } from "src/components/share/render-ayah-image";
@@ -92,6 +92,7 @@ export function ImageGenerator() {
     const [bgKind, setBgKind] = useState<BackgroundKind>("theme");
     const [sig, setSig] = useState(() => Math.floor(Math.random() * 1000));
     const [overlay, setOverlay] = useState(DEFAULT_PHOTO_OVERLAY);
+    const [showHost, setShowHost] = useState(true);
     const { photo, status: photoStatus } = useBackgroundPhoto(bgKind === "photo", orientation, sig);
 
     const ar = useAyats(langs.includes("ar") ? "ar" : null);
@@ -115,7 +116,7 @@ export function ImageGenerator() {
 
     const photoPending = bgKind === "photo" && photoStatus === "loading";
     const bgKey = bgKind === "photo" ? `photo-${sig}-${photoStatus}-${overlay}` : "theme";
-    const styleKey = `${orientation}:${getImageTheme(theme).id}:${bgKey}:${arabicFont}:${langs.join("")}`;
+    const styleKey = `${orientation}:${getImageTheme(theme).id}:${bgKey}:${arabicFont}:${langs.join("")}:${showHost}`;
 
     /** Image input for ayahs `nums`; several are joined with ayah markers. */
     const buildInput = (nums: number[]): AyahImageInput | null => {
@@ -152,6 +153,7 @@ export function ImageGenerator() {
             theme: getImageTheme(theme).id,
             photo: bgKind === "photo" ? photo : null,
             photoOverlay: overlay,
+            showSiteHost: showHost,
         };
     };
 
@@ -298,6 +300,8 @@ export function ImageGenerator() {
                             en={en}
                         />
                     </Field>
+
+                    <SiteHostSwitch checked={showHost} onChange={setShowHost} en={en} />
                 </section>
 
                 {/* Previews */}
