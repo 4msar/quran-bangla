@@ -494,3 +494,12 @@ dialog.drawer-left {
         scroll-behavior: auto !important;
     }
 }
+
+/* Surah header photo: anchored to the top-right; inverted in dark mode. */
+.surah-photo {
+    background-position: right top;
+}
+
+[data-theme="dark"] .surah-photo {
+    filter: invert(1);
+}

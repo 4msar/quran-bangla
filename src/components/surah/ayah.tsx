@@ -11,7 +11,7 @@ import {
     hasSajdah,
     posKey,
     RUKU_BY_END,
-    toLocaleDigits,
+    // toLocaleDigits,
     TRANSLATIONS,
 } from "src/utils";
 import type { UiLang } from "src/utils";
@@ -60,11 +60,9 @@ export const AyahItem = memo(function AyahItem({ row, shown, ui, showArabic }: A
 
     const surah = getSurah(arabic.sura);
     const reference = `${surah ? getSurahName(surah, ui) : ""} ${arabic.sura}:${arabic.aya}`;
-    const fullText = [
-        arabic.text,
-        ...shown.map((id) => translations[id]?.text).filter(Boolean),
-        `— ${reference}`,
-    ].join("\n\n");
+    const fullText = [arabic.text, ...shown.map((id) => translations[id]?.text).filter(Boolean), `— ${reference}`].join(
+        "\n\n",
+    );
 
     const onCopy = () => {
         navigator.clipboard?.writeText(fullText);
@@ -113,20 +111,20 @@ export const AyahItem = memo(function AyahItem({ row, shown, ui, showArabic }: A
                             </motion.span>
                         </AnimatePresence>
                     </motion.button>
-                    <motion.button type="button" whileTap={tap} onClick={onCopy} aria-label="Copy ayah" className={actionButton}>
+                    <motion.button
+                        type="button"
+                        whileTap={tap}
+                        onClick={onCopy}
+                        aria-label="Copy ayah"
+                        className={actionButton}
+                    >
                         <AnimatePresence mode="popLayout" initial={false}>
                             <motion.span key={copied ? "check" : "copy"} className="flex" {...iconSwap}>
                                 {copied ? <CheckIcon size={18} className="text-brand-600" /> : <CopyIcon size={18} />}
                             </motion.span>
                         </AnimatePresence>
                     </motion.button>
-                    <AyahMenu
-                        sura={arabic.sura}
-                        aya={arabic.aya}
-                        arabic={arabic.text}
-                        shareText={fullText}
-                        ui={ui}
-                    />
+                    <AyahMenu sura={arabic.sura} aya={arabic.aya} arabic={arabic.text} shareText={fullText} ui={ui} />
                 </div>
             </div>
 
@@ -154,11 +152,11 @@ export const AyahItem = memo(function AyahItem({ row, shown, ui, showArabic }: A
                                 translationLang(id) === "bn" ? "font-bangla" : ""
                             }`}
                         >
-                            {index === shown.findIndex((x) => translationLang(x) === "bn") && (
+                            {/* {index === shown.findIndex((x) => translationLang(x) === "bn") && (
                                 <span className="mr-1 text-brand-700">
                                     {toLocaleDigits(arabic.aya, "bn")}.
                                 </span>
-                            )}
+                            )} */}
                             {t.text}
                         </p>
                     </div>

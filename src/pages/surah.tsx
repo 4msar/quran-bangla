@@ -8,14 +8,7 @@ import { usePageMeta } from "src/hooks/use-page-meta";
 import { useQuranRows } from "src/hooks/use-quran-rows";
 import { useUiLang } from "src/store";
 import type { Surah as SurahInfo } from "src/types";
-import {
-    bismillah,
-    findSurah,
-    getSurahName,
-    getSurahPrefix,
-    revelationLabel,
-    toLocaleDigits,
-} from "src/utils";
+import { bismillah, findSurah, getSurahName, getSurahPrefix, revelationLabel, toLocaleDigits } from "src/utils";
 import { NotFound } from "./not-found";
 import { surahPath, surahSlug } from "src/utils/slug";
 
@@ -27,7 +20,9 @@ export function Surah() {
     if (!surah) return <NotFound />;
     // Numbered links (/2) and mixed-case slugs move to the canonical slug, keeping search and hash.
     if (surahParam !== surahSlug(surah)) {
-        return <Navigate replace to={{ pathname: surahPath(surah.id), search: location.search, hash: location.hash }} />;
+        return (
+            <Navigate replace to={{ pathname: surahPath(surah.id), search: location.search, hash: location.hash }} />
+        );
     }
 
     // Keyed so switching surah resets scroll-tracking and menus.
@@ -64,12 +59,27 @@ function SurahView({ surah }: { surah: SurahInfo }) {
                 initial={{ opacity: 0, scale: 0.97 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-                className="relative mb-2 overflow-hidden rounded-3xl bg-brand-50 px-6 py-8 text-center ring-1 ring-brand-600/15"
+                data-title="Surah Header"
+                className="relative isolate mb-2 overflow-hidden rounded-3xl px-6 py-8 text-center ring-1 ring-brand-600/15"
             >
+                {/* Makkah or Madinah photo behind the header; the brand tint keeps the text readable. */}
+                <div
+                    aria-hidden="true"
+                    className="surah-photo absolute inset-0 -z-10 bg-size-[200px] bg-no-repeat"
+                    style={{
+                        backgroundImage: `url(/${surah.type.toLowerCase().startsWith("mec") ? "makkah" : "madinah"}.avif)`,
+                    }}
+                />
+                <div aria-hidden="true" className="absolute inset-0 -z-10 bg-brand-50/70" />
                 <span
                     aria-hidden="true"
                     className="diamond absolute left-5 top-5 h-12 w-12 text-sm font-semibold text-brand-700"
-                    style={{ "--diamond-bg": "var(--surface)", "--diamond-line": "var(--brand-100)" } as React.CSSProperties}
+                    style={
+                        {
+                            "--diamond-bg": "var(--surface)",
+                            "--diamond-line": "var(--brand-100)",
+                        } as React.CSSProperties
+                    }
                 >
                     <span>{d(surah.id)}</span>
                 </span>

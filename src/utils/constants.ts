@@ -37,10 +37,10 @@ export type TranslationInfo = {
 
 /** Order here is the order shown in settings and in the reader (Bangla first). */
 export const TRANSLATIONS: TranslationInfo[] = [
-    { id: "mujib", lang: "bn", name: "শেখ মুজিবুর রহমান", label: "Sheikh Mujibur Rahman" },
+    { id: "mujib", lang: "bn", name: "মুজিবুর রহমান", label: "Mujibur Rahman" },
     { id: "taisir", lang: "bn", name: "তাইসিরুল কুরআন", label: "Taisirul Quran" },
     { id: "rawai", lang: "bn", name: "রাওয়াইউল বায়ান", label: "Rawai Al-Bayan" },
-    { id: "bn", lang: "bn", name: " বাংলা", label: "Bangla" },
+    { id: "bn", lang: "bn", name: "মহিউদ্দিন খান", label: "Muhiuddin Khan" },
     { id: "saheeh", lang: "en", name: "Saheeh International", label: "Saheeh" },
     { id: "translit", lang: "en", name: "English Transliteration", label: "Transliteration" },
 ];
