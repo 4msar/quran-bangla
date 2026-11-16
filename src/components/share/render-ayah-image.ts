@@ -275,9 +275,37 @@ export const DEFAULT_IMAGE_THEME: ImageThemeId = "emerald";
 
 export const getImageTheme = (id: string) => IMAGE_THEMES.find((t) => t.id === id) ?? IMAGE_THEMES[0];
 
+const searchQueries = [
+    "islam",
+    "quran",
+    "mosque",
+    "islamic",
+    "islamic architecture",
+    "islamic pattern",
+    "islamic art",
+    "islamic calligraphy",
+    "islamic geometric pattern",
+    "islamic design",
+    "islamic ornament",
+    "islamic tilework",
+    "islamic arabesque",
+    "islamic minaret",
+    "islamic dome",
+    "islamic mosque interior",
+    "islamic mosque exterior",
+    "islamic mosque courtyard",
+    "islamic mosque prayer hall",
+    "islamic mosque minbar",
+    "islamic mosque mihrab",
+    "islamic mosque minaret silhouette",
+];
+
+/** Query picked from `sig` so the URL stays stable across renders (a random pick refetched every render). */
+const queryFor = (sig: number) => encodeURIComponent(searchQueries[Math.abs(sig) % searchQueries.length]);
+
 /** Random mosque photo for the background; `sig` picks a different one. */
 export const backgroundPhotoUrl = (orientation: ImageOrientation, sig: number) =>
-    `https://image.msar.me/unsplash/random?query=mosque&orientation=${orientation}&size=regular&sig=${sig}`;
+    `https://image.msar.me/unsplash/random?query=${queryFor(sig)}&orientation=${orientation}&size=regular&sig=${sig}`;
 
 /**
  * Loads a background photo with CORS so the canvas can still be exported.
@@ -321,7 +349,7 @@ export const IMAGE_SIZES: Record<ImageOrientation, { w: number; h: number }> = {
 };
 
 const BANGLA_FAMILY = '"Kalpurush", "Noto Sans Bengali", sans-serif';
-const LATIN_FAMILY = 'Inter, ui-sans-serif, system-ui, sans-serif';
+const LATIN_FAMILY = "Inter, ui-sans-serif, system-ui, sans-serif";
 
 /** Light-on-dark palette used over a photo, keeping the theme's accent. */
 function photoPalette(base: Palette): Palette {
@@ -407,7 +435,7 @@ function drawPhoto(
     w: number,
     h: number,
     tint: string,
-    overlay: number
+    overlay: number,
 ) {
     // object-fit: cover
     const scale = Math.max(w / img.naturalWidth, h / img.naturalHeight);
@@ -580,7 +608,7 @@ function background(
     h: number,
     p: Palette,
     photo: HTMLImageElement | null | undefined,
-    overlay: number
+    overlay: number,
 ) {
     if (photo) {
         drawPhoto(ctx, photo, w, h, p.bg[2], overlay);
@@ -596,7 +624,12 @@ function background(
 
     const m = Math.round(Math.min(w, h) * 0.035);
     let topExtra = 0;
-    const corners: [number, number][] = [[m, m], [w - m, m], [m, h - m], [w - m, h - m]];
+    const corners: [number, number][] = [
+        [m, m],
+        [w - m, m],
+        [m, h - m],
+        [w - m, h - m],
+    ];
 
     switch (p.frame) {
         case "double": {
@@ -618,7 +651,12 @@ function background(
             ctx.strokeRect(m, m, w - m * 2, h - m * 2);
             // Small diamonds at the middle of each edge.
             ctx.fillStyle = p.accent;
-            for (const [x, y] of [[w / 2, m], [w / 2, h - m], [m, h / 2], [w - m, h / 2]]) {
+            for (const [x, y] of [
+                [w / 2, m],
+                [w / 2, h - m],
+                [m, h / 2],
+                [w - m, h / 2],
+            ]) {
                 ctx.save();
                 ctx.translate(x, y);
                 ctx.rotate(Math.PI / 4);
@@ -699,7 +737,13 @@ function background(
                 star(ctx, c, y, 3.5);
                 star(ctx, w - c, y, 3.5);
             }
-            for (const [x, y] of [[c, c], [w - c, c], [c, h - c], [w - c, h - c]]) star(ctx, x, y, 7);
+            for (const [x, y] of [
+                [c, c],
+                [w - c, c],
+                [c, h - c],
+                [w - c, h - c],
+            ])
+                star(ctx, x, y, 7);
             break;
         }
     }
@@ -847,5 +891,5 @@ export async function renderAyahImage(input: AyahImageInput): Promise<HTMLCanvas
 
 export const canvasToBlob = (canvas: HTMLCanvasElement) =>
     new Promise<Blob>((resolve, reject) =>
-        canvas.toBlob((b) => (b ? resolve(b) : reject(new Error("Could not create image"))), "image/png")
+        canvas.toBlob((b) => (b ? resolve(b) : reject(new Error("Could not create image"))), "image/png"),
     );

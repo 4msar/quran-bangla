@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { useSearchParams } from "react-router-dom";
 import { Layouts } from "src/components";
@@ -53,6 +53,35 @@ function Field({ label, en, children }: { label: string; en: boolean; children: 
             {children}
         </div>
     );
+}
+
+/**
+ * Sticky offset for a column that may be taller than the viewport. Short: pins below the header.
+ * Tall: the negative top lets the page scroll it until its bottom is in view, then pins it there,
+ * so the page is the only scroll area.
+ */
+function useStickyTop<T extends HTMLElement>() {
+    const ref = useRef<T>(null);
+    const [top, setTop] = useState<string | undefined>(undefined);
+    useEffect(() => {
+        const el = ref.current;
+        if (!el) return;
+        const update = () => {
+            const header = document.querySelector("header")?.offsetHeight ?? 0;
+            const gap = 16;
+            const overflow = el.offsetHeight + header + gap * 2 - window.innerHeight;
+            setTop(overflow > 0 ? `${header + gap - overflow}px` : undefined);
+        };
+        update();
+        const observer = new ResizeObserver(update);
+        observer.observe(el);
+        window.addEventListener("resize", update);
+        return () => {
+            observer.disconnect();
+            window.removeEventListener("resize", update);
+        };
+    }, []);
+    return [ref, top] as const;
 }
 
 export function ImageGenerator() {
@@ -183,6 +212,8 @@ export function ImageGenerator() {
         ));
 
     const bnText = en ? "" : "font-bangla text-base";
+    // The preview always pins below the header. The controls pin too, by their bottom edge when taller than the screen.
+    const [controlsRef, controlsTop] = useStickyTop<HTMLElement>();
 
     return (
         <Layouts wide>
@@ -197,7 +228,11 @@ export function ImageGenerator() {
 
             <div className="grid gap-6 lg:grid-cols-[22rem_1fr] lg:items-start">
                 {/* Controls */}
-                <section className="space-y-5 rounded-3xl bg-surface p-5 shadow-card lg:sticky lg:top-[calc(var(--header-h)+1rem)]">
+                <section
+                    ref={controlsRef}
+                    style={controlsTop ? { top: controlsTop } : undefined}
+                    className="space-y-5 rounded-3xl bg-surface p-5 shadow-card lg:sticky lg:top-[calc(var(--header-h)+1rem)]"
+                >
                     <Field label={en ? "Surah" : "সূরা"} en={en}>
                         <select
                             aria-label={en ? "Surah" : "সূরা"}
@@ -309,8 +344,8 @@ export function ImageGenerator() {
                     <SiteHostSwitch checked={showHost} onChange={setShowHost} en={en} />
                 </section>
 
-                {/* Previews */}
-                <section className="space-y-4">
+                {/* Previews: always pinned below the header on desktop; scrolled only by the page. */}
+                <section className="space-y-4 lg:sticky lg:top-[calc(var(--header-h)+1rem)]">
                     {cards.length > 1 && (
                         <div className="flex items-center justify-between gap-3">
                             <p className={`text-sm text-muted ${bnText}`}>
@@ -407,6 +442,13 @@ function PreviewCard({
     const file = current ? new File([current.blob], fileName, { type: "image/png" }) : null;
     const canShare = !!file && "canShare" in navigator && navigator.canShare({ files: [file] });
 
+    // A single image is shrunk to fit the screen height, so the sticky preview never has its top pushed
+    // under the header when the page is scrolled to the end. 12rem covers the gap below the header, the
+    // buttons and size line under the image, and the page's bottom padding.
+    const singleWidth = single
+        ? `min(100%, ${orientation === "portrait" ? "30rem, " : ""}calc((100dvh - var(--header-h) - 12rem) * ${w} / ${h}))`
+        : undefined;
+
     return (
         <motion.div
             layout
@@ -421,7 +463,7 @@ function PreviewCard({
                 style={{
                     background: themeBg,
                     aspectRatio: `${w} / ${h}`,
-                    width: single && orientation === "portrait" ? "min(100%, 30rem)" : "100%",
+                    width: singleWidth ?? "100%",
                 }}
             >
                 <AnimatePresence initial={false}>
@@ -451,7 +493,7 @@ function PreviewCard({
                     )}
                 </AnimatePresence>
             </div>
-            <div className="mx-auto flex gap-2" style={{ maxWidth: single && orientation === "portrait" ? "30rem" : undefined }}>
+            <div className="mx-auto flex gap-2" style={{ maxWidth: singleWidth }}>
                 <motion.button
                     type="button"
                     onClick={download}
