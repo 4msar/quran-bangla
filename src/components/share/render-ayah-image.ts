@@ -1,14 +1,32 @@
 /**
- * Draws an ayah card on a <canvas>: themed (or photo) background, thin double border,
+ * Draws an ayah card on a <canvas>: themed (or photo) background with a motif and frame,
  * Arabic in the middle, a separator, the translation(s), then surah · ayah.
  */
 export type ImageOrientation = "portrait" | "landscape";
 
-export type ImageThemeId = "emerald" | "midnight" | "maroon" | "parchment" | "charcoal";
+export type ImageThemeId =
+    | "emerald"
+    | "midnight"
+    | "turquoise"
+    | "maroon"
+    | "royal"
+    | "ocean"
+    | "olive"
+    | "rose"
+    | "charcoal"
+    | "parchment"
+    | "ivory"
+    | "dawn";
+
+/** Background ornament drawn behind the text. */
+type Motif = "stars" | "girih" | "dots" | "waves" | "rays" | "lattice";
+/** Border style. */
+type Frame = "double" | "single" | "corners" | "arch" | "band";
 
 type Palette = {
     /** Radial gradient stops, centre → edge. */
     bg: [string, string, string];
+    /** Colour of the background motif. */
     pattern: string;
     text: string;
     soft: string;
@@ -18,6 +36,8 @@ type Palette = {
     muted: string;
     rule: string;
     shadow: string;
+    motif: Motif;
+    frame: Frame;
 };
 
 export const IMAGE_THEMES: { id: ImageThemeId; label: string; bn: string; palette: Palette }[] = [
@@ -36,6 +56,8 @@ export const IMAGE_THEMES: { id: ImageThemeId; label: string; bn: string; palett
             muted: "rgba(255,255,255,0.55)",
             rule: "rgba(255,255,255,0.14)",
             shadow: "rgba(0,0,0,0.25)",
+            motif: "stars",
+            frame: "double",
         },
     },
     {
@@ -44,15 +66,36 @@ export const IMAGE_THEMES: { id: ImageThemeId; label: string; bn: string; palett
         bn: "রাত",
         palette: {
             bg: ["#24365f", "#152342", "#0a1226"],
-            pattern: "rgba(255,255,255,0.03)",
+            pattern: "rgba(255,255,255,0.5)",
             text: "#ffffff",
             soft: "rgba(232,238,255,0.86)",
             accent: "#e9c46a",
             accentSoft: "rgba(233,196,106,0.5)",
             innerBorder: "rgba(255,255,255,0.16)",
-            muted: "rgba(255,255,255,0.5)",
+            muted: "rgba(255,255,255,0.55)",
             rule: "rgba(255,255,255,0.14)",
             shadow: "rgba(0,0,0,0.3)",
+            motif: "dots",
+            frame: "arch",
+        },
+    },
+    {
+        id: "turquoise",
+        label: "Turquoise",
+        bn: "ফিরোজা",
+        palette: {
+            bg: ["#1b8a8f", "#0f6468", "#073c40"],
+            pattern: "rgba(255,255,255,0.045)",
+            text: "#ffffff",
+            soft: "rgba(255,255,255,0.88)",
+            accent: "#f2d58a",
+            accentSoft: "rgba(242,213,138,0.55)",
+            innerBorder: "rgba(255,255,255,0.16)",
+            muted: "rgba(255,255,255,0.55)",
+            rule: "rgba(255,255,255,0.14)",
+            shadow: "rgba(0,0,0,0.3)",
+            motif: "girih",
+            frame: "arch",
         },
     },
     {
@@ -61,7 +104,7 @@ export const IMAGE_THEMES: { id: ImageThemeId; label: string; bn: string; palett
         bn: "মেরুন",
         palette: {
             bg: ["#7a2335", "#5a1626", "#350b15"],
-            pattern: "rgba(255,255,255,0.035)",
+            pattern: "rgba(255,255,255,0.045)",
             text: "#ffffff",
             soft: "rgba(255,240,240,0.88)",
             accent: "#f0cf86",
@@ -70,23 +113,84 @@ export const IMAGE_THEMES: { id: ImageThemeId; label: string; bn: string; palett
             muted: "rgba(255,255,255,0.55)",
             rule: "rgba(255,255,255,0.14)",
             shadow: "rgba(0,0,0,0.3)",
+            motif: "girih",
+            frame: "corners",
         },
     },
     {
-        id: "parchment",
-        label: "Parchment",
-        bn: "কাগজ",
+        id: "royal",
+        label: "Royal",
+        bn: "বেগুনি",
         palette: {
-            bg: ["#fbf3df", "#f3e6c6", "#e6d3a6"],
-            pattern: "rgba(120,80,20,0.05)",
-            text: "#2b1d0e",
-            soft: "rgba(60,40,18,0.85)",
-            accent: "#9a6a1f",
-            accentSoft: "rgba(154,106,31,0.5)",
-            innerBorder: "rgba(120,80,20,0.22)",
-            muted: "rgba(60,40,18,0.55)",
-            rule: "rgba(120,80,20,0.2)",
-            shadow: "rgba(0,0,0,0)",
+            bg: ["#5b3a8c", "#3f2566", "#23123d"],
+            pattern: "rgba(255,255,255,0.035)",
+            text: "#ffffff",
+            soft: "rgba(255,255,255,0.88)",
+            accent: "#e8c56f",
+            accentSoft: "rgba(232,197,111,0.5)",
+            innerBorder: "rgba(255,255,255,0.16)",
+            muted: "rgba(255,255,255,0.55)",
+            rule: "rgba(255,255,255,0.14)",
+            shadow: "rgba(0,0,0,0.3)",
+            motif: "rays",
+            frame: "corners",
+        },
+    },
+    {
+        id: "ocean",
+        label: "Ocean",
+        bn: "সমুদ্র",
+        palette: {
+            bg: ["#1d5f99", "#134473", "#0a2747"],
+            pattern: "rgba(255,255,255,0.045)",
+            text: "#ffffff",
+            soft: "rgba(232,244,255,0.88)",
+            accent: "#f0d38a",
+            accentSoft: "rgba(240,211,138,0.5)",
+            innerBorder: "rgba(255,255,255,0.16)",
+            muted: "rgba(255,255,255,0.55)",
+            rule: "rgba(255,255,255,0.14)",
+            shadow: "rgba(0,0,0,0.3)",
+            motif: "waves",
+            frame: "band",
+        },
+    },
+    {
+        id: "olive",
+        label: "Olive",
+        bn: "জলপাই",
+        palette: {
+            bg: ["#6b7a3a", "#4f5c28", "#2f3815"],
+            pattern: "rgba(255,255,255,0.04)",
+            text: "#ffffff",
+            soft: "rgba(255,255,255,0.88)",
+            accent: "#f0d58c",
+            accentSoft: "rgba(240,213,140,0.55)",
+            innerBorder: "rgba(255,255,255,0.16)",
+            muted: "rgba(255,255,255,0.55)",
+            rule: "rgba(255,255,255,0.14)",
+            shadow: "rgba(0,0,0,0.3)",
+            motif: "stars",
+            frame: "band",
+        },
+    },
+    {
+        id: "rose",
+        label: "Rose",
+        bn: "গোলাপি",
+        palette: {
+            bg: ["#b56576", "#8c4a5a", "#5a2a37"],
+            pattern: "rgba(255,255,255,0.045)",
+            text: "#ffffff",
+            soft: "rgba(255,244,240,0.9)",
+            accent: "#ffe0b5",
+            accentSoft: "rgba(255,224,181,0.55)",
+            innerBorder: "rgba(255,255,255,0.16)",
+            muted: "rgba(255,255,255,0.55)",
+            rule: "rgba(255,255,255,0.14)",
+            shadow: "rgba(0,0,0,0.3)",
+            motif: "lattice",
+            frame: "arch",
         },
     },
     {
@@ -95,15 +199,74 @@ export const IMAGE_THEMES: { id: ImageThemeId; label: string; bn: string; palett
         bn: "কালো",
         palette: {
             bg: ["#2e2e30", "#1e1e20", "#111112"],
-            pattern: "rgba(255,255,255,0.03)",
+            pattern: "rgba(255,255,255,0.04)",
             text: "#ffffff",
             soft: "rgba(255,255,255,0.84)",
             accent: "#d9b56a",
             accentSoft: "rgba(217,181,106,0.5)",
-            innerBorder: "rgba(255,255,255,0.14)",
-            muted: "rgba(255,255,255,0.5)",
-            rule: "rgba(255,255,255,0.12)",
+            innerBorder: "rgba(255,255,255,0.16)",
+            muted: "rgba(255,255,255,0.55)",
+            rule: "rgba(255,255,255,0.14)",
             shadow: "rgba(0,0,0,0.3)",
+            motif: "waves",
+            frame: "single",
+        },
+    },
+    {
+        id: "parchment",
+        label: "Parchment",
+        bn: "কাগজ",
+        palette: {
+            bg: ["#fbf3df", "#f3e6c6", "#e6d3a6"],
+            pattern: "rgba(120,80,20,0.07)",
+            text: "#2b1d0e",
+            soft: "rgba(60,40,18,0.85)",
+            accent: "#9a6a1f",
+            accentSoft: "rgba(154,106,31,0.5)",
+            innerBorder: "rgba(120,80,20,0.22)",
+            muted: "rgba(60,40,18,0.55)",
+            rule: "rgba(120,80,20,0.2)",
+            shadow: "rgba(0,0,0,0)",
+            motif: "lattice",
+            frame: "band",
+        },
+    },
+    {
+        id: "ivory",
+        label: "Ivory",
+        bn: "সাদা",
+        palette: {
+            bg: ["#ffffff", "#f6f3ec", "#e9e3d4"],
+            pattern: "rgba(47,122,88,0.08)",
+            text: "#1f2a24",
+            soft: "rgba(31,42,36,0.82)",
+            accent: "#2f7a58",
+            accentSoft: "rgba(47,122,88,0.45)",
+            innerBorder: "rgba(47,122,88,0.22)",
+            muted: "rgba(31,42,36,0.5)",
+            rule: "rgba(47,122,88,0.2)",
+            shadow: "rgba(0,0,0,0)",
+            motif: "girih",
+            frame: "single",
+        },
+    },
+    {
+        id: "dawn",
+        label: "Dawn",
+        bn: "ভোর",
+        palette: {
+            bg: ["#f3f9fd", "#dcebf6", "#bcd6ea"],
+            pattern: "rgba(255,255,255,0.45)",
+            text: "#0f2a40",
+            soft: "rgba(15,42,64,0.82)",
+            accent: "#a8741f",
+            accentSoft: "rgba(168,116,31,0.5)",
+            innerBorder: "rgba(15,42,64,0.18)",
+            muted: "rgba(15,42,64,0.5)",
+            rule: "rgba(15,42,64,0.16)",
+            shadow: "rgba(0,0,0,0)",
+            motif: "rays",
+            frame: "double",
         },
     },
 ];
@@ -264,6 +427,151 @@ function drawPhoto(
     ctx.fillRect(0, 0, w, h);
 }
 
+/** Eight-point star outline (16 vertices). */
+function octagram(ctx: CanvasRenderingContext2D, cx: number, cy: number, r: number) {
+    ctx.moveTo(cx + r, cy);
+    for (let i = 1; i <= 16; i++) {
+        const rr = i % 2 ? r * 0.72 : r;
+        const a = (i * Math.PI) / 8;
+        ctx.lineTo(cx + Math.cos(a) * rr, cy + Math.sin(a) * rr);
+    }
+    ctx.closePath();
+}
+
+/** Small deterministic PRNG so the "dots" sky looks the same every render. */
+function seeded(seed: number) {
+    return () => {
+        seed = (seed * 16807) % 2147483647;
+        return (seed - 1) / 2147483646;
+    };
+}
+
+function drawMotif(ctx: CanvasRenderingContext2D, w: number, h: number, p: Palette) {
+    ctx.save();
+    ctx.fillStyle = p.pattern;
+    ctx.strokeStyle = p.pattern;
+    ctx.lineWidth = 1.5;
+    switch (p.motif) {
+        case "stars": {
+            const step = 72;
+            for (let y = step / 2; y < h; y += step) {
+                for (let x = Math.round(y / step) % 2 ? step : step / 2; x < w; x += step) star(ctx, x, y, 9);
+            }
+            break;
+        }
+        case "girih": {
+            // Octagram tiling joined by small squares.
+            const step = 96;
+            ctx.beginPath();
+            for (let y = 0; y <= h + step; y += step) {
+                for (let x = 0; x <= w + step; x += step) {
+                    octagram(ctx, x, y, step * 0.36);
+                    const cx = x + step / 2;
+                    const cy = y + step / 2;
+                    const q = step * 0.14;
+                    ctx.moveTo(cx, cy - q);
+                    ctx.lineTo(cx + q, cy);
+                    ctx.lineTo(cx, cy + q);
+                    ctx.lineTo(cx - q, cy);
+                    ctx.closePath();
+                }
+            }
+            ctx.stroke();
+            break;
+        }
+        case "dots": {
+            // A quiet starry sky, denser toward the top.
+            const rand = seeded(7);
+            const count = Math.round((w * h) / 2600);
+            for (let i = 0; i < count; i++) {
+                const x = rand() * w;
+                const y = Math.pow(rand(), 1.6) * h;
+                const r = rand() < 0.08 ? 2.2 : rand() * 1.2 + 0.4;
+                ctx.globalAlpha = 0.25 + rand() * 0.6 * (1 - y / h);
+                ctx.beginPath();
+                ctx.arc(x, y, r, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            ctx.globalAlpha = 1;
+            break;
+        }
+        case "waves": {
+            // Overlapping scales.
+            const r = 34;
+            ctx.beginPath();
+            for (let row = 0, y = 0; y < h + r; row++, y += r * 0.75) {
+                for (let x = row % 2 ? r : 0; x < w + r * 2; x += r * 2) {
+                    ctx.moveTo(x + r, y);
+                    ctx.arc(x, y, r, 0, Math.PI);
+                }
+            }
+            ctx.stroke();
+            break;
+        }
+        case "rays": {
+            // Sunburst from just above the centre.
+            const cx = w / 2;
+            const cy = h * 0.42;
+            const len = Math.hypot(w, h);
+            const n = 36;
+            for (let i = 0; i < n; i++) {
+                const a0 = (i / n) * Math.PI * 2;
+                const a1 = a0 + Math.PI / n;
+                ctx.beginPath();
+                ctx.moveTo(cx, cy);
+                ctx.lineTo(cx + Math.cos(a0) * len, cy + Math.sin(a0) * len);
+                ctx.lineTo(cx + Math.cos(a1) * len, cy + Math.sin(a1) * len);
+                ctx.closePath();
+                ctx.fill();
+            }
+            // Fade the rays out at the centre so the text stays clean.
+            const g = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.min(w, h) * 0.5);
+            g.addColorStop(0, p.bg[0]);
+            g.addColorStop(1, "rgba(0,0,0,0)");
+            ctx.fillStyle = g;
+            ctx.fillRect(0, 0, w, h);
+            break;
+        }
+        case "lattice": {
+            // Diamond trellis with a dot at each crossing.
+            const step = 56;
+            ctx.beginPath();
+            for (let d = -h; d < w + h; d += step) {
+                ctx.moveTo(d, 0);
+                ctx.lineTo(d + h, h);
+                ctx.moveTo(d, h);
+                ctx.lineTo(d + h, 0);
+            }
+            ctx.stroke();
+            for (let y = 0; y <= h; y += step) {
+                for (let x = (y / step) % 2 ? step / 2 : 0; x <= w; x += step) {
+                    ctx.beginPath();
+                    ctx.arc(x, y, 2.5, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+            break;
+        }
+    }
+    ctx.restore();
+}
+
+/** Pointed (mihrab) arch outline inside the margin; returns the shoulder height. */
+function archPath(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number) {
+    const rise = Math.min(w * 0.32, h * 0.22);
+    const shoulder = y + rise;
+    const cx = x + w / 2;
+    ctx.beginPath();
+    ctx.moveTo(x, y + h);
+    ctx.lineTo(x, shoulder);
+    ctx.bezierCurveTo(x, y + rise * 0.35, cx - w * 0.18, y + rise * 0.12, cx, y);
+    ctx.bezierCurveTo(cx + w * 0.18, y + rise * 0.12, x + w, y + rise * 0.35, x + w, shoulder);
+    ctx.lineTo(x + w, y + h);
+    ctx.closePath();
+    return rise;
+}
+
+/** Draws the background and frame; returns the margin and extra top space the frame needs. */
 function background(
     ctx: CanvasRenderingContext2D,
     w: number,
@@ -281,32 +589,119 @@ function background(
         g.addColorStop(1, p.bg[2]);
         ctx.fillStyle = g;
         ctx.fillRect(0, 0, w, h);
-
-        // Faint star lattice.
-        ctx.fillStyle = p.pattern;
-        const step = 72;
-        for (let y = step / 2; y < h; y += step) {
-            for (let x = (Math.round(y / step) % 2 ? step : step / 2); x < w; x += step) {
-                star(ctx, x, y, 9);
-            }
-        }
+        drawMotif(ctx, w, h, p);
     }
 
-    // Border: an outer accent line and a thin inner one.
     const m = Math.round(Math.min(w, h) * 0.035);
-    ctx.strokeStyle = p.accentSoft;
-    ctx.lineWidth = 2;
-    roundRect(ctx, m, m, w - m * 2, h - m * 2, 22);
-    ctx.stroke();
-    ctx.strokeStyle = p.innerBorder;
-    ctx.lineWidth = 1;
-    roundRect(ctx, m + 9, m + 9, w - (m + 9) * 2, h - (m + 9) * 2, 16);
-    ctx.stroke();
+    let topExtra = 0;
+    const corners: [number, number][] = [[m, m], [w - m, m], [m, h - m], [w - m, h - m]];
 
-    // Corner stars.
-    ctx.fillStyle = p.accent;
-    for (const [x, y] of [[m, m], [w - m, m], [m, h - m], [w - m, h - m]]) star(ctx, x, y, 8);
-    return m;
+    switch (p.frame) {
+        case "double": {
+            ctx.strokeStyle = p.accentSoft;
+            ctx.lineWidth = 2;
+            roundRect(ctx, m, m, w - m * 2, h - m * 2, 22);
+            ctx.stroke();
+            ctx.strokeStyle = p.innerBorder;
+            ctx.lineWidth = 1;
+            roundRect(ctx, m + 9, m + 9, w - (m + 9) * 2, h - (m + 9) * 2, 16);
+            ctx.stroke();
+            ctx.fillStyle = p.accent;
+            for (const [x, y] of corners) star(ctx, x, y, 8);
+            break;
+        }
+        case "single": {
+            ctx.strokeStyle = p.accentSoft;
+            ctx.lineWidth = 1.5;
+            ctx.strokeRect(m, m, w - m * 2, h - m * 2);
+            // Small diamonds at the middle of each edge.
+            ctx.fillStyle = p.accent;
+            for (const [x, y] of [[w / 2, m], [w / 2, h - m], [m, h / 2], [w - m, h / 2]]) {
+                ctx.save();
+                ctx.translate(x, y);
+                ctx.rotate(Math.PI / 4);
+                ctx.fillRect(-5, -5, 10, 10);
+                ctx.restore();
+            }
+            break;
+        }
+        case "corners": {
+            ctx.strokeStyle = p.innerBorder;
+            ctx.lineWidth = 1;
+            ctx.strokeRect(m + 10, m + 10, w - (m + 10) * 2, h - (m + 10) * 2);
+            // L-shaped brackets with a star at each corner.
+            const len = Math.min(w, h) * 0.12;
+            ctx.strokeStyle = p.accent;
+            ctx.lineWidth = 3;
+            ctx.lineCap = "round";
+            for (const [x, y] of corners) {
+                const sx = x === m ? 1 : -1;
+                const sy = y === m ? 1 : -1;
+                ctx.beginPath();
+                ctx.moveTo(x + sx * len, y);
+                ctx.lineTo(x, y);
+                ctx.lineTo(x, y + sy * len);
+                ctx.stroke();
+                ctx.lineWidth = 1.5;
+                ctx.beginPath();
+                ctx.moveTo(x + sx * len * 0.6, y + sy * 8);
+                ctx.lineTo(x + sx * 8, y + sy * 8);
+                ctx.lineTo(x + sx * 8, y + sy * len * 0.6);
+                ctx.stroke();
+                ctx.lineWidth = 3;
+            }
+            ctx.lineCap = "butt";
+            ctx.fillStyle = p.accent;
+            for (const [x, y] of corners) star(ctx, x, y, 6);
+            break;
+        }
+        case "arch": {
+            ctx.strokeStyle = p.innerBorder;
+            ctx.lineWidth = 1;
+            ctx.strokeRect(m, m, w - m * 2, h - m * 2);
+            const inset = m + 14;
+            const rise = archPath(ctx, inset, inset, w - inset * 2, h - inset * 2);
+            ctx.strokeStyle = p.accentSoft;
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            archPath(ctx, inset + 8, inset + 8, w - (inset + 8) * 2, h - (inset + 8) * 2);
+            ctx.strokeStyle = p.innerBorder;
+            ctx.lineWidth = 1;
+            ctx.stroke();
+            ctx.fillStyle = p.accent;
+            star(ctx, w / 2, inset, 8);
+            for (const [x, y] of corners) star(ctx, x, y, 5);
+            topExtra = rise * 0.55;
+            break;
+        }
+        case "band": {
+            // Wide translucent band with a fine line either side and stars along it.
+            const bw = 12;
+            ctx.strokeStyle = p.accentSoft;
+            ctx.globalAlpha = 0.45;
+            ctx.lineWidth = bw;
+            ctx.strokeRect(m + bw / 2, m + bw / 2, w - m * 2 - bw, h - m * 2 - bw);
+            ctx.globalAlpha = 1;
+            ctx.lineWidth = 1;
+            ctx.strokeStyle = p.accent;
+            ctx.strokeRect(m, m, w - m * 2, h - m * 2);
+            ctx.strokeRect(m + bw, m + bw, w - (m + bw) * 2, h - (m + bw) * 2);
+            ctx.fillStyle = p.accent;
+            const c = m + bw / 2;
+            const gap = 64;
+            for (let x = c + gap; x < w - c - gap / 2; x += gap) {
+                star(ctx, x, c, 3.5);
+                star(ctx, x, h - c, 3.5);
+            }
+            for (let y = c + gap; y < h - c - gap / 2; y += gap) {
+                star(ctx, c, y, 3.5);
+                star(ctx, w - c, y, 3.5);
+            }
+            for (const [x, y] of [[c, c], [w - c, c], [c, h - c], [w - c, h - c]]) star(ctx, x, y, 7);
+            break;
+        }
+    }
+    return { m, topExtra };
 }
 
 function separator(ctx: CanvasRenderingContext2D, cx: number, y: number, half: number, p: Palette) {
@@ -336,11 +731,11 @@ export async function renderAyahImage(input: AyahImageInput): Promise<HTMLCanvas
     const base = getImageTheme(input.theme ?? DEFAULT_IMAGE_THEME).palette;
     const p = input.photo ? photoPalette(base) : base;
     const overlay = Math.min(0.9, Math.max(0, input.photoOverlay ?? DEFAULT_PHOTO_OVERLAY));
-    const m = background(ctx, w, h, p, input.photo, overlay);
+    const { m, topExtra } = background(ctx, w, h, p, input.photo, overlay);
 
     // Footer: surah name · ayah, then the site.
     const footerH = portrait ? 150 : 104;
-    const top = m + (portrait ? 70 : 44);
+    const top = m + (portrait ? 70 : 44) + topExtra;
     const bottom = h - m - footerH;
     const maxWidth = w - (m + (portrait ? 70 : 64)) * 2;
     const gap = portrait ? 56 : 36; // around the separator
