@@ -3,6 +3,9 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "resolutions": {
+    "@typescript-eslint/types": "8.72.0"
+  },
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build && node scripts/prerender.mjs",
