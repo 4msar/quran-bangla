@@ -144,7 +144,11 @@ export type AyahImageInput = {
     theme?: ImageThemeId;
     /** Photo drawn under a dark veil; text then uses light colours with the theme accent. */
     photo?: HTMLImageElement | null;
+    /** How dark the veil over the photo is, 0 (none) to 0.9. Defaults to 0.5. */
+    photoOverlay?: number;
 };
+
+export const DEFAULT_PHOTO_OVERLAY = 0.5;
 
 export const IMAGE_SIZES: Record<ImageOrientation, { w: number; h: number }> = {
     landscape: { w: 1200, h: 630 },
@@ -232,7 +236,14 @@ function star(ctx: CanvasRenderingContext2D, cx: number, cy: number, r: number) 
     }
 }
 
-function drawPhoto(ctx: CanvasRenderingContext2D, img: HTMLImageElement, w: number, h: number, tint: string) {
+function drawPhoto(
+    ctx: CanvasRenderingContext2D,
+    img: HTMLImageElement,
+    w: number,
+    h: number,
+    tint: string,
+    overlay: number
+) {
     // object-fit: cover
     const scale = Math.max(w / img.naturalWidth, h / img.naturalHeight);
     const iw = img.naturalWidth * scale;
@@ -240,22 +251,29 @@ function drawPhoto(ctx: CanvasRenderingContext2D, img: HTMLImageElement, w: numb
     ctx.drawImage(img, (w - iw) / 2, (h - ih) / 2, iw, ih);
 
     // Darken (tinted toward the theme) so text stays readable.
-    ctx.fillStyle = "rgba(0,0,0,0.5)";
+    ctx.fillStyle = `rgba(0,0,0,${overlay})`;
     ctx.fillRect(0, 0, w, h);
-    ctx.globalAlpha = 0.25;
+    ctx.globalAlpha = overlay * 0.5;
     ctx.fillStyle = tint;
     ctx.fillRect(0, 0, w, h);
     ctx.globalAlpha = 1;
     const v = ctx.createRadialGradient(w / 2, h / 2, Math.min(w, h) * 0.3, w / 2, h / 2, Math.max(w, h) * 0.75);
     v.addColorStop(0, "rgba(0,0,0,0)");
-    v.addColorStop(1, "rgba(0,0,0,0.45)");
+    v.addColorStop(1, `rgba(0,0,0,${overlay * 0.9})`);
     ctx.fillStyle = v;
     ctx.fillRect(0, 0, w, h);
 }
 
-function background(ctx: CanvasRenderingContext2D, w: number, h: number, p: Palette, photo?: HTMLImageElement | null) {
+function background(
+    ctx: CanvasRenderingContext2D,
+    w: number,
+    h: number,
+    p: Palette,
+    photo: HTMLImageElement | null | undefined,
+    overlay: number
+) {
     if (photo) {
-        drawPhoto(ctx, photo, w, h, p.bg[2]);
+        drawPhoto(ctx, photo, w, h, p.bg[2], overlay);
     } else {
         const g = ctx.createRadialGradient(w / 2, h * 0.42, 0, w / 2, h / 2, Math.max(w, h) * 0.75);
         g.addColorStop(0, p.bg[0]);
@@ -317,7 +335,8 @@ export async function renderAyahImage(input: AyahImageInput): Promise<HTMLCanvas
 
     const base = getImageTheme(input.theme ?? DEFAULT_IMAGE_THEME).palette;
     const p = input.photo ? photoPalette(base) : base;
-    const m = background(ctx, w, h, p, input.photo);
+    const overlay = Math.min(0.9, Math.max(0, input.photoOverlay ?? DEFAULT_PHOTO_OVERLAY));
+    const m = background(ctx, w, h, p, input.photo, overlay);
 
     // Footer: surah name · ayah, then the site.
     const footerH = portrait ? 150 : 104;

@@ -6,7 +6,7 @@ import { Segmented } from "src/components/ui/segmented";
 import { BackgroundPicker, ThemePicker } from "src/components/share/image-options";
 import { downloadBlobUrl, useAyahImage, useBackgroundPhoto } from "src/components/share/image-tools";
 import type { BackgroundKind } from "src/components/share/image-tools";
-import { getImageTheme, IMAGE_SIZES } from "src/components/share/render-ayah-image";
+import { DEFAULT_PHOTO_OVERLAY, getImageTheme, IMAGE_SIZES } from "src/components/share/render-ayah-image";
 import type { AyahImageInput, ImageOrientation } from "src/components/share/render-ayah-image";
 import { useAyats } from "src/hooks/use-ayats";
 import { usePageMeta } from "src/hooks/use-page-meta";
@@ -91,6 +91,7 @@ export function ImageGenerator() {
     const [orientation, setOrientation] = useState<ImageOrientation>("portrait");
     const [bgKind, setBgKind] = useState<BackgroundKind>("theme");
     const [sig, setSig] = useState(() => Math.floor(Math.random() * 1000));
+    const [overlay, setOverlay] = useState(DEFAULT_PHOTO_OVERLAY);
     const { photo, status: photoStatus } = useBackgroundPhoto(bgKind === "photo", orientation, sig);
 
     const ar = useAyats(langs.includes("ar") ? "ar" : null);
@@ -113,7 +114,7 @@ export function ImageGenerator() {
         `${getAyahLabel(ui)} ${toLocaleDigits(sura, ui)}:${toLocaleDigits(a, ui)}${b > a ? `–${toLocaleDigits(b, ui)}` : ""}`;
 
     const photoPending = bgKind === "photo" && photoStatus === "loading";
-    const bgKey = bgKind === "photo" ? `photo-${sig}-${photoStatus}` : "theme";
+    const bgKey = bgKind === "photo" ? `photo-${sig}-${photoStatus}-${overlay}` : "theme";
     const styleKey = `${orientation}:${getImageTheme(theme).id}:${bgKey}:${arabicFont}:${langs.join("")}`;
 
     /** Image input for ayahs `nums`; several are joined with ayah markers. */
@@ -150,6 +151,7 @@ export function ImageGenerator() {
             orientation,
             theme: getImageTheme(theme).id,
             photo: bgKind === "photo" ? photo : null,
+            photoOverlay: overlay,
         };
     };
 
@@ -291,6 +293,8 @@ export function ImageGenerator() {
                             onChange={setBgKind}
                             onShuffle={() => setSig((n) => n + 1)}
                             photoStatus={photoStatus}
+                            overlay={overlay}
+                            onOverlayChange={setOverlay}
                             en={en}
                         />
                     </Field>

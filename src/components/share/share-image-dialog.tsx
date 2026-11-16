@@ -17,7 +17,7 @@ import {
     toLocaleDigits,
 } from "src/utils";
 import type { Position } from "src/utils";
-import { getImageTheme, IMAGE_SIZES } from "./render-ayah-image";
+import { DEFAULT_PHOTO_OVERLAY, getImageTheme, IMAGE_SIZES } from "./render-ayah-image";
 import type { ImageOrientation } from "./render-ayah-image";
 import { BackgroundPicker, ThemePicker } from "./image-options";
 import { downloadBlobUrl, useAyahImage, useBackgroundPhoto } from "./image-tools";
@@ -55,6 +55,7 @@ function ShareImageBody({ pos }: { pos: Position }) {
     const closeDialog = useUiStore((s) => s.closeShareImage);
     const [bgKind, setBgKind] = useState<BackgroundKind>("theme");
     const [sig, setSig] = useState(() => Math.floor(Math.random() * 1000));
+    const [overlay, setOverlay] = useState(DEFAULT_PHOTO_OVERLAY);
     const { photo, status: photoStatus } = useBackgroundPhoto(bgKind === "photo", orientation, sig);
 
     // Same content the reader shows for this ayah.
@@ -82,7 +83,7 @@ function ShareImageBody({ pos }: { pos: Position }) {
     const reference = `${getAyahLabel(ui)} ${toLocaleDigits(pos.sura, ui)}:${toLocaleDigits(pos.aya, ui)}`;
     const fileName = `quran-${pos.sura}-${pos.aya}-${orientation}.png`;
 
-    const bgKey = bgKind === "photo" ? `photo-${sig}-${photoStatus}` : "theme";
+    const bgKey = bgKind === "photo" ? `photo-${sig}-${photoStatus}-${overlay}` : "theme";
     const renderKey = `${key}:${orientation}:${theme}:${bgKey}:${arabicFont}`;
     const photoPending = bgKind === "photo" && photoStatus === "loading";
 
@@ -100,6 +101,7 @@ function ShareImageBody({ pos }: { pos: Position }) {
             orientation,
             theme: getImageTheme(theme).id,
             photo: bgKind === "photo" ? photo : null,
+            photoOverlay: overlay,
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [ready, photoPending, renderKey, arText, bnText, enText]);
@@ -144,6 +146,8 @@ function ShareImageBody({ pos }: { pos: Position }) {
                 onChange={setBgKind}
                 onShuffle={() => setSig((n) => n + 1)}
                 photoStatus={photoStatus}
+                overlay={overlay}
+                onOverlayChange={setOverlay}
                 en={en}
             />
 

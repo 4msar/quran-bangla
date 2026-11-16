@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { motion } from "motion/react";
 import { Segmented } from "src/components/ui/segmented";
 import { getImageTheme, IMAGE_THEMES } from "./render-ayah-image";
@@ -57,12 +58,17 @@ export function BackgroundPicker({
     onChange,
     onShuffle,
     photoStatus,
+    overlay,
+    onOverlayChange,
     en,
 }: {
     value: BackgroundKind;
     onChange: (kind: BackgroundKind) => void;
     onShuffle: () => void;
     photoStatus: PhotoStatus;
+    /** Darkness of the veil over the photo, 0..0.9. */
+    overlay: number;
+    onOverlayChange: (overlay: number) => void;
     en: boolean;
 }) {
     return (
@@ -92,6 +98,9 @@ export function BackgroundPicker({
                     </motion.button>
                 )}
             </div>
+            {value === "photo" && (
+                <OverlaySlider value={overlay} onCommit={onOverlayChange} en={en} />
+            )}
             {value === "photo" && photoStatus === "error" && (
                 <p className={`text-xs text-red-600 ${en ? "" : "font-bangla text-sm"}`}>
                     {en
@@ -100,5 +109,37 @@ export function BackgroundPicker({
                 </p>
             )}
         </div>
+    );
+}
+
+/** Range input that shows its value live but only re-renders the image on release. */
+function OverlaySlider({ value, onCommit, en }: { value: number; onCommit: (v: number) => void; en: boolean }) {
+    const [draft, setDraft] = useState<number | null>(null);
+    const shown = draft ?? value;
+    const commit = () => {
+        if (draft !== null && draft !== value) onCommit(draft);
+        setDraft(null);
+    };
+    const label = en ? "Overlay opacity" : "ওভারলে অস্বচ্ছতা";
+    return (
+        <label className="flex items-center gap-3 pt-1">
+            <span className={`shrink-0 text-sm text-muted ${en ? "" : "font-bangla"}`}>{label}</span>
+            <input
+                type="range"
+                aria-label={label}
+                min={0}
+                max={90}
+                step={5}
+                value={Math.round(shown * 100)}
+                onChange={(e) => setDraft(Number(e.target.value) / 100)}
+                onPointerUp={commit}
+                onKeyUp={commit}
+                onBlur={commit}
+                className="h-1.5 flex-1 cursor-pointer accent-brand-600"
+            />
+            <span className="w-10 shrink-0 text-right text-sm tabular-nums text-ink">
+                {en ? Math.round(shown * 100) : Math.round(shown * 100).toLocaleString("bn-BD")}%
+            </span>
+        </label>
     );
 }
