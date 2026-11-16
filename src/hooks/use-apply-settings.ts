@@ -1,12 +1,10 @@
 import { useEffect, useState } from "react";
 import { useQuranStore, useUiStore } from "src/store";
 import {
-    arabicSizeRem,
     getArabicFont,
     getBanglaFont,
     getEnglishFont,
     loadGoogleFont,
-    translationSizeRem,
 } from "src/utils/constants";
 
 const darkQuery = () => window.matchMedia("(prefers-color-scheme: dark)");
@@ -59,10 +57,7 @@ export function useApplySettings() {
 
     useEffect(() => {
         const root = document.documentElement.style;
-        root.setProperty("--arabic-size", `${arabicSizeRem(arabicSize)}rem`);
-        root.setProperty(
-            "--translation-size",
-            `${translationSizeRem(translationSize)}rem`
-        );
+        root.setProperty("--arabic-size", `${arabicSize}px`);
+        root.setProperty("--translation-size", `${translationSize}px`);
     }, [arabicSize, translationSize]);
 }

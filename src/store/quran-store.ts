@@ -14,8 +14,10 @@ export type Position = { sura: number; aya: number };
 
 export const STORE_KEY = "quran-store-v2";
 
-export const SIZE_MIN = 1;
-export const SIZE_MAX = 10;
+/** Reading text sizes in px: allowed range and how much one +/− press changes it. */
+export const ARABIC_SIZE = { min: 20, max: 64, step: 2 } as const;
+export const TRANSLATION_SIZE = { min: 12, max: 28, step: 1 } as const;
+export type SizeRange = { min: number; max: number; step: number };
 
 type Settings = {
     theme: Theme;
@@ -48,8 +50,8 @@ export const DEFAULT_SETTINGS: Settings = {
     arabicFont: DEFAULT_ARABIC_FONT,
     banglaFont: DEFAULT_BANGLA_FONT,
     englishFont: DEFAULT_ENGLISH_FONT,
-    arabicSize: 5,
-    translationSize: 4,
+    arabicSize: 24,
+    translationSize: 18,
     reciter: DEFAULT_RECITER,
     volume: 1,
     playbackRate: 1,
@@ -86,7 +88,7 @@ export type QuranStore = Settings & {
     setLastRead: (position: Position) => void;
 };
 
-const clampSize = (size: number) => Math.min(SIZE_MAX, Math.max(SIZE_MIN, Math.round(size)));
+const clampSize = (size: number, { min, max }: SizeRange) => Math.min(max, Math.max(min, Math.round(size)));
 
 /** Keep Bangla before English, in the settings order, regardless of the order they were ticked. */
 const ORDER: TranslationId[] = TRANSLATIONS.map((t) => t.id);
@@ -119,8 +121,8 @@ export const useQuranStore = create<QuranStore>()(
             setArabicFont: (arabicFont) => set({ arabicFont }),
             setBanglaFont: (banglaFont) => set({ banglaFont }),
             setEnglishFont: (englishFont) => set({ englishFont }),
-            setArabicSize: (size) => set({ arabicSize: clampSize(size) }),
-            setTranslationSize: (size) => set({ translationSize: clampSize(size) }),
+            setArabicSize: (size) => set({ arabicSize: clampSize(size, ARABIC_SIZE) }),
+            setTranslationSize: (size) => set({ translationSize: clampSize(size, TRANSLATION_SIZE) }),
             setReciter: (reciter) => set({ reciter }),
             setVolume: (volume) => set({ volume: Math.min(1, Math.max(0, volume)) }),
             setPlaybackRate: (playbackRate) => set({ playbackRate }),
@@ -140,14 +142,19 @@ export const useQuranStore = create<QuranStore>()(
         }),
         {
             name: STORE_KEY,
-            version: 1,
+            version: 2,
             // v0 stored a single `translation: "bn" | "en" | "off"`.
+            // v1 stored text sizes as steps 1..10 instead of px.
             migrate: (persisted, version) => {
                 const state = (persisted ?? {}) as Record<string, unknown>;
                 if (version < 1) {
                     const old = state.translation;
                     state.translations = old === "en" ? ["en"] : old === "off" ? [] : ["bn"];
                     delete state.translation;
+                }
+                if (version < 2) {
+                    if (typeof state.arabicSize === "number") state.arabicSize = 20 + state.arabicSize * 4;
+                    if (typeof state.translationSize === "number") state.translationSize = 12 + state.translationSize;
                 }
                 return state as unknown as QuranStore;
             },

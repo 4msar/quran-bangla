@@ -82,8 +82,8 @@
     --arabic-font: "Amiri Quran", "Amiri", serif;
     --bangla-font: "Kalpurush", sans-serif;
     --english-font: Inter, ui-sans-serif, system-ui, sans-serif;
-    --arabic-size: 2.5rem;
-    --translation-size: 1rem;
+    --arabic-size: 24px;
+    --translation-size: 18px;
     /* Notch / status bar and home-indicator insets (non-zero in the installed iOS app). */
     --safe-top: env(safe-area-inset-top, 0px);
     --safe-bottom: env(safe-area-inset-bottom, 0px);

@@ -1,6 +1,6 @@
 import { translationLang } from "src/utils/constants";
 import { useEffect, useState } from "react";
-import { SIZE_MAX, SIZE_MIN, useQuranStore, useUiLang, useUiStore } from "src/store";
+import { ARABIC_SIZE, type SizeRange, TRANSLATION_SIZE, useQuranStore, useUiLang, useUiStore } from "src/store";
 import {
     ARABIC_FONTS,
     BANGLA_FONTS,
@@ -22,12 +22,17 @@ import { CheckIcon, MinusIcon, PlusIcon } from "src/components/ui/icons";
 const T = {
     bn: {
         title: "সেটিংস",
+        tabs: "সেটিংসের বিভাগ",
+        tabGeneral: "সাধারণ",
+        tabFonts: "ফন্ট",
         preview: "প্রিভিউ",
         theme: "থিম",
         view: "পড়ার ধরন",
         translations: "অনুবাদ",
         translationsHint: "একাধিক বেছে নিতে পারেন। কোনোটি না বাছলে শুধু আরবি।",
         translationsHintNoArabic: "আরবি বন্ধ থাকায় অন্তত একটি অনুবাদ চালু থাকবে।",
+        translationsOffView: "অনুবাদ শুধু “অনুবাদ” পড়ার ধরনে দেখায়।",
+        translationsTurnOn: "চালু করুন",
         arabicText: "আরবি লেখা",
         arabicTextHint: "বন্ধ করলে শুধু অনুবাদ দেখাবে।",
         showArabic: "আরবি দেখান",
@@ -52,12 +57,17 @@ const T = {
     },
     en: {
         title: "Settings",
+        tabs: "Settings sections",
+        tabGeneral: "General",
+        tabFonts: "Fonts",
         preview: "Preview",
         theme: "Theme",
         view: "View",
         translations: "Translations",
         translationsHint: "Pick one or more. None shows Arabic only.",
         translationsHintNoArabic: "With Arabic hidden, at least one translation stays on.",
+        translationsOffView: "Translations show only in the Translation view.",
+        translationsTurnOn: "Turn on",
         arabicText: "Arabic text",
         arabicTextHint: "Turn off to read the translation only.",
         showArabic: "Show Arabic",
@@ -82,6 +92,11 @@ const T = {
     },
 };
 
+const TRANSLATION_GROUPS = [
+    { lang: "bn", label: "বাংলা" },
+    { lang: "en", label: "English" },
+] as const;
+
 function Section({ title, hint, children }: { title: string; hint?: string; children: React.ReactNode }) {
     return (
         <section className="space-y-3 px-5 py-4">
@@ -99,11 +114,14 @@ function Section({ title, hint, children }: { title: string; hint?: string; chil
 function Stepper({
     label,
     value,
+    range,
     onChange,
     ui,
 }: {
     label: string;
+    /** Size in px. */
     value: number;
+    range: SizeRange;
     onChange: (v: number) => void;
     ui: "bn" | "en";
 }) {
@@ -116,23 +134,24 @@ function Stepper({
                 <button
                     type="button"
                     className={button}
-                    onClick={() => onChange(value - 1)}
-                    disabled={value <= SIZE_MIN}
+                    onClick={() => onChange(value - range.step)}
+                    disabled={value <= range.min}
                     aria-label={`${label} −`}
                 >
                     <MinusIcon size={16} />
                 </button>
                 <output
                     aria-live="polite"
-                    className="w-8 text-center text-sm font-semibold tabular-nums text-ink"
+                    className="w-14 text-center text-sm font-semibold tabular-nums text-ink"
                 >
                     {toLocaleDigits(value, ui)}
+                    <span className="ml-0.5 text-xs font-normal text-muted">px</span>
                 </output>
                 <button
                     type="button"
                     className={button}
-                    onClick={() => onChange(value + 1)}
-                    disabled={value >= SIZE_MAX}
+                    onClick={() => onChange(value + range.step)}
+                    disabled={value >= range.max}
                     aria-label={`${label} +`}
                 >
                     <PlusIcon size={16} />
@@ -327,10 +346,7 @@ export function SettingsDrawer() {
     };
     usePreloadFonts(open);
     const [installed] = useState(isInstalledApp);
-    // Which language tab of the translation list is open; starts on the first selected translation's.
-    const [trTab, setTrTab] = useState<"bn" | "en">(() =>
-        s.translations[0] ? translationLang(s.translations[0]) : "bn"
-    );
+    const [tab, setTab] = useState<"general" | "translations" | "fonts">("general");
 
     const translationView = s.viewMode === "translation";
     const arabicVisible = !translationView || s.showArabic || s.translations.length === 0;
@@ -388,167 +404,224 @@ export function SettingsDrawer() {
                 </div>
             </div>
 
-            <Section title={t.theme}>
+            <div className="px-5 pt-4">
                 <Segmented
-                    label={t.theme}
-                    value={s.theme}
-                    onChange={s.setTheme}
-                    options={THEMES.map((o) => ({ id: o.id, label: ui === "en" ? o.label : o.bn }))}
+                    label={t.tabs}
+                    value={tab}
+                    onChange={setTab}
+                    options={[
+                        { id: "general", label: t.tabGeneral },
+                        { id: "translations", label: t.translations },
+                        { id: "fonts", label: t.tabFonts },
+                    ]}
                 />
-            </Section>
+            </div>
 
-            <Section title={t.view}>
-                <Segmented
-                    label={t.view}
-                    value={s.viewMode}
-                    onChange={s.setViewMode}
-                    options={VIEW_MODES.map((o) => ({ id: o.id, label: ui === "en" ? o.label : o.bn }))}
-                />
-                <p className="text-xs text-muted">
-                    {(() => {
-                        const mode = VIEW_MODES.find((v) => v.id === s.viewMode);
-                        return ui === "en" ? mode?.hint : mode?.bnHint;
-                    })()}
-                </p>
-            </Section>
+            {tab === "general" && (
+                <>
+                    <Section title={t.theme}>
+                        <Segmented
+                            label={t.theme}
+                            value={s.theme}
+                            onChange={s.setTheme}
+                            options={THEMES.map((o) => ({ id: o.id, label: ui === "en" ? o.label : o.bn }))}
+                        />
+                    </Section>
 
-            {translationView && (
-                <Section title={t.arabicText} hint={t.arabicTextHint}>
-                    <Switch
-                        label={t.showArabic}
-                        checked={s.showArabic}
-                        onChange={s.setShowArabic}
-                        disabled={s.translations.length === 0}
-                        note={s.translations.length === 0 ? t.needTranslation : undefined}
-                    />
-                </Section>
+                    <Section title={t.view}>
+                        <Segmented
+                            label={t.view}
+                            value={s.viewMode}
+                            onChange={s.setViewMode}
+                            options={VIEW_MODES.map((o) => ({ id: o.id, label: ui === "en" ? o.label : o.bn }))}
+                        />
+                        <p className="text-xs text-muted">
+                            {(() => {
+                                const mode = VIEW_MODES.find((v) => v.id === s.viewMode);
+                                return ui === "en" ? mode?.hint : mode?.bnHint;
+                            })()}
+                        </p>
+                    </Section>
+
+                    {translationView && (
+                        <Section title={t.arabicText} hint={t.arabicTextHint}>
+                            <Switch
+                                label={t.showArabic}
+                                checked={s.showArabic}
+                                onChange={s.setShowArabic}
+                                disabled={s.translations.length === 0}
+                                note={s.translations.length === 0 ? t.needTranslation : undefined}
+                            />
+                        </Section>
+                    )}
+
+                    {open && installed && <OfflineSection t={t} ui={ui} />}
+                </>
             )}
 
-            {translationView && (
+            {tab === "translations" && (
                 <Section
                     title={t.translations}
-                    hint={s.showArabic ? t.translationsHint : t.translationsHintNoArabic}
+                    hint={
+                        !translationView
+                            ? undefined
+                            : s.showArabic
+                              ? t.translationsHint
+                              : t.translationsHintNoArabic
+                    }
                 >
-                    <Segmented
-                        label={t.translations}
-                        value={trTab}
-                        onChange={setTrTab}
-                        options={[
-                            { id: "bn", label: "বাংলা" },
-                            { id: "en", label: "English" },
-                        ]}
-                    />
-                    <div className="space-y-2">
-                        {TRANSLATIONS.filter((tr) => tr.lang === trTab).map((tr) => {
-                            const on = s.translations.includes(tr.id);
-                            const locked = on && lockLastTranslation;
-                            return (
-                                <label
-                                    key={tr.id}
-                                    className={`press flex items-center gap-3 rounded-xl px-3 py-2.5 ring-1 ${
-                                        locked ? "cursor-not-allowed" : "cursor-pointer"
-                                    } ${on ? "bg-brand-50 ring-brand-600/30" : "ring-line hover:bg-panel"}`}
+                    {!translationView && (
+                        <div className="flex items-center gap-3 rounded-xl bg-panel px-3 py-2.5 ring-1 ring-line">
+                            <p className="flex-1 text-xs text-muted">{t.translationsOffView}</p>
+                            <button
+                                type="button"
+                                onClick={() => s.setViewMode("translation")}
+                                className="press shrink-0 rounded-full bg-brand-50 px-3 py-1.5 text-xs font-semibold text-brand-700 ring-1 ring-brand-600/30"
+                            >
+                                {t.translationsTurnOn}
+                            </button>
+                        </div>
+                    )}
+                    <div
+                        role="listbox"
+                        aria-label={t.translations}
+                        aria-multiselectable="true"
+                        className="space-y-4"
+                    >
+                        {TRANSLATION_GROUPS.map((group) => (
+                            <div
+                                key={group.lang}
+                                role="group"
+                                aria-labelledby={`tr-group-${group.lang}`}
+                                className="overflow-hidden rounded-xl ring-1 ring-line"
+                            >
+                                <div
+                                    id={`tr-group-${group.lang}`}
+                                    lang={group.lang}
+                                    className={`bg-panel px-3 py-2 text-xs font-semibold text-muted ${
+                                        group.lang === "bn" ? "font-bangla" : ""
+                                    }`}
                                 >
-                                    <input
-                                        type="checkbox"
-                                        checked={on}
-                                        disabled={locked}
-                                        onChange={() => s.toggleTranslation(tr.id)}
-                                        className="sr-only"
-                                    />
-                                    <span
-                                        aria-hidden="true"
-                                        className={`flex h-5 w-5 items-center justify-center rounded-md ring-1 ${
-                                            on ? "bg-brand-600 text-on-brand ring-brand-600" : "bg-surface ring-line"
-                                        }`}
-                                    >
-                                        {on && <CheckIcon size={14} strokeWidth={2.5} />}
-                                    </span>
-                                    <span className={`text-sm font-medium text-ink ${tr.lang === "bn" ? "font-bangla text-base" : ""}`}>
-                                        {tr.name}
-                                    </span>
-                                    <span className="ml-auto text-xs text-muted">{tr.label}</span>
-                                </label>
-                            );
-                        })}
+                                    {group.label}
+                                </div>
+                                {TRANSLATIONS.filter((tr) => tr.lang === group.lang).map((tr) => {
+                                    const on = s.translations.includes(tr.id);
+                                    const locked = on && lockLastTranslation;
+                                    return (
+                                        <button
+                                            key={tr.id}
+                                            type="button"
+                                            role="option"
+                                            aria-selected={on}
+                                            aria-disabled={locked || undefined}
+                                            onClick={() => !locked && s.toggleTranslation(tr.id)}
+                                            className={`press flex w-full items-center gap-3 border-t border-line px-3 py-2.5 text-left ${
+                                                locked ? "cursor-not-allowed" : "cursor-pointer"
+                                            } ${on ? "bg-brand-50" : "hover:bg-panel"}`}
+                                        >
+                                            <span
+                                                aria-hidden="true"
+                                                className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-md ring-1 ${
+                                                    on ? "bg-brand-600 text-on-brand ring-brand-600" : "bg-surface ring-line"
+                                                }`}
+                                            >
+                                                {on && <CheckIcon size={14} strokeWidth={2.5} />}
+                                            </span>
+                                            <span
+                                                lang={tr.lang}
+                                                className={`text-sm font-medium ${on ? "text-brand-700" : "text-ink"} ${
+                                                    tr.lang === "bn" ? "font-bangla text-base" : ""
+                                                }`}
+                                            >
+                                                {tr.name}
+                                            </span>
+                                            <span className="ml-auto text-xs text-muted">{tr.label}</span>
+                                        </button>
+                                    );
+                                })}
+                            </div>
+                        ))}
                     </div>
                 </Section>
             )}
 
-            <Section title={t.font}>
-                <div role="radiogroup" aria-label={t.font} className="grid grid-cols-2 gap-2">
-                    {ARABIC_FONTS.map((font) => {
-                        const on = s.arabicFont === font.id;
-                        return (
-                            <button
-                                key={font.id}
-                                type="button"
-                                role="radio"
-                                aria-checked={on}
-                                onClick={() => s.setArabicFont(font.id)}
-                                className={`press rounded-xl px-3 py-2.5 text-left ring-1 ${
-                                    on ? "bg-brand-50 ring-brand-600/40" : "ring-line hover:bg-panel"
-                                }`}
-                            >
-                                <span
-                                    dir="rtl"
-                                    lang="ar"
-                                    className="block text-right text-2xl leading-[1.9] text-ink"
-                                    style={{ fontFamily: font.family }}
-                                >
-                                    بِسْمِ اللَّهِ
-                                </span>
-                                <span className={`block text-xs font-semibold ${on ? "text-brand-700" : "text-ink"}`}>
-                                    {font.name}
-                                </span>
-                                <span className="block text-[11px] text-muted">{font.note}</span>
-                            </button>
-                        );
-                    })}
-                </div>
-            </Section>
+            {tab === "fonts" && (
+                <>
+                    <Section title={t.font}>
+                        <div role="radiogroup" aria-label={t.font} className="grid grid-cols-2 gap-2">
+                            {ARABIC_FONTS.map((font) => {
+                                const on = s.arabicFont === font.id;
+                                return (
+                                    <button
+                                        key={font.id}
+                                        type="button"
+                                        role="radio"
+                                        aria-checked={on}
+                                        onClick={() => s.setArabicFont(font.id)}
+                                        className={`press rounded-xl px-3 py-2.5 text-left ring-1 ${
+                                            on ? "bg-brand-50 ring-brand-600/40" : "ring-line hover:bg-panel"
+                                        }`}
+                                    >
+                                        <span
+                                            dir="rtl"
+                                            lang="ar"
+                                            className="block text-right text-2xl leading-[1.9] text-ink"
+                                            style={{ fontFamily: font.family }}
+                                        >
+                                            بِسْمِ اللَّهِ
+                                        </span>
+                                        <span className={`block text-xs font-semibold ${on ? "text-brand-700" : "text-ink"}`}>
+                                            {font.name}
+                                        </span>
+                                        <span className="block text-[11px] text-muted">{font.note}</span>
+                                    </button>
+                                );
+                            })}
+                        </div>
+                    </Section>
 
-            {translationView && s.translations.some((id) => translationLang(id) === "bn") && (
-                <Section title={t.banglaFont}>
-                    <FontPicker
-                        label={t.banglaFont}
-                        fonts={BANGLA_FONTS}
-                        value={s.banglaFont}
-                        onChange={s.setBanglaFont}
-                        sample="বিসমিল্লাহির রাহমানির রাহিম"
-                        lang="bn"
-                    />
-                </Section>
-            )}
-
-            {translationView && s.translations.some((id) => translationLang(id) === "en") && (
-                <Section title={t.englishFont}>
-                    <FontPicker
-                        label={t.englishFont}
-                        fonts={ENGLISH_FONTS}
-                        value={s.englishFont}
-                        onChange={s.setEnglishFont}
-                        sample="In the name of God"
-                        lang="en"
-                    />
-                </Section>
-            )}
-
-            <Section title={ui === "en" ? "Font size" : "লেখার আকার"}>
-                <div className="space-y-3">
-                    <Stepper label={t.arabicSize} value={s.arabicSize} onChange={s.setArabicSize} ui={ui} />
-                    {s.viewMode === "translation" && (
-                        <Stepper
-                            label={t.translationSize}
-                            value={s.translationSize}
-                            onChange={s.setTranslationSize}
-                            ui={ui}
-                        />
+                    {translationView && s.translations.some((id) => translationLang(id) === "bn") && (
+                        <Section title={t.banglaFont}>
+                            <FontPicker
+                                label={t.banglaFont}
+                                fonts={BANGLA_FONTS}
+                                value={s.banglaFont}
+                                onChange={s.setBanglaFont}
+                                sample="বিসমিল্লাহির রাহমানির রাহিম"
+                                lang="bn"
+                            />
+                        </Section>
                     )}
-                </div>
-            </Section>
 
-            {open && installed && <OfflineSection t={t} ui={ui} />}
+                    {translationView && s.translations.some((id) => translationLang(id) === "en") && (
+                        <Section title={t.englishFont}>
+                            <FontPicker
+                                label={t.englishFont}
+                                fonts={ENGLISH_FONTS}
+                                value={s.englishFont}
+                                onChange={s.setEnglishFont}
+                                sample="In the name of God"
+                                lang="en"
+                            />
+                        </Section>
+                    )}
+
+                    <Section title={ui === "en" ? "Font size" : "লেখার আকার"}>
+                        <div className="space-y-3">
+                            <Stepper label={t.arabicSize} value={s.arabicSize} range={ARABIC_SIZE} onChange={s.setArabicSize} ui={ui} />
+                            {s.viewMode === "translation" && (
+                                <Stepper
+                                    label={t.translationSize}
+                                    value={s.translationSize}
+                                    range={TRANSLATION_SIZE}
+                                    onChange={s.setTranslationSize}
+                                    ui={ui}
+                                />
+                            )}
+                        </div>
+                    </Section>
+                </>
+            )}
         </Drawer>
     );
 }

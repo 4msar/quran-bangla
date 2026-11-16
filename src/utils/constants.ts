@@ -256,13 +256,9 @@ export function loadGoogleFont(kind: string, font: { id: string; google?: string
     document.head.appendChild(link);
 }
 
-export const DEFAULT_ARABIC_FONT = ARABIC_FONTS[0].id;
+export const DEFAULT_ARABIC_FONT = "uthman-hafs";
 
 export const getArabicFont = (id: string) => ARABIC_FONTS.find((f) => f.id === id) ?? ARABIC_FONTS[0];
-
-/** Size steps 1..10 mapped to rem. */
-export const arabicSizeRem = (step: number) => 1.25 + step * 0.25;
-export const translationSizeRem = (step: number) => 0.75 + step * 0.0625;
 
 /** Popular quick links for the home page. */
 export const QUICK_LINKS: { label: string; bn: string; to: string }[] = [
