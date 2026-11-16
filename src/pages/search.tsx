@@ -1,3 +1,4 @@
+import { surahPath } from "src/utils/slug";
 import { useMemo, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { Layouts, SearchBox } from "src/components";
@@ -97,7 +98,7 @@ export function Search() {
                             return (
                                 <li key={a.id}>
                                     <Link
-                                        to={`/${a.sura}#ayah-${a.sura}-${a.aya}`}
+                                        to={`${surahPath(a.sura)}#ayah-${a.sura}-${a.aya}`}
                                         className="block rounded-2xl bg-surface p-4 shadow-card ring-1 ring-transparent hover:ring-brand-600/30"
                                     >
                                         <div className="flex items-center gap-2">

@@ -1,3 +1,4 @@
+import { surahPath } from "src/utils/slug";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import { useUiLang } from "src/store";
@@ -156,7 +157,7 @@ export function ListPanelBody() {
                             const active = position.surah === s.id;
                             return (
                                 <li key={s.id} data-active={active}>
-                                    <NavLink to={`/${s.id}`} className={rowClass(active)}>
+                                    <NavLink to={surahPath(s.id)} className={rowClass(active)}>
                                         <NumberBadge
                                             value={toLocaleDigits(s.id, ui)}
                                             active={active}
@@ -221,7 +222,7 @@ export function ListPanelBody() {
                             return (
                                 <li key={r.id}>
                                     <NavLink
-                                        to={`/${r.sura}#ruku-${r.id}`}
+                                        to={`${surahPath(r.sura)}#ruku-${r.id}`}
                                         className={rowClass(false)}
                                     >
                                         <NumberBadge value={toLocaleDigits(r.ruku, ui)} active={false} />

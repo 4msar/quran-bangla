@@ -1,3 +1,4 @@
+import { surahPath } from "src/utils/slug";
 import { motion } from "motion/react";
 import { Link, NavLink } from "react-router-dom";
 import { JuzList, Layouts, ListTypeToggle, RukuList, SearchBox, SurahList } from "src/components";
@@ -32,7 +33,7 @@ function ContinueReading() {
                 {ui === "en" ? "Continue reading" : "যেখানে ছিলেন"}
             </h2>
             <MotionLink
-                to={`/${lastRead.sura}#ayah-${lastRead.sura}-${lastRead.aya}`}
+                to={`${surahPath(lastRead.sura)}#ayah-${lastRead.sura}-${lastRead.aya}`}
                 whileHover={{ y: -2 }}
                 whileTap={{ scale: 0.98 }}
                 transition={{ type: "spring", stiffness: 420, damping: 28 }}

@@ -1,3 +1,4 @@
+import { surahPath } from "src/utils/slug";
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { Link } from "react-router-dom";
@@ -193,7 +194,7 @@ export function AudioPlayer() {
                     <SkipForwardIcon size={18} />
                 </button>
 
-                <Link to={`/${current.sura}#ayah-${current.sura}-${current.aya}`} className="min-w-0 flex-1 px-2">
+                <Link to={`${surahPath(current.sura)}#ayah-${current.sura}-${current.aya}`} className="min-w-0 flex-1 px-2">
                     <span className={`block truncate text-sm font-semibold text-ink ${en ? "" : "font-bangla"}`}>
                         {surah ? getSurahName(surah, ui) : ""}{" "}
                         {intro ? (en ? "· Bismillah" : "· বিসমিল্লাহ") : `${d(current.sura)}:${d(current.aya)}`}

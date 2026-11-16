@@ -1,7 +1,7 @@
 import { translationLang } from "src/utils/constants";
 import { useLayoutEffect } from "react";
 import { motion } from "motion/react";
-import { useLocation, useParams } from "react-router-dom";
+import { Navigate, useLocation, useParams } from "react-router-dom";
 import { AyahList, Layouts, ReaderBar, SurahPrevNext } from "src/components";
 import { useHashTarget } from "src/hooks/use-hash-target";
 import { usePageMeta } from "src/hooks/use-page-meta";
@@ -10,19 +10,25 @@ import { useUiLang } from "src/store";
 import type { Surah as SurahInfo } from "src/types";
 import {
     bismillah,
-    getSurahInfo,
+    findSurah,
     getSurahName,
     getSurahPrefix,
     revelationLabel,
     toLocaleDigits,
 } from "src/utils";
 import { NotFound } from "./not-found";
+import { surahPath, surahSlug } from "src/utils/slug";
 
 export function Surah() {
     const { surah: surahParam } = useParams();
-    const surah = getSurahInfo(Number(surahParam));
+    const location = useLocation();
+    const surah = findSurah(surahParam);
 
     if (!surah) return <NotFound />;
+    // Numbered links (/2) and mixed-case slugs move to the canonical slug, keeping search and hash.
+    if (surahParam !== surahSlug(surah)) {
+        return <Navigate replace to={{ pathname: surahPath(surah.id), search: location.search, hash: location.hash }} />;
+    }
 
     // Keyed so switching surah resets scroll-tracking and menus.
     return <SurahView key={surah.id} surah={surah} />;

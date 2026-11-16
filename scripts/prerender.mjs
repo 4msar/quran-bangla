@@ -19,6 +19,10 @@ const surahs = readJson("src/data/meta/surah.json");
 const juzList = readJson("src/data/meta/juz.json").sort((a, b) => a.id - b.id);
 const surahById = new Map(surahs.map((s) => [s.id, s]));
 
+/** Same rule as slugify() in src/utils/slug.ts. */
+const slugify = (text) =>
+    text.toLowerCase().replace(/['’`]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+
 const bn = (value) => String(value).replace(/\d/g, (d) => "০১২৩৪৫৬৭৮৯"[d]);
 const revelation = (type) => (type.toLowerCase().startsWith("mec") ? "মাক্কী" : "মাদানী");
 
@@ -36,7 +40,7 @@ const pages = [
         description: "আরবি, বাংলা ও ইংরেজি অনুবাদসহ কুরআনের আয়াতের সুন্দর ছবি তৈরি করুন — বিভিন্ন থিম ও ব্যাকগ্রাউন্ড ছবিসহ।",
     },
     ...surahs.map((s) => ({
-        path: `/${s.id}`,
+        path: `/${slugify(s.tname)}`,
         title: `সূরাহ ${s.bname} (${s.tname})`,
         description: `সূরাহ ${s.bname} (${s.name}) — কুরআনের ${bn(s.id)} নম্বর সূরা, ${bn(s.ayas)} আয়াত, ${revelation(s.type)}। আরবি ও বাংলা অনুবাদসহ পড়ুন। Surah ${s.tname} (${s.ename}), ${s.ayas} ayahs, with Bangla and English translation.`,
     })),

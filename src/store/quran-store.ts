@@ -43,7 +43,7 @@ type Settings = {
 export const DEFAULT_SETTINGS: Settings = {
     theme: "system",
     viewMode: "translation",
-    translations: ["bn"],
+    translations: ["mujib"],
     showArabic: true,
     arabicFont: DEFAULT_ARABIC_FONT,
     banglaFont: DEFAULT_BANGLA_FONT,
@@ -86,8 +86,7 @@ export type QuranStore = Settings & {
     setLastRead: (position: Position) => void;
 };
 
-const clampSize = (size: number) =>
-    Math.min(SIZE_MAX, Math.max(SIZE_MIN, Math.round(size)));
+const clampSize = (size: number) => Math.min(SIZE_MAX, Math.max(SIZE_MIN, Math.round(size)));
 
 /** Keep Bangla before English, in the settings order, regardless of the order they were ticked. */
 const ORDER: TranslationId[] = TRANSLATIONS.map((t) => t.id);
@@ -105,9 +104,7 @@ export const useQuranStore = create<QuranStore>()(
             toggleTranslation: (id) =>
                 set((state) => {
                     const on = state.translations.includes(id);
-                    const next = on
-                        ? state.translations.filter((t) => t !== id)
-                        : [...state.translations, id];
+                    const next = on ? state.translations.filter((t) => t !== id) : [...state.translations, id];
                     // With Arabic hidden, keep at least one translation so the page is never empty.
                     if (next.length === 0 && !state.showArabic) return state;
                     return {
@@ -117,19 +114,15 @@ export const useQuranStore = create<QuranStore>()(
             setShowArabic: (showArabic) =>
                 set((state) =>
                     // Hiding Arabic needs a translation to show instead.
-                    !showArabic && state.translations.length === 0
-                        ? state
-                        : { showArabic }
+                    !showArabic && state.translations.length === 0 ? state : { showArabic },
                 ),
             setArabicFont: (arabicFont) => set({ arabicFont }),
             setBanglaFont: (banglaFont) => set({ banglaFont }),
             setEnglishFont: (englishFont) => set({ englishFont }),
             setArabicSize: (size) => set({ arabicSize: clampSize(size) }),
-            setTranslationSize: (size) =>
-                set({ translationSize: clampSize(size) }),
+            setTranslationSize: (size) => set({ translationSize: clampSize(size) }),
             setReciter: (reciter) => set({ reciter }),
-            setVolume: (volume) =>
-                set({ volume: Math.min(1, Math.max(0, volume)) }),
+            setVolume: (volume) => set({ volume: Math.min(1, Math.max(0, volume)) }),
             setPlaybackRate: (playbackRate) => set({ playbackRate }),
             setRepeatAyah: (repeatAyah) => set({ repeatAyah }),
             setTafseerLang: (tafseerLang) => set({ tafseerLang }),
@@ -153,8 +146,7 @@ export const useQuranStore = create<QuranStore>()(
                 const state = (persisted ?? {}) as Record<string, unknown>;
                 if (version < 1) {
                     const old = state.translation;
-                    state.translations =
-                        old === "en" ? ["en"] : old === "off" ? [] : ["bn"];
+                    state.translations = old === "en" ? ["en"] : old === "off" ? [] : ["bn"];
                     delete state.translation;
                 }
                 return state as unknown as QuranStore;
@@ -179,8 +171,8 @@ export const useQuranStore = create<QuranStore>()(
                 bookmarks: state.bookmarks,
                 lastRead: state.lastRead,
             }),
-        }
-    )
+        },
+    ),
 );
 
 /** UI labels follow the first selected translation (Bangla when none). */

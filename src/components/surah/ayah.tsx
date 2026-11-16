@@ -1,3 +1,4 @@
+import { surahPath } from "src/utils/slug";
 import { memo, useEffect, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { Link } from "react-router-dom";
@@ -82,7 +83,7 @@ export const AyahItem = memo(function AyahItem({ row, shown, ui, showArabic }: A
         >
             <div className="mb-3 flex items-center gap-2">
                 <Link
-                    to={`/${arabic.sura}/${arabic.aya}`}
+                    to={`${surahPath(arabic.sura)}/${arabic.aya}`}
                     className="rounded-full bg-brand-50 px-3 py-1 text-xs font-semibold tabular-nums text-brand-700 hover:bg-brand-100"
                     aria-label={`Ayah ${arabic.sura}:${arabic.aya}`}
                 >

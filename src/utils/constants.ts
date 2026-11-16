@@ -3,8 +3,7 @@ import type { Theme, TranslationId, ViewMode } from "src/types";
 /** UI labels follow the translation: English stays English, everything else is Bangla. */
 export type UiLang = "bn" | "en";
 
-export const getSurahPrefix = (lang: string) =>
-    lang === "en" ? "Surah" : "সূরাহ";
+export const getSurahPrefix = (lang: string) => (lang === "en" ? "Surah" : "সূরাহ");
 
 export const getRukuPrefix = (lang: string) => (lang === "en" ? "Ruku" : "রুকু");
 
@@ -21,13 +20,10 @@ export const revelationLabel = (type: string, lang: string) => {
 const BN_DIGITS = "০১২৩৪৫৬৭৮৯";
 /** Bangla numerals when the UI is Bangla. */
 export const toLocaleDigits = (value: number | string, lang: string) =>
-    lang === "en"
-        ? String(value)
-        : String(value).replace(/\d/g, (d) => BN_DIGITS[Number(d)]);
+    lang === "en" ? String(value) : String(value).replace(/\d/g, (d) => BN_DIGITS[Number(d)]);
 
 const AR_DIGITS = "٠١٢٣٤٥٦٧٨٩";
-export const toArabicDigits = (value: number) =>
-    String(value).replace(/\d/g, (d) => AR_DIGITS[Number(d)]);
+export const toArabicDigits = (value: number) => String(value).replace(/\d/g, (d) => AR_DIGITS[Number(d)]);
 
 export type TranslationInfo = {
     id: TranslationId;
@@ -41,17 +37,15 @@ export type TranslationInfo = {
 
 /** Order here is the order shown in settings and in the reader (Bangla first). */
 export const TRANSLATIONS: TranslationInfo[] = [
-    { id: "bn", lang: "bn", name: "বাংলা", label: "Bangla" },
-    { id: "taisir", lang: "bn", name: "তাইসিরুল কুরআন", label: "Taisirul Quran" },
     { id: "mujib", lang: "bn", name: "শেখ মুজিবুর রহমান", label: "Sheikh Mujibur Rahman" },
+    { id: "taisir", lang: "bn", name: "তাইসিরুল কুরআন", label: "Taisirul Quran" },
     { id: "rawai", lang: "bn", name: "রাওয়াইউল বায়ান", label: "Rawai Al-Bayan" },
-    { id: "en", lang: "en", name: "English", label: "English" },
+    { id: "bn", lang: "bn", name: " বাংলা", label: "Bangla" },
     { id: "saheeh", lang: "en", name: "Saheeh International", label: "Saheeh" },
     { id: "translit", lang: "en", name: "English Transliteration", label: "Transliteration" },
 ];
 
-export const translationLang = (id: TranslationId): "bn" | "en" =>
-    TRANSLATIONS.find((t) => t.id === id)?.lang ?? "bn";
+export const translationLang = (id: TranslationId): "bn" | "en" => TRANSLATIONS.find((t) => t.id === id)?.lang ?? "bn";
 
 export const THEMES: { id: Theme; label: string; bn: string }[] = [
     { id: "system", label: "System", bn: "সিস্টেম" },
@@ -169,20 +163,80 @@ export type TextFont = {
 
 export const BANGLA_FONTS: TextFont[] = [
     { id: "kalpurush", name: "Kalpurush", family: "'Kalpurush', sans-serif", note: "Default, familiar print style" },
-    { id: "noto-sans-bengali", name: "Noto Sans Bengali", family: "'Noto Sans Bengali', sans-serif", google: "Noto+Sans+Bengali:wght@400;600", note: "Clean, modern sans" },
-    { id: "hind-siliguri", name: "Hind Siliguri", family: "'Hind Siliguri', sans-serif", google: "Hind+Siliguri:wght@400;600", note: "Light, UI-friendly sans" },
-    { id: "mukta", name: "Mukta", family: "'Mukta', sans-serif", google: "Mukta:wght@400;600", note: "Open, rounded sans" },
-    { id: "anek-bangla", name: "Anek Bangla", family: "'Anek Bangla', sans-serif", google: "Anek+Bangla:wght@400;600", note: "Contemporary, wide" },
-    { id: "noto-serif-bengali", name: "Noto Serif Bengali", family: "'Noto Serif Bengali', serif", google: "Noto+Serif+Bengali:wght@400;600", note: "Book-style serif" },
-    { id: "tiro-bangla", name: "Tiro Bangla", family: "'Tiro Bangla', serif", google: "Tiro+Bangla", note: "Classic text serif" },
+    {
+        id: "noto-sans-bengali",
+        name: "Noto Sans Bengali",
+        family: "'Noto Sans Bengali', sans-serif",
+        google: "Noto+Sans+Bengali:wght@400;600",
+        note: "Clean, modern sans",
+    },
+    {
+        id: "hind-siliguri",
+        name: "Hind Siliguri",
+        family: "'Hind Siliguri', sans-serif",
+        google: "Hind+Siliguri:wght@400;600",
+        note: "Light, UI-friendly sans",
+    },
+    {
+        id: "mukta",
+        name: "Mukta",
+        family: "'Mukta', sans-serif",
+        google: "Mukta:wght@400;600",
+        note: "Open, rounded sans",
+    },
+    {
+        id: "anek-bangla",
+        name: "Anek Bangla",
+        family: "'Anek Bangla', sans-serif",
+        google: "Anek+Bangla:wght@400;600",
+        note: "Contemporary, wide",
+    },
+    {
+        id: "noto-serif-bengali",
+        name: "Noto Serif Bengali",
+        family: "'Noto Serif Bengali', serif",
+        google: "Noto+Serif+Bengali:wght@400;600",
+        note: "Book-style serif",
+    },
+    {
+        id: "tiro-bangla",
+        name: "Tiro Bangla",
+        family: "'Tiro Bangla', serif",
+        google: "Tiro+Bangla",
+        note: "Classic text serif",
+    },
 ];
 
 export const ENGLISH_FONTS: TextFont[] = [
     { id: "inter", name: "Inter", family: "Inter, ui-sans-serif, system-ui, sans-serif", note: "Default sans" },
-    { id: "source-serif", name: "Source Serif 4", family: "'Source Serif 4', serif", google: "Source+Serif+4:wght@400;600", note: "Readable book serif" },
-    { id: "lora", name: "Lora", family: "'Lora', serif", google: "Lora:wght@400;600", note: "Warm, calligraphic serif" },
-    { id: "merriweather", name: "Merriweather", family: "'Merriweather', serif", google: "Merriweather:wght@400;700", note: "Sturdy, screen-friendly serif" },
-    { id: "atkinson", name: "Atkinson Hyperlegible", family: "'Atkinson Hyperlegible', sans-serif", google: "Atkinson+Hyperlegible:wght@400;700", note: "Maximum legibility" },
+    {
+        id: "source-serif",
+        name: "Source Serif 4",
+        family: "'Source Serif 4', serif",
+        google: "Source+Serif+4:wght@400;600",
+        note: "Readable book serif",
+    },
+    {
+        id: "lora",
+        name: "Lora",
+        family: "'Lora', serif",
+        google: "Lora:wght@400;600",
+        note: "Warm, calligraphic serif",
+    },
+    {
+        id: "merriweather",
+        name: "Merriweather",
+        family: "'Merriweather', serif",
+        google: "Merriweather:wght@400;700",
+        note: "Sturdy, screen-friendly serif",
+    },
+    {
+        id: "atkinson",
+        name: "Atkinson Hyperlegible",
+        family: "'Atkinson Hyperlegible', sans-serif",
+        google: "Atkinson+Hyperlegible:wght@400;700",
+        note: "Maximum legibility",
+    },
 ];
 
 export const DEFAULT_BANGLA_FONT = BANGLA_FONTS[0].id;
@@ -204,8 +258,7 @@ export function loadGoogleFont(kind: string, font: { id: string; google?: string
 
 export const DEFAULT_ARABIC_FONT = ARABIC_FONTS[0].id;
 
-export const getArabicFont = (id: string) =>
-    ARABIC_FONTS.find((f) => f.id === id) ?? ARABIC_FONTS[0];
+export const getArabicFont = (id: string) => ARABIC_FONTS.find((f) => f.id === id) ?? ARABIC_FONTS[0];
 
 /** Size steps 1..10 mapped to rem. */
 export const arabicSizeRem = (step: number) => 1.25 + step * 0.25;
@@ -213,12 +266,12 @@ export const translationSizeRem = (step: number) => 0.75 + step * 0.0625;
 
 /** Popular quick links for the home page. */
 export const QUICK_LINKS: { label: string; bn: string; to: string }[] = [
-    { label: "Yasin", bn: "ইয়াসীন", to: "/36" },
-    { label: "Al-Kahf", bn: "আল কাহফ", to: "/18" },
-    { label: "Al-Mulk", bn: "আল মুলক", to: "/67" },
-    { label: "Ar-Rahman", bn: "আর রাহমান", to: "/55" },
-    { label: "Al-Waqi'ah", bn: "আল ওয়াকিয়া", to: "/56" },
-    { label: "Ayatul Kursi", bn: "আয়াতুল কুরসী", to: "/2/255" },
+    { label: "Yasin", bn: "ইয়াসীন", to: "/yaseen" },
+    { label: "Al-Kahf", bn: "আল কাহফ", to: "/al-kahf" },
+    { label: "Al-Mulk", bn: "আল মুলক", to: "/al-mulk" },
+    { label: "Ar-Rahman", bn: "আর রাহমান", to: "/ar-rahmaan" },
+    { label: "Al-Waqi'ah", bn: "আল ওয়াকিয়া", to: "/al-waaqia" },
+    { label: "Ayatul Kursi", bn: "আয়াতুল কুরসী", to: "/al-baqara/255" },
     { label: "Ayah image", bn: "আয়াতের ছবি", to: "/image-generator" },
 ];
 
@@ -237,7 +290,6 @@ export const RECITERS: { id: string; name: string; bn: string }[] = [
 
 export const DEFAULT_RECITER = RECITERS[0].id;
 
-export const getReciter = (id: string) =>
-    RECITERS.find((r) => r.id === id) ?? RECITERS[0];
+export const getReciter = (id: string) => RECITERS.find((r) => r.id === id) ?? RECITERS[0];
 
 export const PLAYBACK_RATES = [0.75, 1, 1.25, 1.5];

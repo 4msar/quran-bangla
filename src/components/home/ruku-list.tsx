@@ -1,3 +1,4 @@
+import { surahPath } from "src/utils/slug";
 import { Fragment } from "react";
 import { Link } from "react-router-dom";
 import { useUiLang } from "src/store";
@@ -32,7 +33,7 @@ export function RukuList() {
                             </h3>
                         )}
                         <Link
-                            to={`/${ruku.sura}#ruku-${ruku.id}`}
+                            to={`${surahPath(ruku.sura)}#ruku-${ruku.id}`}
                             className="press flex items-center justify-between rounded-xl px-3 py-2.5 hover:bg-panel"
                         >
                             <span className="text-sm font-medium text-ink">

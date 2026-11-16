@@ -1,3 +1,4 @@
+import { surahPath } from "src/utils/slug";
 import { motion } from "motion/react";
 import { NavLink, useLocation } from "react-router-dom";
 import { useQuranStore, useUiLang, useUiStore } from "src/store";
@@ -64,7 +65,7 @@ export function NavItems({ variant }: { variant: Variant }) {
     const { pathname } = useLocation();
 
     const readTo = lastRead
-        ? `/${lastRead.sura}#ayah-${lastRead.sura}-${lastRead.aya}`
+        ? `${surahPath(lastRead.sura)}#ayah-${lastRead.sura}-${lastRead.aya}`
         : "/1";
     const reading = /^\/(\d+|juz\/\d+)/.test(pathname);
 

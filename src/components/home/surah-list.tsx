@@ -1,3 +1,4 @@
+import { surahPath } from "src/utils/slug";
 import { motion } from "motion/react";
 import { Link } from "react-router-dom";
 import { useQuranStore, useUiLang } from "src/store";
@@ -25,7 +26,7 @@ function Badge({ n, ui }: { n: number; ui: UiLang }) {
 function SurahCard({ surah, ui, index }: { surah: Surah; ui: UiLang; index: number }) {
     return (
         <MotionLink
-            to={`/${surah.id}`}
+            to={surahPath(surah.id)}
             {...enter(index)}
             whileHover={{ y: -3, transition: { type: "spring", stiffness: 400, damping: 25 } }}
             whileTap={{ scale: 0.98 }}
@@ -54,7 +55,7 @@ function SurahRow({ surah, ui, index }: { surah: Surah; ui: UiLang; index: numbe
     const juz = getJuzInfo(surah.id);
     return (
         <MotionLink
-            to={`/${surah.id}`}
+            to={surahPath(surah.id)}
             {...enter(index)}
             className="press group flex items-center gap-4 border-b border-line px-2 py-3 hover:bg-panel"
         >

@@ -1,3 +1,4 @@
+import { surahPath } from "./slug";
 import hizbs from "src/data/meta/hizbs.json";
 import juz from "src/data/meta/juz.json";
 import manzil from "src/data/meta/manzil.json";
@@ -62,12 +63,12 @@ export const resolveSearch = (query: string): string | null => {
         const aya = Number(verse[2]);
         const info = getSurahInfo(sura);
         if (!info || aya < 1 || aya > info.ayas) return null;
-        return `/${sura}#ayah-${sura}-${aya}`;
+        return `${surahPath(sura)}#ayah-${sura}-${aya}`;
     }
 
     if (/^\d+$/.test(q)) {
         const info = getSurahInfo(Number(q));
-        return info ? `/${info.id}` : null;
+        return info ? surahPath(info.id) : null;
     }
 
     const match = surah.find((s) =>
@@ -75,5 +76,5 @@ export const resolveSearch = (query: string): string | null => {
             name.toLowerCase().includes(q)
         )
     );
-    return match ? `/${match.id}` : null;
+    return match ? surahPath(match.id) : null;
 };

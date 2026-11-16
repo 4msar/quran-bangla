@@ -1,3 +1,4 @@
+import { surahPath } from "src/utils/slug";
 import { Link } from "react-router-dom";
 import { getSurah, getSurahName, toLocaleDigits, UiLang } from "src/utils";
 import { ChevronLeftIcon, ChevronRightIcon } from "src/components/ui/icons";
@@ -40,7 +41,7 @@ export function SurahPrevNext({ surah, ui }: { surah: number; ui: UiLang }) {
     const target = (id: number, sub: string) => {
         const s = getSurah(id);
         return s
-            ? { to: `/${id}`, label: `${toLocaleDigits(id, ui)}. ${getSurahName(s, ui)}`, sub }
+            ? { to: surahPath(id), label: `${toLocaleDigits(id, ui)}. ${getSurahName(s, ui)}`, sub }
             : undefined;
     };
     return (

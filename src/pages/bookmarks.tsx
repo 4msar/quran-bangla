@@ -1,3 +1,4 @@
+import { surahPath } from "src/utils/slug";
 import { translationLang } from "src/utils/constants";
 import { useMemo } from "react";
 import { AnimatePresence, motion } from "motion/react";
@@ -51,7 +52,7 @@ export function Bookmarks() {
                             : "যেকোনো আয়াতের বুকমার্ক আইকনে চাপ দিয়ে এখানে সংরক্ষণ করুন।"}
                     </p>
                     <Link
-                        to="/1"
+                        to={surahPath(1)}
                         className="press mt-6 inline-block rounded-full bg-brand-600 px-5 py-2 text-sm font-semibold text-on-brand hover:bg-brand-700"
                     >
                         {ui === "en" ? "Start reading" : "পড়া শুরু করুন"}
@@ -77,7 +78,7 @@ export function Bookmarks() {
                             >
                                 <div className="flex items-center gap-2">
                                     <Link
-                                        to={`/${sura}#ayah-${sura}-${aya}`}
+                                        to={`${surahPath(sura)}#ayah-${sura}-${aya}`}
                                         className={`font-semibold text-ink hover:text-brand-700 ${ui === "bn" ? "font-bangla text-lg" : ""}`}
                                     >
                                         {surah ? getSurahName(surah, ui) : sura}
@@ -94,7 +95,7 @@ export function Bookmarks() {
                                         <TrashIcon size={16} />
                                     </button>
                                 </div>
-                                <Link to={`/${sura}#ayah-${sura}-${aya}`} className="mt-2 block">
+                                <Link to={`${surahPath(sura)}#ayah-${sura}-${aya}`} className="mt-2 block">
                                     {showArabic && (
                                         <p dir="rtl" lang="ar" className="font-arabic line-clamp-2 text-right text-2xl leading-loose text-ink">
                                             {ar ? stripBismillah(ar).text : "…"}
