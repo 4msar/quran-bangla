@@ -15,6 +15,16 @@ import { surahPath, surahSlug } from "src/utils/slug";
 export function Surah() {
     const { surah: surahParam } = useParams();
     const location = useLocation();
+
+    // Verse shorthand: /2:255 (or /al-baqara:255) opens the surah at that ayah.
+    const verse = surahParam?.match(/^(.+):(\d+)$/);
+    if (verse) {
+        const info = findSurah(verse[1]);
+        const ayah = Number(verse[2]);
+        if (!info || ayah < 1 || ayah > info.ayas) return <NotFound />;
+        return <Navigate replace to={`${surahPath(info.id)}#ayah-${info.id}-${ayah}`} />;
+    }
+
     const surah = findSurah(surahParam);
 
     if (!surah) return <NotFound />;
